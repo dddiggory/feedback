@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies();
+  const cookieStore = cookies() as unknown as Promise<ReturnType<typeof cookies>>;
   const supabase = createClient(cookieStore);
 
   const { data: feedbackItems } = await supabase
