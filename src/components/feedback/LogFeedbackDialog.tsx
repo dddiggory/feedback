@@ -32,7 +32,7 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
         <DialogHeader>
           <DialogTitle>Log New Feedback</DialogTitle>
           <DialogDescription>
-            Share your feedback or product idea. This feedback will be stored for easy continuous monitoring of the level of demand for features & ideas. It will also stream in realtime to the 'feedback firehose' channel of the relevant Product Area.
+            Share your feedback or product idea. This feedback will be stored for easy continuous monitoring of the level of demand for features & ideas. It will also stream in realtime to the Feedback Firehose channel of the relevant Product Area.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
