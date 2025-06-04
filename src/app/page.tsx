@@ -42,7 +42,7 @@ export default async function DashboardPage() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Revenue Opportunity</dt>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Revenue Opportunity?</dt>
                   <dd className="text-lg font-semibold text-gray-900">$2.5M</dd>
                 </dl>
               </div>
