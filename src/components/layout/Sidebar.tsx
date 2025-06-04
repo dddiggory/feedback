@@ -16,9 +16,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full w-64 flex-col bg-gray-900">
+    <div className="flex h-full w-64 flex-col bg-gray-900 pl-4">
       <div className="flex h-16 shrink-0 items-center px-6">
-        <span className="text-xl font-semibold text-white">vercel/feedback</span>
+        <span className="text-xl font-semibold text-white">▲vercel/feedback</span>
       </div>
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">

@@ -18,8 +18,8 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-md bg-blue-500 flex items-center justify-center">
-                  <span className="text-white text-xl">📊</span>
+                <div className="h-12 w-12 rounded-md bg-black flex items-center justify-center">
+                  <span className="text-white text-xl"></span>
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">
@@ -36,14 +36,14 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-md bg-green-500 flex items-center justify-center">
-                  <span className="text-white text-xl">👍</span>
+                <div className="h-12 w-12 rounded-md bg-green-700 flex items-center justify-center">
+                  <span className="text-white text-xl"></span>
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Upvotes This Week</dt>
-                  <dd className="text-lg font-semibold text-gray-900">42</dd>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Revenue Opportunity</dt>
+                  <dd className="text-lg font-semibold text-gray-900">$2.5M</dd>
                 </dl>
               </div>
             </div>
@@ -54,14 +54,14 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-md bg-purple-500 flex items-center justify-center">
-                  <span className="text-white text-xl">🎯</span>
+                <div className="h-12 w-12 rounded-md bg-purple-800 flex items-center justify-center">
+                  <span className="text-white text-xl"></span>
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Active Projects</dt>
-                  <dd className="text-lg font-semibold text-gray-900">12</dd>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Top Product Area</dt>
+                  <dd className="text-lg font-semibold text-gray-900">v0</dd>
                 </dl>
               </div>
             </div>
@@ -97,8 +97,11 @@ export default async function DashboardPage() {
                             {item.title}
                           </td>
                           <td className="px-3 py-4 text-sm text-gray-500">
-                            <div className="max-h-[3.3rem] overflow-y-auto pr-2">
-                              {item.description}
+                            <div className="relative max-h-[4rem] pr-2">
+                              <div className="overflow-y-auto max-h-[3.8rem]">
+                                {item.description}
+                              </div>
+                              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent"></div>
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
