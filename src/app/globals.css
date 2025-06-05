@@ -126,3 +126,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* React Select Styles */
+.react-select-container .react-select__control {
+  @apply border-input bg-transparent shadow-xs;
+}
+
+.react-select-container .react-select__menu {
+  @apply bg-white border border-input rounded-md shadow-lg mt-1;
+}
+
+.react-select-container .react-select__option {
+  @apply px-3 py-2 cursor-pointer;
+}
+
+.react-select-container .react-select__option--is-focused {
+  @apply bg-accent text-accent-foreground;
+}
+
+.react-select-container .react-select__option--is-selected {
+  @apply bg-primary text-primary-foreground;
+}

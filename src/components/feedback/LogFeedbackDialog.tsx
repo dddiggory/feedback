@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ReactNode } from "react"
+import { ProductAreaSelect } from "./ProductAreaSelect"
 
 export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
   return (
@@ -48,6 +49,7 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
               className="min-h-[100px]"
             />
           </div>
+          <ProductAreaSelect />
         </div>
         <DialogFooter>
           <Button type="submit">Submit Feedback</Button>
