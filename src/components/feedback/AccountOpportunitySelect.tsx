@@ -66,7 +66,7 @@ export function AccountOpportunitySelect() {
         placeholder="Search for an account or opportunity..."
         isClearable
         isSearchable
-        tabIndex={0}
+        menuIsOpen={undefined}
         styles={{
           control: (base) => ({
             ...base,

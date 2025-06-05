@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ReactNode } from "react"
 import { ProductAreaSelect } from "./ProductAreaSelect"
 import { FeedbackItemSelect } from "./FeedbackItemSelect"
+import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
 
 export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
   return (
@@ -30,7 +31,7 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] lg:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Log New Feedback</DialogTitle>
           <DialogDescription>
@@ -38,11 +39,9 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <ProductAreaSelect />
+          <AccountOpportunitySelect />
           <FeedbackItemSelect />
-          <div className="grid gap-2">
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" placeholder="Enter a title for your feedback" />
-          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -51,7 +50,6 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
               className="min-h-[100px]"
             />
           </div>
-          <ProductAreaSelect />
         </div>
         <DialogFooter>
           <Button type="submit">Submit Feedback</Button>
