@@ -5,6 +5,12 @@ import Select, { components, GroupBase, OptionProps, FilterOptionOption } from '
 import { Label } from "@/components/ui/label"
 import { createClient } from '@/utils/supabase/client'
 
+interface FeedbackItemRow {
+  id: string;
+  title: string;
+  description: string;
+}
+
 interface FeedbackItem {
   value: string
   label: string
@@ -55,7 +61,7 @@ export function FeedbackItemSelect() {
         return
       }
 
-      const formattedItems = data.map((item: any) => ({
+      const formattedItems = (data as FeedbackItemRow[]).map(item => ({
         value: item.id,
         label: item.title,
         description: item.description

@@ -5,6 +5,12 @@ import Select, { components, GroupBase, OptionProps, FilterOptionOption } from '
 import { Label } from "@/components/ui/label"
 import { createClient } from '@/utils/supabase/client'
 
+interface ProductAreaRow {
+  name: string;
+  slug: string;
+  description: string;
+}
+
 interface ProductArea {
   value: string
   label: string
@@ -57,7 +63,7 @@ export function ProductAreaSelect() {
         return
       }
 
-      const formattedAreas = data.map((area: any) => ({
+      const formattedAreas = (data as ProductAreaRow[]).map(area => ({
         value: area.slug,
         label: area.name,
         description: area.description
