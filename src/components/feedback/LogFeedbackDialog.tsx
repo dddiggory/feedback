@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ReactNode } from "react"
 import { ProductAreaSelect } from "./ProductAreaSelect"
+import { FeedbackItemSelect } from "./FeedbackItemSelect"
 
 export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
   return (
@@ -37,6 +38,7 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <FeedbackItemSelect />
           <div className="grid gap-2">
             <Label htmlFor="title">Title</Label>
             <Input id="title" placeholder="Enter a title for your feedback" />

@@ -5,7 +5,7 @@ import Select, { components, GroupBase, OptionProps, FilterOptionOption } from '
 import { Label } from "@/components/ui/label"
 import { createClient } from '@/utils/supabase/client'
 
-interface ProductArea {
+interface FeedbackItem {
   value: string
   label: string
   description: string
@@ -13,19 +13,17 @@ interface ProductArea {
 
 const highlightText = (text: string, searchStr: string) => {
   if (!searchStr) return text;
-  
   const parts = text.split(new RegExp(`(${searchStr})`, 'gi'));
-  return parts.map((part, i) => 
-    part.toLowerCase() === searchStr.toLowerCase() ? 
-      <span key={i} className="bg-yellow-200">{part}</span> : 
+  return parts.map((part, i) =>
+    part.toLowerCase() === searchStr.toLowerCase() ?
+      <span key={i} className="bg-yellow-200">{part}</span> :
       part
   );
 };
 
-const Option = (props: OptionProps<ProductArea, false, GroupBase<ProductArea>>) => {
+const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
   const { data, selectProps } = props;
   const searchStr = selectProps.inputValue;
-
   return (
     <components.Option {...props}>
       <div className="py-1">
@@ -40,38 +38,37 @@ const Option = (props: OptionProps<ProductArea, false, GroupBase<ProductArea>>) 
   );
 };
 
-export function ProductAreaSelect() {
-  const [selectedOption, setSelectedOption] = useState<ProductArea | null>(null)
-  const [productAreas, setProductAreas] = useState<ProductArea[]>([])
+export function FeedbackItemSelect() {
+  const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchProductAreas = async () => {
+    const fetchFeedbackItems = async () => {
       const supabase = createClient()
       const { data, error } = await supabase
-        .from('product_areas')
-        .select('name, slug, description')
+        .from('product_feedback_items')
+        .select('id, title, description')
 
       if (error) {
-        console.error('Error fetching product areas:', error)
+        console.error('Error fetching feedback items:', error)
         return
       }
 
-      const formattedAreas = data.map((area: any) => ({
-        value: area.slug,
-        label: area.name,
-        description: area.description
+      const formattedItems = data.map((item: any) => ({
+        value: item.id,
+        label: item.title,
+        description: item.description
       }))
 
-      setProductAreas(formattedAreas)
+      setFeedbackItems(formattedItems)
       setIsLoading(false)
     }
-
-    fetchProductAreas()
+    fetchFeedbackItems()
   }, [])
 
   const filterOption = (
-    option: FilterOptionOption<ProductArea>,
+    option: FilterOptionOption<FeedbackItem>,
     inputValue: string
   ) => {
     const searchStr = inputValue.toLowerCase()
@@ -85,17 +82,17 @@ export function ProductAreaSelect() {
 
   return (
     <div className="grid gap-2">
-      <Label htmlFor="product-area">Product Area</Label>
+      <Label htmlFor="feedback-item">Feedback Item</Label>
       <Select
-        id="product-area"
+        id="feedback-item"
         value={selectedOption}
         onChange={setSelectedOption}
-        options={productAreas}
+        options={feedbackItems}
         filterOption={filterOption}
         components={{ Option }}
         className="react-select-container"
         classNamePrefix="react-select"
-        placeholder={isLoading ? "Loading product areas..." : "Search for a product area..."}
+        placeholder={isLoading ? "Loading feedback items..." : "Search for an existing feedback item..."}
         isClearable
         isSearchable
         isLoading={isLoading}
