@@ -1,9 +1,11 @@
 "use client";
 
 import { HomeIcon, ChartBarIcon, ChatBubbleLeftRightIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
+import { useState } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -14,16 +16,47 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsCollapsed(prev => !prev);
+  };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-gray-900 pl-4">
-      <div className="flex h-16 shrink-0 items-center px-6">
-        <span className="text-xl font-semibold text-white">▲vercel/feedback</span>
+    <div 
+      className={clsx(
+        "flex h-full flex-col bg-gray-900 transition-all duration-300 ease-in-out relative",
+        isCollapsed ? "w-16" : "w-64"
+      )}
+    >
+      <div className="flex h-16 shrink-0 items-center justify-between px-4">
+        <span className={clsx(
+          "text-xl font-semibold text-white transition-opacity duration-300",
+          isCollapsed ? "opacity-0 w-0" : "opacity-100"
+        )}>
+          ▲vercel/feedback
+        </span>
+        <div className="relative z-10">
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="relative p-1.5 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white transition-colors cursor-pointer select-none z-10"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen className="h-5 w-5" />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
-            <ul role="list" className="-mx-2 space-y-1">
+            <ul role="list" className="space-y-1">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -34,11 +67,20 @@ export function Sidebar() {
                         isActive
                           ? 'bg-gray-800 text-white'
                           : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                        'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
+                        'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
+                        isCollapsed && 'justify-center',
+                        'mx-0 w-full'
                       )}
+                      style={{ borderRadius: 8 }}
+                      title={isCollapsed ? item.name : undefined}
                     >
                       <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                      {item.name}
+                      <span className={clsx(
+                        "transition-opacity duration-300",
+                        isCollapsed ? "opacity-0 w-0" : "opacity-100"
+                      )}>
+                        {item.name}
+                      </span>
                     </Link>
                   </li>
                 );
