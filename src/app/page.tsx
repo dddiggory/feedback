@@ -79,11 +79,28 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Popular Feedback Items This Month Section */}
+      <div className="mt-8">
+        <div className="overflow-hidden rounded-lg bg-white shadow p-4 sm:p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-6">Popular Feedback Items (Past 30 Days)</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-32 rounded-xl border border-gray-200 bg-gray-50 shadow-sm flex items-center justify-center"
+              >
+                {/* Placeholder for future content */}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Recent Feedback Section */}
       <div className="mt-8">
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-4 sm:p-6">
-            <h2 className="text-lg font-medium text-gray-900">Recent Feedback</h2>
+            <h2 className="text-lg font-medium text-gray-900">Recent Feedback (temporary, will remove)</h2>
             <div className="mt-6 flow-root">
               <div className="overflow-x-auto">
                 <div className="inline-block w-full py-2 align-middle">

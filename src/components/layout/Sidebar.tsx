@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeIcon, ChartBarIcon, ChatBubbleLeftRightIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ChartBarIcon, ChatBubbleLeftRightIcon, UserGroupIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -8,10 +8,10 @@ import { clsx } from 'clsx';
 import { useState, useEffect } from 'react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Feedback', href: '/feedback', icon: ChatBubbleLeftRightIcon },
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Team', href: '/team', icon: UserGroupIcon },
+  { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
+  { name: 'Analytics & Reporting', href: '/analytics', icon: ChartBarIcon },
+  { name: 'Browse by Product Area', href: '/team', icon: TableCellsIcon },
+  { name: 'Browse by Account', href: '/team', icon: TableCellsIcon },
 ];
 
 export function Sidebar() {
@@ -85,8 +85,8 @@ export function Sidebar() {
                         isActive
                           ? 'bg-gray-800 text-white'
                           : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                        'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                        isCollapsed && 'justify-center',
+                        'group flex gap-x-3 rounded-md text-sm font-semibold leading-6',
+                        isCollapsed ? 'justify-center p-1' : 'p-2',
                         'mx-0 w-full'
                       )}
                       style={{ borderRadius: 8 }}
@@ -95,7 +95,7 @@ export function Sidebar() {
                       <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                       <span className={clsx(
                         "transition-opacity duration-300",
-                        isCollapsed ? "opacity-0 w-0" : "opacity-100"
+                        isCollapsed ? "hidden" : "opacity-100"
                       )}>
                         {item.name}
                       </span>
