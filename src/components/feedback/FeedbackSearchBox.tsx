@@ -168,7 +168,7 @@ export function FeedbackSearchBox() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full rounded-xl bg-green-200 overflow-hidden">
       <Select
         value={selectedOption as any}
         onChange={setSelectedOption as any}
@@ -177,47 +177,67 @@ export function FeedbackSearchBox() {
         components={{ Option, MenuList } as any}
         className="react-select-container"
         classNamePrefix="react-select"
-        placeholder="Add customer feedback..."
+        placeholder="Start typing to add customer feedback..."
         isClearable
         isSearchable
         isLoading={isLoading}
+        autoFocus
         menuPortalTarget={typeof window !== 'undefined' ? document.body : undefined}
         menuPosition="fixed"
         styles={{
           control: (base) => ({
             ...base,
-            minHeight: '48px',
+            minHeight: '52px',
             borderColor: 'var(--border)',
-            borderRadius: '12px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+            borderRadius: '0',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
             width: '100%',
             maxWidth: '100%',
+            backgroundColor: 'white',
+            borderWidth: '2px',
             '&:hover': {
               borderColor: 'var(--ring)',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+              boxShadow: '0 6px 12px rgba(0,0,0,0.15)'
+            },
+            '&:focus-within': {
+              borderColor: 'var(--ring)',
+              boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.2)'
             }
+          }),
+          valueContainer: (base) => ({
+            ...base,
+            backgroundColor: 'white',
+          }),
+          input: (base) => ({
+            ...base,
+            fontSize: '1.525rem',
+            lineHeight: '1.75rem',
+            padding: '1.25rem 1.25rem 1.25rem 2rem',
+            fontWeight: '500',
+            // backgroundColor: 'white',
           }),
           menu: (base) => ({
             ...base,
             width: '100%',
             maxWidth: '100%',
-          }),
-          input: (base) => ({
-            ...base,
-            fontSize: '1.125rem',
-            lineHeight: '1.75rem',
-            padding: '0.5rem 0'
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            borderRadius: '12px',
+            overflow: 'hidden'
           }),
           placeholder: (base) => ({
             ...base,
-            fontSize: '1.125rem',
+            fontSize: '1.525rem',
             lineHeight: '1.75rem',
-            color: 'rgb(156 163 175)'
+            color: '',
+            fontWeight: '500',
+            padding: '1.25rem 1.25rem 1.25rem 2.5rem',
+            opacity: '0.9'
           }),
           option: (base, state) => ({
             ...base,
             backgroundColor: state.isFocused ? 'var(--accent)' : 'transparent',
             color: state.isFocused ? 'var(--accent-foreground)' : 'inherit',
+            padding: '12px 16px',
             '&:active': {
               backgroundColor: 'var(--accent)'
             }
@@ -225,7 +245,21 @@ export function FeedbackSearchBox() {
           menuPortal: (base) => ({
             ...base,
             zIndex: 9999
-          })
+          }),
+          singleValue: (base) => ({
+            ...base,
+            fontSize: '1.525rem',
+            padding: '1.25rem 1.25rem 1.25rem 2rem',
+            fontWeight: '500'
+          }),
+          indicatorsContainer: (base) => ({
+            ...base,
+            backgroundColor: 'white',
+          }),
+          dropdownIndicator: (base) => ({
+            ...base,
+            backgroundColor: 'white',
+          }),
         }}
       />
     </div>

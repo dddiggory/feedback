@@ -106,6 +106,7 @@ export function FeedbackItemSelect() {
           control: (base) => ({
             ...base,
             minHeight: '42px',
+            backgroundColor: 'white',
             borderColor: 'var(--border)',
             '&:hover': {
               borderColor: 'var(--ring)'
