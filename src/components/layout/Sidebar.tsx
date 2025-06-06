@@ -5,7 +5,7 @@ import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -17,6 +17,24 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    // Check if window is defined (client-side)
+    if (typeof window !== 'undefined') {
+      // Set initial state based on screen width
+      const isLargeScreen = window.innerWidth >= 1024; // 1024px is the 'lg' breakpoint in Tailwind
+      setIsCollapsed(!isLargeScreen);
+
+      // Add resize listener
+      const handleResize = () => {
+        const isLargeScreen = window.innerWidth >= 1024;
+        setIsCollapsed(!isLargeScreen);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   const toggleSidebar = (e: React.MouseEvent) => {
     e.preventDefault();

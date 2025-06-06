@@ -1,9 +1,10 @@
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
+import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 
 export default async function DashboardPage() {
-  const cookieStore = cookies() as unknown as Promise<ReturnType<typeof cookies>>;
+  const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
   const { data: feedbackItems } = await supabase
@@ -12,7 +13,7 @@ export default async function DashboardPage() {
 
   return (
     <Layout>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="hidden grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {/* Stats Cards */}
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-5">
@@ -69,25 +70,34 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Feedback Section */}
+      {/* Search Box */}
       <div className="mt-8">
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-6">
+            <FeedbackSearchBox />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Feedback Section */}
+      <div className="mt-8">
+        <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="p-4 sm:p-6">
             <h2 className="text-lg font-medium text-gray-900">Recent Feedback</h2>
             <div className="mt-6 flow-root">
-              <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  <table className="min-w-full divide-y divide-gray-300">
+              <div className="overflow-x-auto">
+                <div className="inline-block w-full py-2 align-middle">
+                  <table className="w-full divide-y divide-gray-300">
                     <thead>
                       <tr>
                         <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Title</th>
                         <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
                         <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Entries</th>
-                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Product Areas</th>
-                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer ARR</th>
-                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Open Opp ARR</th>
-                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created</th>
+                        <th className="hidden md:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Entries</th>
+                        <th className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Product Areas</th>
+                        <th className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer ARR</th>
+                        <th className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Open Opp ARR</th>
+                        <th className="hidden md:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -109,19 +119,19 @@ export default async function DashboardPage() {
                               {item.status}
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="hidden md:table-cell whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.entry_count}
                           </td>
-                          <td className="px-3 py-4 text-sm text-gray-500">
+                          <td className="hidden lg:table-cell px-3 py-4 text-sm text-gray-500">
                             {item.product_area_names?.join(', ')}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="hidden lg:table-cell whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.current_arr_sum || 0)}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="hidden lg:table-cell whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.open_opp_arr_sum || 0)}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="hidden md:table-cell whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {new Date(item.created_at).toLocaleDateString()}
                           </td>
                         </tr>
