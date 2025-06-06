@@ -32,7 +32,7 @@ const highlightText = (text: string, searchStr: string) => {
   if (!normSearch) return text;
 
   // Find all match indices in the normalized text
-  let matchIndices: [number, number][] = [];
+  const matchIndices: [number, number][] = [];
   let startIdx = 0;
   while (startIdx <= normText.length) {
     const idx = normText.indexOf(normSearch, startIdx);
@@ -43,7 +43,8 @@ const highlightText = (text: string, searchStr: string) => {
   if (matchIndices.length === 0) return text;
 
   // Map normalized indices back to original text indices
-  let origIdx = 0, normIdx = 0, parts = [], lastEnd = 0, matchIdx = 0;
+  const parts: (string | JSX.Element)[] = [];
+  let origIdx = 0, normIdx = 0, lastEnd = 0, matchIdx = 0;
   while (origIdx < text.length && matchIdx < matchIndices.length) {
     const [matchStart, matchEnd] = matchIndices[matchIdx];
     // Advance to matchStart in normalized text
