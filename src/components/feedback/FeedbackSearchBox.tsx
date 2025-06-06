@@ -3,6 +3,7 @@
 import { useState, useEffect, MouseEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/utils/supabase/client'
+import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
 
 interface FeedbackItemRow {
   id: string;
@@ -102,7 +103,7 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
   );
 };
 
-const MenuList = (props: any) => {
+const MenuList = (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
   const handleFooterClick = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     // Placeholder for future functionality
@@ -123,8 +124,10 @@ const MenuList = (props: any) => {
   );
 };
 
-const Select: any = dynamic(() => import('react-select').then(mod => mod.default), { ssr: false })
-import { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
+const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>>(
+  () => import('react-select').then(mod => mod.default),
+  { ssr: false }
+)
 
 export function FeedbackSearchBox() {
   const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
@@ -171,11 +174,11 @@ export function FeedbackSearchBox() {
   return (
     <div className="w-full rounded-xl bg-green-200 overflow-hidden">
       <Select
-        value={selectedOption as any}
-        onChange={setSelectedOption as any}
-        options={feedbackItems as any}
-        filterOption={filterOption as any}
-        components={{ Option, MenuList } as any}
+        value={selectedOption}
+        onChange={setSelectedOption}
+        options={feedbackItems}
+        filterOption={filterOption}
+        components={{ Option, MenuList }}
         className="react-select-container"
         classNamePrefix="react-select"
         placeholder="Start typing to add customer feedback..."
