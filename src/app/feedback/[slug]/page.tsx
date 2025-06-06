@@ -6,7 +6,7 @@ export default async function FeedbackItemPage({
 }: {
   params: { slug: string }
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data: feedbackItem } = await supabase
     .from('feedback_items_with_data')
