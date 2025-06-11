@@ -31,7 +31,7 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] lg:max-w-3xl">
+      <DialogContent className="sm:max-w-[425px] lg:max-w-3xl bg-stone-100">
         <DialogHeader>
           <DialogTitle>Log New Feedback</DialogTitle>
           <DialogDescription>

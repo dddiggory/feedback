@@ -236,6 +236,7 @@ export function FeedbackSearchBox() {
             ...base,
             width: '100%',
             maxWidth: '100%',
+            backgroundColor: 'white',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             borderRadius: '12px',
             overflow: 'hidden'
@@ -271,7 +272,7 @@ export function FeedbackSearchBox() {
             ...base,
             fontSize: '1.525rem',
             lineHeight: '1.75rem',
-            color: '#6b7280', // Tailwind gray-400
+            color: 'oklch(29.3% 0.066 243.157)',
             fontWeight: '500',
             padding: '1.25rem 1.25rem 1.25rem 2.5rem',
             opacity: 0.9,

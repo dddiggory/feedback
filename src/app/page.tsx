@@ -72,7 +72,7 @@ export default async function DashboardPage() {
 
       {/* Search Box */}
       <div className="mt-8">
-        <div className="overflow-hidden rounded-lg bg-gradient-to-r from-black to-sky-950 shadow">
+        <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-black to-sky-950 shadow">
           <div className="p-6">
             <FeedbackSearchBox />
           </div>

@@ -24,14 +24,14 @@ export function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-background">
       {/* <Sidebar /> */}
       <div className="flex flex-1 flex-col">
         <header className="bg-black shadow">
           <div className="px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-8">
-                <h1 className="text-2xl font-semibold text-white">▲vercel/feedback</h1>
+                <Link href="/" className="text-2xl font-semibold text-white hover:text-gray-200 transition-colors">▲vercel/feedback</Link>
                 <nav className="hidden md:flex items-center space-x-1">
                   {navigation.map((item) => {
                     const isActive = pathname === item.href;
@@ -53,7 +53,7 @@ export function Layout({ children }: LayoutProps) {
                   })}
                 </nav>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-4 hidden">
                 <LogFeedbackDialog
                   trigger={
                     <button
@@ -69,8 +69,10 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
-          {children}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="w-4/5 mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
