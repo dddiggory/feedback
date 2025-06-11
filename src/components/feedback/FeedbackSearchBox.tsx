@@ -4,24 +4,28 @@ import { useState, useEffect, MouseEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/utils/supabase/client'
 import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
+import { useRouter } from 'next/navigation'
+import { JSX } from 'react'
 
 interface FeedbackItemRow {
   id: string;
   title: string;
   description: string;
+  slug: string;
 }
 
 interface FeedbackItem {
   value: string
   label: string
   description: string
+  slug: string
 }
 
 // Helper to normalize text by removing punctuation and normalizing whitespace
 function normalizeText(str: string) {
   return str
     .toLowerCase()
-    .replace(/[.,\/#!$%^&*;:{}=_`~()\[\]"'’"“<>?|+=-]/g, '') // remove punctuation
+    .replace(/[.,\/#!$%^&*;:{}=_`~()\[\]"''"<>?|+=-]/g, '') // remove punctuation
     .replace(/\s+/g, ' ') // normalize whitespace
     .trim();
 }
@@ -130,6 +134,7 @@ const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>
 )
 
 export function FeedbackSearchBox() {
+  const router = useRouter()
   const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -138,8 +143,8 @@ export function FeedbackSearchBox() {
     const fetchFeedbackItems = async () => {
       const supabase = createClient()
       const { data, error } = await supabase
-        .from('product_feedback_items')
-        .select('id, title, description')
+        .from('feedback_items_with_data')
+        .select('id, title, description, slug')
 
       if (error) {
         console.error('Error fetching feedback items:', error)
@@ -149,7 +154,8 @@ export function FeedbackSearchBox() {
       const formattedItems = (data as FeedbackItemRow[]).map(item => ({
         value: item.id,
         label: item.title,
-        description: item.description
+        description: item.description,
+        slug: item.slug
       }))
 
       setFeedbackItems(formattedItems)
@@ -157,6 +163,13 @@ export function FeedbackSearchBox() {
     }
     fetchFeedbackItems()
   }, [])
+
+  const handleChange = (option: FeedbackItem | null) => {
+    setSelectedOption(option)
+    if (option?.slug) {
+      router.push(`/feedback/${option.slug}`)
+    }
+  }
 
   const filterOption = (
     option: FilterOptionOption<FeedbackItem>,
@@ -175,7 +188,7 @@ export function FeedbackSearchBox() {
     <div className="w-full rounded-xl bg-green-200 overflow-hidden">
       <Select
         value={selectedOption}
-        onChange={setSelectedOption}
+        onChange={handleChange}
         options={feedbackItems}
         filterOption={filterOption}
         components={{ Option, MenuList }}
@@ -218,7 +231,6 @@ export function FeedbackSearchBox() {
             lineHeight: '1.75rem',
             padding: '1.25rem 1.25rem 1.25rem 2rem',
             fontWeight: '500',
-            // backgroundColor: 'white',
           }),
           menu: (base) => ({
             ...base,
@@ -227,15 +239,6 @@ export function FeedbackSearchBox() {
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             borderRadius: '12px',
             overflow: 'hidden'
-          }),
-          placeholder: (base) => ({
-            ...base,
-            fontSize: '1.525rem',
-            lineHeight: '1.75rem',
-            color: '',
-            fontWeight: '500',
-            padding: '1.25rem 1.25rem 1.25rem 2.5rem',
-            opacity: '0.9'
           }),
           option: (base, state) => ({
             ...base,
@@ -263,6 +266,15 @@ export function FeedbackSearchBox() {
           dropdownIndicator: (base) => ({
             ...base,
             backgroundColor: 'white',
+          }),
+          placeholder: (base) => ({
+            ...base,
+            fontSize: '1.525rem',
+            lineHeight: '1.75rem',
+            color: '#6b7280', // Tailwind gray-400
+            fontWeight: '500',
+            padding: '1.25rem 1.25rem 1.25rem 2.5rem',
+            opacity: 0.9,
           }),
         }}
       />
