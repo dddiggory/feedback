@@ -22,7 +22,7 @@ export default async function FeedbackItemPage({
 
   return (
     <Layout>
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto pb-8 pt-1">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
           <LogFeedbackDialog
@@ -81,7 +81,7 @@ export default async function FeedbackItemPage({
         <div className="grid grid-cols-2 gap-4">
           <div className="prose">
             <h3 className="text-2xl font-medium">Description</h3>
-            <div className="bg-white p-4 rounded-lg shadow-md max-h-[12em] overflow-y-auto relative">
+            <div className="bg-white p-4 rounded-lg shadow-md h-[9.5em] overflow-y-auto relative">
               <p>{feedbackItem.description}</p>
               <button className="absolute bottom-2 right-2 text-blue-700 hover:text-blue-600 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -92,7 +92,7 @@ export default async function FeedbackItemPage({
           </div>
           <div className="prose">
             <h3 className="text-2xl font-medium">EPD Commentary</h3>
-            <p className="bg-white p-4 rounded-lg shadow-md min-h-[9.5em]">
+            <p className="bg-white p-4 rounded-lg shadow-md h-[9.5em]">
               (Placeholder, product-editable, last updated date, editor)
               </p>
               
