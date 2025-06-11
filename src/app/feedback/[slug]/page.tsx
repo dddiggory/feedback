@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { LogFeedbackDialog } from '@/components/feedback/LogFeedbackDialog'
 import { Layout } from '@/components/layout/Layout'
+import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
 
 export default async function FeedbackItemPage({
   params,
@@ -19,6 +20,13 @@ export default async function FeedbackItemPage({
   if (!feedbackItem) {
     notFound()
   }
+
+  // Fetch entries for this feedback item
+  const { data: entries } = await supabase
+    .from('entries')
+    .select('*')
+    .eq('feedback_item_id', feedbackItem.id)
+    .order('created_at', { ascending: false })
 
   return (
     <Layout>
@@ -101,7 +109,7 @@ export default async function FeedbackItemPage({
         </div>
         <div className="pt-8 prose">
             <h3 className="text-2xl font-medium">Customer Feedback Entries</h3>
-            <div>customer entry table goes here</div>
+            <FeedbackEntryTable data={entries || []} />
           </div>
       </div>
     </Layout>
