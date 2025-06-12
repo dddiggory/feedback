@@ -44,7 +44,11 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
   );
 };
 
-export function FeedbackItemSelect() {
+interface FeedbackItemSelectProps {
+  defaultValue?: string
+}
+
+export function FeedbackItemSelect({ defaultValue }: FeedbackItemSelectProps) {
   const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -68,10 +72,19 @@ export function FeedbackItemSelect() {
       }))
 
       setFeedbackItems(formattedItems)
+      
+      // Set default value if provided
+      if (defaultValue) {
+        const defaultItem = formattedItems.find(item => item.value === defaultValue)
+        if (defaultItem) {
+          setSelectedOption(defaultItem)
+        }
+      }
+      
       setIsLoading(false)
     }
     fetchFeedbackItems()
-  }, [])
+  }, [defaultValue])
 
   const filterOption = (
     option: FilterOptionOption<FeedbackItem>,

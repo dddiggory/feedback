@@ -1,7 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { LogFeedbackDialog } from '@/components/feedback/LogFeedbackDialog'
+import { FeedbackPageLogFeedbackDialog } from '@/components/feedback/FeedbackPageLogFeedbackDialog'
 import { Layout } from '@/components/layout/Layout'
+import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
+import Link from 'next/link'
+
+const GRADIENTS = [
+  'bg-gradient-to-r from-slate-50 to-emerald-200',
+  'bg-gradient-to-r from-slate-50 to-teal-200',
+  'bg-gradient-to-r from-slate-50 to-pink-200',
+  'bg-gradient-to-r from-slate-50 to-violet-200',
+] as const
+
+function getRandomGradient() {
+  return GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)]
+}
 
 export default async function FeedbackItemPage({
   params,
@@ -20,12 +33,35 @@ export default async function FeedbackItemPage({
     notFound()
   }
 
+  // Fetch entries for this feedback item
+  const { data: entries } = await supabase
+    .from('entries')
+    .select('*')
+    .eq('feedback_item_id', feedbackItem.id)
+    .order('created_at', { ascending: false })
+
   return (
     <Layout>
       <div className="container mx-auto pb-8 pt-1">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
-          <LogFeedbackDialog
+          <div className="flex items-center gap-4">
+            <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
+            <div className="flex flex-wrap gap-2">
+              {feedbackItem.product_area_names?.map((area: string, index: number) => (
+                <Link
+                  key={area}
+                  href={`/product_areas/${feedbackItem.product_area_slugs?.[index]}`}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity`}
+                >
+                  {area}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <FeedbackPageLogFeedbackDialog
+            feedbackItemId={feedbackItem.id}
+            feedbackItemTitle={feedbackItem.title}
+            productAreaIds={feedbackItem.product_area_slugs}
             trigger={
               <button
                 type="button"
@@ -34,7 +70,7 @@ export default async function FeedbackItemPage({
                 <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
-                Log Feedback
+                Add Customer +1
               </button>
             }
           />
@@ -101,7 +137,7 @@ export default async function FeedbackItemPage({
         </div>
         <div className="pt-8 prose">
             <h3 className="text-2xl font-medium">Customer Feedback Entries</h3>
-            <div>customer entry table goes here</div>
+            <FeedbackEntryTable data={entries || []} />
           </div>
       </div>
     </Layout>
