@@ -3,6 +3,18 @@ import { notFound } from 'next/navigation'
 import { LogFeedbackDialog } from '@/components/feedback/LogFeedbackDialog'
 import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
+import Link from 'next/link'
+
+const GRADIENTS = [
+  'bg-gradient-to-r from-slate-50 to-emerald-200',
+  'bg-gradient-to-r from-slate-50 to-teal-200',
+  'bg-gradient-to-r from-slate-50 to-pink-200',
+  'bg-gradient-to-r from-slate-50 to-violet-200',
+] as const
+
+function getRandomGradient() {
+  return GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)]
+}
 
 export default async function FeedbackItemPage({
   params,
@@ -32,7 +44,20 @@ export default async function FeedbackItemPage({
     <Layout>
       <div className="container mx-auto pb-8 pt-1">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
+            <div className="flex flex-wrap gap-2">
+              {feedbackItem.product_area_names?.map((area: string, index: number) => (
+                <Link
+                  key={area}
+                  href={`/product_areas/${feedbackItem.product_area_slugs?.[index]}`}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity`}
+                >
+                  {area}
+                </Link>
+              ))}
+            </div>
+          </div>
           <LogFeedbackDialog
             trigger={
               <button

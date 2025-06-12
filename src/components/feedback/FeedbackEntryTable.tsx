@@ -17,6 +17,8 @@ export interface FeedbackEntry {
   account_name: string;
   entry_description: string;
   severity: string;
+  current_arr: number;
+  open_opp_arr: number;
   impacted_arr: number;
   created_by_user_id: string;
   created_at: string; // Note: This comes as a string from the database
@@ -35,6 +37,14 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     header: "Description",
     enableSorting: true,
     enableColumnFilter: true,
+    cell: ({ row }) => {
+      const description = row.getValue("entry_description") as string;
+      return (
+        <div className="w-[30vw] max-h-[100px] overflow-y-auto whitespace-normal break-words">
+          {description}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "severity",
@@ -48,6 +58,36 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
           {severity}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "current_arr",
+    header: "Current ARR",
+    enableSorting: true,
+    enableColumnFilter: true,
+    cell: ({ row }) => {
+      const amount = row.getValue("current_arr") as number;
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    },
+  },
+  {
+    accessorKey: "open_opp_arr",
+    header: "Open Opp ARR",
+    enableSorting: true,
+    enableColumnFilter: true,
+    cell: ({ row }) => {
+      const amount = row.getValue("open_opp_arr") as number;
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
     },
   },
   {
