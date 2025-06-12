@@ -19,14 +19,15 @@ function getRandomGradient() {
 export default async function FeedbackItemPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
   const supabase = await createClient()
+  const { slug } = await params
   
   const { data: feedbackItem } = await supabase
     .from('feedback_items_with_data')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
 
   if (!feedbackItem) {
