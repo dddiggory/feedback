@@ -1,7 +1,5 @@
 "use client"
 
-// Probably not needed anymore and will delete.  Work on FeedbackPageLogFeedbackDialog instead.
-
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,15 +10,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ReactNode } from "react"
-import { ProductAreaSelect } from "./ProductAreaSelect"
-import { FeedbackItemSelect } from "./FeedbackItemSelect"
 import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
 
-export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
+interface FeedbackPageLogFeedbackDialogProps {
+  trigger?: ReactNode
+  feedbackItemId: string
+  feedbackItemTitle: string
+  productAreaIds?: string[]
+}
+
+export function FeedbackPageLogFeedbackDialog({ 
+  trigger,
+  feedbackItemId,
+  feedbackItemTitle,
+  productAreaIds
+}: FeedbackPageLogFeedbackDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,21 +36,21 @@ export function LogFeedbackDialog({ trigger }: { trigger?: ReactNode }) {
             <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
             </svg>
-            Log Feedback
+            Add Customer +1
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] lg:max-w-3xl bg-stone-100">
         <DialogHeader>
-          <DialogTitle>Log New Feedback</DialogTitle>
+          <DialogTitle className="text-2xl">Add Customer +1: 
+            <span className="text-blue-600 font-bold pl-2">{feedbackItemTitle}</span>
+            </DialogTitle>
           <DialogDescription>
-            Share your feedback or product idea. This feedback will be stored for easy continuous monitoring of the level of demand for features & ideas. It will also stream in realtime to the Feedback Firehose channel of the relevant Product Area.
+            test
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <ProductAreaSelect />
           <AccountOpportunitySelect />
-          <FeedbackItemSelect />
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
             <Textarea

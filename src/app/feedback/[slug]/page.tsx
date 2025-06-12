@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { LogFeedbackDialog } from '@/components/feedback/LogFeedbackDialog'
+import { FeedbackPageLogFeedbackDialog } from '@/components/feedback/FeedbackPageLogFeedbackDialog'
 import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
 import Link from 'next/link'
@@ -58,7 +58,10 @@ export default async function FeedbackItemPage({
               ))}
             </div>
           </div>
-          <LogFeedbackDialog
+          <FeedbackPageLogFeedbackDialog
+            feedbackItemId={feedbackItem.id}
+            feedbackItemTitle={feedbackItem.title}
+            productAreaIds={feedbackItem.product_area_slugs}
             trigger={
               <button
                 type="button"
@@ -67,7 +70,7 @@ export default async function FeedbackItemPage({
                 <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
-                Log Feedback
+                Add Customer +1
               </button>
             }
           />

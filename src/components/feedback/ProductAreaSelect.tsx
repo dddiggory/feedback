@@ -46,7 +46,11 @@ const Option = (props: OptionProps<ProductArea, false, GroupBase<ProductArea>>) 
   );
 };
 
-export function ProductAreaSelect() {
+interface ProductAreaSelectProps {
+  defaultValue?: string[]
+}
+
+export function ProductAreaSelect({ defaultValue }: ProductAreaSelectProps) {
   const [selectedOption, setSelectedOption] = useState<ProductArea | null>(null)
   const [productAreas, setProductAreas] = useState<ProductArea[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -70,11 +74,20 @@ export function ProductAreaSelect() {
       }))
 
       setProductAreas(formattedAreas)
+      
+      // Set default value if provided
+      if (defaultValue && defaultValue.length > 0) {
+        const defaultArea = formattedAreas.find(area => area.value === defaultValue[0])
+        if (defaultArea) {
+          setSelectedOption(defaultArea)
+        }
+      }
+      
       setIsLoading(false)
     }
 
     fetchProductAreas()
-  }, [])
+  }, [defaultValue])
 
   const filterOption = (
     option: FilterOptionOption<ProductArea>,
