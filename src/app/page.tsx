@@ -1,11 +1,9 @@
 import { Layout } from '@/components/layout/Layout';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 
 export default async function DashboardPage() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
 
   const { data: feedbackItems } = await supabase
     .from('product_feedback_items_with_entry_metrics')

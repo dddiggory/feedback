@@ -1,6 +1,5 @@
 "use client";
 
-import { type Table as TanstackTable } from "@tanstack/react-table";
 import { DataTable } from "../data-table/data-table";
 import { DataTableToolbar } from "../data-table/data-table-toolbar";
 import { DataTableAdvancedToolbar } from "../data-table/data-table-advanced-toolbar";
@@ -10,7 +9,6 @@ import { useDataTable } from "@/hooks/use-data-table";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
-// Define the type for your feedback entry data
 export interface FeedbackEntry {
   id: string;
   feedback_item_id: string;
