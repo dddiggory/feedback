@@ -60,9 +60,7 @@ export default async function FeedbackItemPage({
             </div>
           </div>
           <FeedbackPageLogFeedbackDialog
-            feedbackItemId={feedbackItem.id}
             feedbackItemTitle={feedbackItem.title}
-            productAreaIds={feedbackItem.product_area_slugs}
             trigger={
               <button
                 type="button"

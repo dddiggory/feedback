@@ -17,16 +17,12 @@ import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
-  feedbackItemId: string
   feedbackItemTitle: string
-  productAreaIds?: string[]
 }
 
 export function FeedbackPageLogFeedbackDialog({ 
   trigger,
-  feedbackItemId,
   feedbackItemTitle,
-  productAreaIds
 }: FeedbackPageLogFeedbackDialogProps) {
   return (
     <Dialog>

@@ -1,10 +1,8 @@
 'use client'
 
-import { Sidebar } from './Sidebar';
 import { LogFeedbackDialog } from '../feedback/LogFeedbackDialog';
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { HomeIcon, ChartBarIcon, ChatBubbleLeftRightIcon, UserGroupIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
