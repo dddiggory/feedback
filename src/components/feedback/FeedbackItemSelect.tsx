@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Select, { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
 import { Label } from "@/components/ui/label"
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 interface FeedbackItemRow {
   id: string;

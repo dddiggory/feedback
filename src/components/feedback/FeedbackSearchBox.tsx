@@ -2,7 +2,7 @@
 
 import { useState, useEffect, MouseEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
 import { useRouter } from 'next/navigation'
 import { JSX } from 'react'
