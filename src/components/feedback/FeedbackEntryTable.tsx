@@ -146,7 +146,7 @@ export function FeedbackEntryTable({
   console.log('Account Name filter value:', table.getColumn("account_name")?.getFilterValue());
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-white rounded-xl p-4">
       <DataTable table={table}>
         {useAdvancedToolbar ? (
           <DataTableAdvancedToolbar table={table}>
