@@ -9,7 +9,7 @@ interface AccountOption {
   label: string
 }
 
-const accounts: AccountOption[] = [
+export const accounts: AccountOption[] = [
   { value: 'bain', label: 'Bain' },
   { value: 'boston-consulting-group', label: 'Boston Consulting Group' },
   { value: 'mckinsey', label: 'McKinsey' },
@@ -61,7 +61,7 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
   const handleChange = (option: AccountOption | null) => {
     setSelectedOption(option)
     if (onChange) {
-      onChange(option?.label || '')
+      onChange(option?.value || '')
     }
   }
 

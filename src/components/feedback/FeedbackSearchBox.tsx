@@ -194,7 +194,7 @@ export function FeedbackSearchBox() {
         components={{ Option, MenuList }}
         className="react-select-container"
         classNamePrefix="react-select"
-        placeholder="Start typing to add or read customer feedback..."
+        placeholder="Start typing to add or view customer feedback..."
         isClearable
         isSearchable
         isLoading={isLoading}

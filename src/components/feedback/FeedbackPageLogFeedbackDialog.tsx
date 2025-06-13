@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ReactNode, useState, useRef, useEffect } from "react"
-import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
+import { AccountOpportunitySelect, accounts } from "./AccountOpportunitySelect"
 import {
   Select,
   SelectContent,
@@ -102,7 +102,11 @@ export function FeedbackPageLogFeedbackDialog({
 
   // Focus the description textarea after account selection
   const handleAccountChange = (value: string) => {
-    setAccountName(value)
+    // Find the account option that matches this value
+    const account = accounts.find(acc => acc.value === value)
+    if (account) {
+      setAccountName(account.value)
+    }
     // Focus the textarea after a short delay to allow react-select to finish
     setTimeout(() => {
       descriptionRef.current?.focus()
@@ -173,7 +177,7 @@ export function FeedbackPageLogFeedbackDialog({
               <div className="space-y-1">
                 <Label htmlFor="links">Relevant External Links</Label>
                 <p className="text-sm text-gray-500">
-                  Add any relevant links (one per line, please) that provide additional context (e.g., slack, notion)
+                  Add any relevant links (one per line, please) that provide additional context (e.g., Slack, Notion, Gong clips, etc.)
                 </p>
               </div>
               <Textarea
@@ -191,7 +195,12 @@ export function FeedbackPageLogFeedbackDialog({
               type="submit" 
               disabled={isSubmitting || !accountName || !description.trim()}
             >
-              {isSubmitting ? "Submitting..." : "Submit Feedback (Cmd+Enter)"}
+              {isSubmitting 
+                ? "Submitting..." 
+                : (!accountName || !description.trim())
+                  ? "Complete Required Fields Before Submitting"
+                  : "Submit Feedback (Cmd+Enter)"
+              }
             </Button>
           </DialogFooter>
         </form>
