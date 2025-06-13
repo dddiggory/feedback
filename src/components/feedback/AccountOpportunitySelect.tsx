@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Select, { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
 import { Label } from "@/components/ui/label"
 
@@ -40,8 +40,30 @@ const Option = (props: OptionProps<AccountOption, false, GroupBase<AccountOption
   );
 };
 
-export function AccountOpportunitySelect() {
+interface AccountOpportunitySelectProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export function AccountOpportunitySelect({ value, onChange }: AccountOpportunitySelectProps) {
   const [selectedOption, setSelectedOption] = useState<AccountOption | null>(null)
+
+  // Sync selectedOption with value prop
+  useEffect(() => {
+    if (value) {
+      const option = accounts.find(acc => acc.value === value)
+      setSelectedOption(option || null)
+    } else {
+      setSelectedOption(null)
+    }
+  }, [value])
+
+  const handleChange = (option: AccountOption | null) => {
+    setSelectedOption(option)
+    if (onChange) {
+      onChange(option?.label || '')
+    }
+  }
 
   const filterOption = (
     option: FilterOptionOption<AccountOption>,
@@ -53,11 +75,11 @@ export function AccountOpportunitySelect() {
 
   return (
     <div className="grid gap-2">
-      <Label htmlFor="account-opportunity">Account/Opportunity</Label>
+      {/* <Label htmlFor="account-opportunity">Account/Opportunity<span className="text-red-500">*</span></Label> */}
       <Select
         id="account-opportunity"
         value={selectedOption}
-        onChange={setSelectedOption}
+        onChange={handleChange}
         options={accounts}
         filterOption={filterOption}
         components={{ Option }}
