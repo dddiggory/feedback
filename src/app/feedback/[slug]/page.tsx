@@ -44,15 +44,15 @@ export default async function FeedbackItemPage({
   return (
     <Layout>
       <div className="container mx-auto pb-8 pt-1">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <h1 className="text-4xl font-bold">{feedbackItem.title}</h1>
-            <div className="flex flex-wrap gap-2">
+        <div className="flex justify-between items-start mb-8">
+          <div className="flex items-start gap-4">
+            <h1 className="text-4xl font-bold max-w-[40vw]">{feedbackItem.title}</h1>
+            <div className="flex flex-wrap gap-2 h-[2.5rem] overflow-hidden">
               {feedbackItem.product_area_names?.map((area: string, index: number) => (
                 <Link
                   key={area}
                   href={`/product_areas/${feedbackItem.product_area_slugs?.[index]}`}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity`}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity h-[2.5rem]`}
                 >
                   {area}
                 </Link>
@@ -66,7 +66,7 @@ export default async function FeedbackItemPage({
             trigger={
               <button
                 type="button"
-                className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer"
+                className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer h-[3.5rem]"
               >
                 <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
