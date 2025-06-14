@@ -1,10 +1,11 @@
 import { Metadata } from "next"
 import { Layout } from '@/components/layout/Layout'
 
-interface ProductAreaPageProps {
+type ProductAreaPageProps = {
   params: {
     slug: string
   }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 export async function generateMetadata({ params }: ProductAreaPageProps): Promise<Metadata> {
