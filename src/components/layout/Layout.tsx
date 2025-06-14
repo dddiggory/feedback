@@ -15,7 +15,7 @@ const navigation = [
   { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
   { name: 'Analytics & Reporting', href: '/reports', icon: ChartBarIcon },
   { name: 'Browse by Product Area', href: '/browse/product_areas', icon: TableCellsIcon },
-  // { name: 'Browse by Account', href: '/team', icon: TableCellsIcon },
+  { name: 'Browse All', href: '/browse/all', icon: TableCellsIcon },
 ];
 
 export function Layout({ children }: LayoutProps) {
