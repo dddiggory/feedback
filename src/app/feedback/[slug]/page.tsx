@@ -44,9 +44,8 @@ export default async function FeedbackItemPage({
   return (
     <Layout>
       <div className="container mx-auto pb-8 pt-1">
-        <div className="flex justify-between items-start mb-8">
-          <div className="flex items-start gap-4 bg-yellow-100 rounded-2xl">
-            <h1 className="text-4xl font-bold text-black text-shadow-sky-950 max-w-[40vw]">{feedbackItem.title}</h1>
+        <div className="flex justify-between items-start mb-3">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-2 h-[2.5rem] overflow-hidden">
               {feedbackItem.product_area_names?.map((area: string, index: number) => (
                 <Link
@@ -58,63 +57,72 @@ export default async function FeedbackItemPage({
                 </Link>
               ))}
             </div>
+            
+            <h1 className="text-5xl font-bold text-slate-100 text-shadow-sky-950 max-w-[70vw]">{feedbackItem.title}</h1>
+            <div>
+            <p className="text-slate-100">{feedbackItem.description}</p>
+            </div>
           </div>
-          <FeedbackPageLogFeedbackDialog
-            feedbackItemTitle={feedbackItem.title}
-            feedbackItemDescription={feedbackItem.description}
-            feedbackItemId={feedbackItem.id}
-            trigger={
-              <button
-                type="button"
-                className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer h-[3.5rem]"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                Add Customer +1
-              </button>
-            }
-          />
+          <div className="flex flex-col gap-y-3 min-w-[30vh] w-fit">
+            <div>
+              <FeedbackPageLogFeedbackDialog
+                feedbackItemTitle={feedbackItem.title}
+                feedbackItemDescription={feedbackItem.description}
+                feedbackItemId={feedbackItem.id}
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer h-[3.5rem] whitespace-nowrap min-w-[30vh] w-fit"
+                  >
+                    <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                    </svg>
+                    Add Customer +1
+                  </button>
+                }
+              />
+            </div>
+            <div className="">
+              <div className="grid grid-cols-1 gap-y-2 py-3 rounded-md bg-emerald-50 text-slate-800 outline-1 outline-slate-600 min-w-[30vh] w-fit">
+                <div className="text-center col-span-1">
+                  <div className="text-3xl font-bold">{feedbackItem.entry_count || 0}</div>
+                  <div>Customer Requests</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">
+                    {(() => {
+                      const value = feedbackItem.current_arr_sum || 0;
+                      if (value >= 1000000) {
+                        return `$${(value / 1000000).toFixed(2)}M`;
+                      } else if (value >= 1000) {
+                        return `$${Math.floor(value / 1000)}k`;
+                      }
+                      return `$${value}`;
+                    })()}
+                  </div>
+                  <div>Current Customer Demand</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">
+                    {(() => {
+                      const value = feedbackItem.open_opp_arr_sum || 0;
+                      if (value >= 1000000) {
+                        return `$${(value / 1000000).toFixed(2)}M`;
+                      } else if (value >= 1000) {
+                        return `$${Math.floor(value / 1000)}k`;
+                      }
+                      return `$${value}`;
+                    })()}
+                  </div>
+                  <div>Open Opportunity Impact</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        {/* Customer Demand Metrics */}
-        <div> 
-        <div className="grid grid-cols-3 gap-6 mb-8 max-w-2/3">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-3xl font-bold text-gray-900">
-              {feedbackItem.entry_count || 0}
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              Customer Requests
-            </div>
-          </div>
+        
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-3xl font-bold text-gray-900">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-              }).format(feedbackItem.current_arr_sum || 0)}
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              Current Account Demand
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-3xl font-bold text-gray-900">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-              }).format(feedbackItem.open_opp_arr_sum || 0)}
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              Open Opportunity Impact
-            </div>
-          </div>
-        </div>
-        </div>
+        
         <div className="grid grid-cols-2 gap-4">
           <div className="prose">
             <h3 className="text-2xl font-medium">Description <span className="text-sm text-gray-500 pl-3 align-middle cursor-not-allowed underline">edit</span></h3>
