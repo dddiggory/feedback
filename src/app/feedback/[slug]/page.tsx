@@ -45,8 +45,8 @@ export default async function FeedbackItemPage({
     <Layout>
       <div className="container mx-auto pb-8 pt-1">
         <div className="flex justify-between items-start mb-8">
-          <div className="flex items-start gap-4">
-            <h1 className="text-4xl font-bold max-w-[40vw]">{feedbackItem.title}</h1>
+          <div className="flex items-start gap-4 bg-yellow-100 rounded-2xl">
+            <h1 className="text-4xl font-bold text-black text-shadow-sky-950 max-w-[40vw]">{feedbackItem.title}</h1>
             <div className="flex flex-wrap gap-2 h-[2.5rem] overflow-hidden">
               {feedbackItem.product_area_names?.map((area: string, index: number) => (
                 <Link

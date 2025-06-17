@@ -70,15 +70,15 @@ export default async function DashboardPage() {
 
       {/* Search Box */}
       <div className="mt-8">
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-black to-sky-950 shadow">
-          <div className="p-6">
+        <div className="animated-gradient-bg">
+          <div className="p-4">
             <FeedbackSearchBox />
           </div>
         </div>
       </div>
 
       {/* Popular Feedback Items This Month Section */}
-      <div className="mt-8">
+      <div className="mt-8 hidden">
         <div className="overflow-hidden rounded-lg bg-white shadow p-4 sm:p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Popular Feedback Items (Past 30 Days)</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent Feedback Section */}
-      <div className="mt-8">
+      <div className="mt-8 hidden">
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-4 sm:p-6">
             <h2 className="text-lg font-medium text-gray-900">Recent Feedback (temporary, will remove)</h2>
