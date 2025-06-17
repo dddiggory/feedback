@@ -129,10 +129,10 @@ export function FeedbackPageLogFeedbackDialog({
         <form ref={formRef} onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="text-xs text-gray-500">Add Customer +1</div>
-            <DialogTitle className="text-2xl text-blue-600 font-bold">
+            <DialogTitle className="text-2xl text-blue-800 font-bold">
               {feedbackItemTitle}
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-600 mt-2">
+            <DialogDescription className="outline-dotted rounded-sm p-1 text-sm text-gray-600 mt-2 max-h-[100px] overflow-y-scroll">
               {feedbackItemDescription}
             </DialogDescription>
           </DialogHeader>

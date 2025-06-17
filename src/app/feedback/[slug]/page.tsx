@@ -58,9 +58,9 @@ export default async function FeedbackItemPage({
               ))}
             </div>
             
-            <h1 className="text-5xl font-bold text-slate-100 text-shadow-sky-950 max-w-[70vw]">{feedbackItem.title}</h1>
+            <h1 className={`font-bold text-slate-100 text-shadow-sky-950 max-w-[70vw] pr-2 ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
             <div>
-            <p className="text-slate-100">{feedbackItem.description}</p>
+            <p className="text-slate-950 min-h-[150px] max-h-[150px] overflow-y-scroll mr-12 p-4 wrap-normal bg-slate-100/80 rounded-lg">{feedbackItem.description}</p>
             </div>
           </div>
           <div className="flex flex-col gap-y-3 min-w-[30vh] w-fit">
@@ -83,12 +83,12 @@ export default async function FeedbackItemPage({
               />
             </div>
             <div className="">
-              <div className="grid grid-cols-1 gap-y-2 py-3 rounded-md bg-emerald-50 text-slate-800 outline-1 outline-slate-600 min-w-[30vh] w-fit">
-                <div className="text-center col-span-1">
+              <div className="grid grid-cols-1 gap-y-2 py-5 rounded-md bg-teal-200/50 text-slate-800 min-w-[30vh] w-fit">
+                <div className="text-left col-span-1 ml-4">
                   <div className="text-3xl font-bold">{feedbackItem.entry_count || 0}</div>
                   <div>Customer Requests</div>
                 </div>
-                <div className="text-center">
+                <div className="text-left col-span-1 ml-4">
                   <div className="text-3xl font-bold">
                     {(() => {
                       const value = feedbackItem.current_arr_sum || 0;
@@ -102,7 +102,7 @@ export default async function FeedbackItemPage({
                   </div>
                   <div>Current Customer Demand</div>
                 </div>
-                <div className="text-center">
+                <div className="text-left col-span-1 ml-4">
                   <div className="text-3xl font-bold">
                     {(() => {
                       const value = feedbackItem.open_opp_arr_sum || 0;
@@ -121,26 +121,8 @@ export default async function FeedbackItemPage({
           </div>
         </div>
         
-
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div className="prose">
-            <h3 className="text-2xl font-medium">Description <span className="text-sm text-gray-500 pl-3 align-middle cursor-not-allowed underline">edit</span></h3>
-            <div className="bg-white p-4 rounded-lg shadow-md h-[9.5em] overflow-y-auto relative">
-              <p>{feedbackItem.description}</p>
-            </div>
-          </div>
-          <div className="prose">
-            <h3 className="text-2xl font-medium">EPD Commentary</h3>
-            <p className="bg-white p-4 rounded-lg shadow-md h-[9.5em]">
-              (Placeholder, product-editable, last updated date, editor)
-              </p>
-              
-          </div>
-          
-        </div>
-        <div className="pt-8 prose">
-            <h3 className="text-2xl font-medium">Customer Feedback Entries</h3>
+        <div className="pt-2 prose">
+            <h3 className="text-white text-2xl font-medium">Customer Feedback Entries (WIP)</h3>
             <FeedbackEntryTable data={entries || []} />
           </div>
       </div>
