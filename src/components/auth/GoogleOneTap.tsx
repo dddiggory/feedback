@@ -5,13 +5,20 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+interface GoogleOneTapConfig {
+  client_id: string
+  callback: (response: CredentialResponse) => void
+  nonce: string
+  use_fedcm_for_prompt: boolean
+}
+
 // Type declarations for Google One Tap
 declare global {
   interface Window {
     google: {
       accounts: {
         id: {
-          initialize: (config: any) => void
+          initialize: (config: GoogleOneTapConfig) => void
           prompt: () => void
         }
       }
