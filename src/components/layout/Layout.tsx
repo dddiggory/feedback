@@ -14,9 +14,9 @@ interface LayoutProps {
 
 const navigation = [
   { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
-  { name: 'Analytics & Reporting', href: '/reports', icon: ChartBarIcon },
-  { name: 'Browse by Product Area', href: '/browse/product_areas', icon: TableCellsIcon },
-  { name: 'Browse All', href: '/browse/all', icon: TableCellsIcon },
+  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+  { name: 'Product Areas', href: '/areas', icon: TableCellsIcon },
+  { name: 'Accounts', href: '/accounts', icon: TableCellsIcon },
 ];
 
 export function Layout({ children }: LayoutProps) {

@@ -21,8 +21,8 @@ export default async function FeedbackItemPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  const { slug } = await params;
   const supabase = await createClient()
+  const { slug } = await params
   
   const { data: feedbackItem } = await supabase
     .from('feedback_items_with_data')
@@ -50,7 +50,7 @@ export default async function FeedbackItemPage({
               {feedbackItem.product_area_names?.map((area: string, index: number) => (
                 <Link
                   key={area}
-                  href={`/product_areas/${feedbackItem.product_area_slugs?.[index]}`}
+                  href={`/areas/${feedbackItem.product_area_slugs?.[index]}`}
                   className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity h-[2.5rem]`}
                 >
                   {area}
