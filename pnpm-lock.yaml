@@ -65,6 +65,9 @@ importers:
       '@tsparticles/react':
         specifier: ^3.0.0
         version: 3.0.0(@tsparticles/engine@3.8.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@upstash/search':
+        specifier: ^0.1.2
+        version: 0.1.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1302,6 +1305,12 @@ packages:
     resolution: {integrity: sha512-hHKFx+opG5BA3/owMXon8ypwSotBGTdblG6oda/iOu9+OEYnk0cxD2uIcGyGT8jCK578kV+xMrNxqbn8Zjlpgw==}
     cpu: [x64]
     os: [win32]
+
+  '@upstash/search@0.1.2':
+    resolution: {integrity: sha512-NbeL61SlxmyghBVYxH0D8yLJ8kmJrx1I6MNK2ZIKB36ZGZC5F8Ck/g9MJA0aHhtA3MQM1LbvcaZghzZX4SNZ2w==}
+
+  '@upstash/vector@1.2.1':
+    resolution: {integrity: sha512-xKA9qTgbnPsxym/ymgwmaJbJHSTA6b5B1SNyTqJerV8322xn6eJM+p3xZPxKJYDPfSea7RgVxsTkhE9I/mOaOw==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -3934,6 +3943,12 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.7.8':
     optional: true
+
+  '@upstash/search@0.1.2':
+    dependencies:
+      '@upstash/vector': 1.2.1
+
+  '@upstash/vector@1.2.1': {}
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:

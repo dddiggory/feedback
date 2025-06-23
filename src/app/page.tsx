@@ -1,6 +1,7 @@
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
+import { FeedbackSearchBoxExperimental } from '@/components/feedback/FeedbackSearchBoxExperimental';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -73,6 +74,14 @@ export default async function DashboardPage() {
         <div className="animated-gradient-bg">
           <div className="p-4">
             <FeedbackSearchBox />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <div className="animated-gradient-bg">
+          <div className="p-4">
+            <FeedbackSearchBoxExperimental />
           </div>
         </div>
       </div>
