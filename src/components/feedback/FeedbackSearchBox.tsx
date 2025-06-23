@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { JSX } from 'react'
 
 interface FeedbackItemRow {
@@ -108,22 +109,17 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
 };
 
 const MenuList = (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
-  const handleFooterClick = (e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    // Placeholder for future functionality
-    alert('Create new feedback item (to be implemented)');
-  };
-
   return (
     <div>
       <components.MenuList {...props} />
-      <div
-        onClick={handleFooterClick}
-        className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md"
-        style={{ borderTop: '1px solid #fbbf24' }}
-      >
-        ＋ None of these existing items are what I had in mind; Create a brand new feedback item instead.
-      </div>
+      <Link href="/feedback/new">
+        <div
+          className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md"
+          style={{ borderTop: '1px solid #fbbf24' }}
+        >
+          ＋ None of these existing items are what I had in mind; Create a brand new feedback item instead.
+        </div>
+      </Link>
     </div>
   );
 };
