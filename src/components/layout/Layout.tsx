@@ -1,14 +1,21 @@
 'use client'
 
-import { LogFeedbackDialog } from '../feedback/LogFeedbackDialog';
-import { Plus } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { ChartBarIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
+import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
+}
+
+interface User {
+  id: string
+  email?: string
+  user_metadata?: Record<string, unknown>
 }
 
 const navigation = [
@@ -20,6 +27,20 @@ const navigation = [
 
 export function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase.auth]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -51,18 +72,20 @@ export function Layout({ children }: LayoutProps) {
                   })}
                 </nav>
               </div>
-              <div className="flex gap-4 hidden">
-                <LogFeedbackDialog
-                  trigger={
+              <div className="flex items-center gap-4">
+                {user && (
+                  <div className="flex items-center gap-2 text-white">
+                    <User className="h-4 w-4" />
+                    <span className="text-sm">{user.email}</span>
                     <button
-                      type="button"
-                      className="inline-flex items-center gap-x-2.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all duration-200"
+                      onClick={handleSignOut}
+                      className="flex items-center gap-1 px-2 py-1 text-sm text-gray-300 hover:text-white transition-colors"
                     >
-                      <Plus className="h-5 w-5" />
-                      Log Feedback
+                      <LogOut className="h-4 w-4" />
+                      Sign out
                     </button>
-                  }
-                />
+                  </div>
+                )}
               </div>
             </div>
           </div>
