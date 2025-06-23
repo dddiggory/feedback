@@ -62,7 +62,7 @@ export function AuthGate({ children }: AuthGateProps) {
               Welcome to Vercel Feedback
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Please sign in to access the feedback system
+              Auth with a @vercel.com email is required.
             </p>
           </div>
           <div className="mt-8 space-y-6">
