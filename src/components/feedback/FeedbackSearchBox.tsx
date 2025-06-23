@@ -31,28 +31,41 @@ function normalizeText(str: string) {
     .trim();
 }
 
+// Highlight all occurrences of each word in the search string, even if split by unrelated words
 const highlightText = (text: string, searchStr: string) => {
   if (!searchStr) return text;
   const normText = normalizeText(text);
-  const normSearch = normalizeText(searchStr);
-  if (!normSearch) return text;
+  const words = normalizeText(searchStr).split(' ').filter(Boolean);
+  if (words.length === 0) return text;
 
-  // Find all match indices in the normalized text
-  const matchIndices: [number, number][] = [];
-  let startIdx = 0;
-  while (startIdx <= normText.length) {
-    const idx = normText.indexOf(normSearch, startIdx);
-    if (idx === -1) break;
-    matchIndices.push([idx, idx + normSearch.length]);
-    startIdx = idx + normSearch.length;
+  // Find all match indices for all words, even if split by unrelated words
+  let matchIndices: [number, number][] = [];
+  for (const word of words) {
+    let startIdx = 0;
+    while (startIdx <= normText.length) {
+      const idx = normText.indexOf(word, startIdx);
+      if (idx === -1) break;
+      matchIndices.push([idx, idx + word.length]);
+      startIdx = idx + word.length;
+    }
   }
-  if (matchIndices.length === 0) return text;
+  // Remove duplicate and overlapping matches
+  matchIndices = matchIndices.sort((a, b) => a[0] - b[0]);
+  const merged: [number, number][] = [];
+  for (const [start, end] of matchIndices) {
+    if (!merged.length || start > merged[merged.length - 1][1]) {
+      merged.push([start, end]);
+    } else {
+      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end);
+    }
+  }
+  if (merged.length === 0) return text;
 
   // Map normalized indices back to original text indices
   const parts: (string | JSX.Element)[] = [];
   let origIdx = 0, normIdx = 0, lastEnd = 0, matchIdx = 0;
-  while (origIdx < text.length && matchIdx < matchIndices.length) {
-    const [matchStart, matchEnd] = matchIndices[matchIdx];
+  while (origIdx < text.length && matchIdx < merged.length) {
+    const [matchStart, matchEnd] = merged[matchIdx];
     // Advance to matchStart in normalized text
     let realStart = origIdx;
     while (normIdx < matchStart && origIdx < text.length) {
@@ -100,7 +113,7 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
         <div className="font-medium">
           {highlightText(data.label, searchStr)}
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500 whitespace-pre-line">
           {highlightText(data.description, searchStr)}
         </div>
       </div>
@@ -171,12 +184,12 @@ export function FeedbackSearchBox() {
     option: FilterOptionOption<FeedbackItem>,
     inputValue: string
   ) => {
-    const searchStr = normalizeText(inputValue);
+    const words = normalizeText(inputValue).split(' ').filter(Boolean);
     const label = normalizeText(option.label || '');
     const description = normalizeText((option.data && option.data.description) || '');
-    return (
-      label.includes(searchStr) ||
-      description.includes(searchStr)
+    // Return true if every word is found in either label or description
+    return words.every(
+      word => label.includes(word) || description.includes(word)
     );
   }
 
