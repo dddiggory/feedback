@@ -36,7 +36,7 @@ export default async function FeedbackItemPage({
 
   // Fetch entries for this feedback item
   const { data: entries } = await supabase
-    .from('entries')
+    .from('entries_with_data')
     .select('*')
     .eq('feedback_item_id', feedbackItem.id)
     .order('created_at', { ascending: false })
@@ -124,7 +124,7 @@ export default async function FeedbackItemPage({
         <div className="pt-2 prose">
             <h3 className="text-white text-2xl font-medium">Customer Feedback Entries (WIP)</h3>
             <FeedbackEntryTable data={entries || []} />
-          </div>
+        </div>
       </div>
     </Layout>
   )

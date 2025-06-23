@@ -20,6 +20,8 @@ export interface FeedbackEntry {
   impacted_arr: number;
   created_by_user_id: string;
   created_at: string; // Note: This comes as a string from the database
+  submitter_name?: string;
+  submitter_email?: string;
 }
 
 // Define the column definitions
@@ -108,6 +110,20 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     header: "Submitter",
     enableSorting: true,
     enableColumnFilter: true,
+    cell: ({ row }) => {
+      const name = row.original.submitter_name || row.original.submitter_email || row.original.created_by_user_id;
+      const email = row.original.submitter_email;
+      return email ? (
+        <a
+          href={`/user/${encodeURIComponent(email)}`}
+          className="text-blue-500 underline hover:text-blue-900"
+        >
+          {name}
+        </a>
+      ) : (
+        <span>{name}</span>
+      );
+    },
   },
   {
     accessorKey: "created_at",

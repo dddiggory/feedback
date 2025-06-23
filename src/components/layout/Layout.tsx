@@ -1,21 +1,15 @@
 'use client'
 
-import { User, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { ChartBarIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
-import { createClient } from '@/lib/supabase/client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useUser } from './UserContext';
 
 interface LayoutProps {
   children: React.ReactNode;
-}
-
-interface User {
-  id: string
-  email?: string
-  user_metadata?: Record<string, unknown>
 }
 
 const navigation = [
@@ -27,18 +21,9 @@ const navigation = [
 
 export function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, [supabase.auth]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -57,6 +42,8 @@ export function Layout({ children }: LayoutProps) {
   }, [menuOpen]);
 
   const handleSignOut = async () => {
+    const { createClient } = await import('@/lib/supabase/client');
+    const supabase = createClient();
     await supabase.auth.signOut();
   };
 
@@ -117,8 +104,8 @@ export function Layout({ children }: LayoutProps) {
                         </div>
                         <div className="py-1">
                           <Link
-                            href=""
-                            className="disabled cursor-not-allowed block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
+                            href={`/user/${encodeURIComponent(user.email)}`}
+                            className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
                             onClick={() => setMenuOpen(false)}
                           >
                             My Submissions (coming soon)

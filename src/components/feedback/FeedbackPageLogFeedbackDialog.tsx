@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { createClient } from '@/lib/supabase/client'
+import { useUser } from '@/components/layout/UserContext'
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
@@ -36,6 +37,7 @@ export function FeedbackPageLogFeedbackDialog({
   feedbackItemDescription,
   feedbackItemId,
 }: FeedbackPageLogFeedbackDialogProps) {
+  const { user } = useUser()
   const [open, setOpen] = useState(false)
   const [severity, setSeverity] = useState("med")
   const [accountName, setAccountName] = useState("")
@@ -73,9 +75,9 @@ export function FeedbackPageLogFeedbackDialog({
           severity: severity,
           entry_description: description,
           external_links: links,
-          contact_person: "diggory.rycroft",
           open_opp_arr: 60000,
-          current_arr: 120000
+          current_arr: 120000,
+          created_by_user_id: user?.id
         })
 
       if (error) throw error
