@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { createClient } from '@/lib/supabase/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,6 +28,8 @@ const navigation = [
 export function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -38,9 +40,30 @@ export function Layout({ children }: LayoutProps) {
     getUser();
   }, [supabase.auth]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
+
+  const avatarUrl =
+    (user?.user_metadata?.avatar_url as string) ||
+    (user?.user_metadata?.picture as string) ||
+    undefined;
 
   return (
     <div className="flex h-screen bg-background">
@@ -73,17 +96,42 @@ export function Layout({ children }: LayoutProps) {
                 </nav>
               </div>
               <div className="flex items-center gap-4">
-                {user && (
-                  <div className="flex items-center gap-2 text-white">
-                    <User className="h-4 w-4" />
-                    <span className="text-sm">{user.email}</span>
+                {user && avatarUrl && (
+                  <div className="relative" ref={menuRef}>
                     <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-1 px-2 py-1 text-sm text-gray-300 hover:text-white transition-colors"
+                      onClick={() => setMenuOpen((open) => !open)}
+                      className="focus:outline-none cursor-pointer"
+                      aria-label="User menu"
                     >
-                      <LogOut className="h-4 w-4" />
-                      Sign out
+                      <img
+                        src={avatarUrl}
+                        alt="User avatar"
+                        className="w-10 h-10 rounded-full border-2 border-green-500 shadow-sm object-cover transition-all duration-150"
+                      />
                     </button>
+                    {menuOpen && (
+                      <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 animate-fade-in">
+                        <div className="py-3 px-4 border-b border-gray-100">
+                          <div className="text-xs text-gray-500 mb-1">Signed in as</div>
+                          <div className="text-sm font-medium text-gray-900 break-all">{user.email}</div>
+                        </div>
+                        <div className="py-1">
+                          <Link
+                            href=""
+                            className="disabled cursor-not-allowed block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            My Submissions (coming soon)
+                          </Link>
+                          <button
+                            onClick={handleSignOut}
+                            className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:text-red-800 transition-colors"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,9 +1,9 @@
 'use client'
 
+import React, { useImperativeHandle, forwardRef, useEffect } from 'react'
 import Script from 'next/script'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
 interface GoogleOneTapConfig {
   client_id: string
@@ -30,7 +30,7 @@ interface CredentialResponse {
   credential: string
 }
 
-const GoogleOneTapComponent = () => {
+const GoogleOneTapComponent = forwardRef((_props, ref) => {
   const supabase = createClient()
   const router = useRouter()
 
@@ -43,6 +43,14 @@ const GoogleOneTapComponent = () => {
     const hashedNonce = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
     return [nonce, hashedNonce]
   }
+
+  useImperativeHandle(ref, () => ({
+    prompt: () => {
+      if (window.google?.accounts?.id) {
+        window.google.accounts.id.prompt();
+      }
+    }
+  }), [])
 
   useEffect(() => {
     let cancelled = false
@@ -103,6 +111,7 @@ const GoogleOneTapComponent = () => {
       <div id="oneTap" className="fixed top-0 right-0 z-[100]" />
     </>
   )
-}
+})
 
+GoogleOneTapComponent.displayName = 'GoogleOneTapComponent';
 export default GoogleOneTapComponent 

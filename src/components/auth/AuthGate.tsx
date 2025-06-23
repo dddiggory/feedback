@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import GoogleOneTapComponent from './GoogleOneTap'
@@ -18,6 +19,7 @@ export function AuthGate({ children }: AuthGateProps) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const oneTapRef = useRef<{ prompt: () => void }>(null)
 
   useEffect(() => {
     // Get initial session
@@ -64,9 +66,12 @@ export function AuthGate({ children }: AuthGateProps) {
             </p>
           </div>
           <div className="mt-8 space-y-6">
-            <GoogleOneTapComponent />
+            <GoogleOneTapComponent ref={oneTapRef} />
             <div className="text-center">
-              <p className="text-sm text-gray-500">
+              <p
+                className="text-sm text-gray-500 cursor-pointer underline"
+                onClick={() => oneTapRef.current?.prompt()}
+              >
                 Sign in with your Google account to continue
               </p>
             </div>
