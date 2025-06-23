@@ -1,19 +1,12 @@
 "use client"
 
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { JSX } from 'react'
 import { Search } from "@upstash/search"
-
-interface FeedbackItemRow {
-  id: string;
-  title: string;
-  description: string;
-  slug: string;
-}
 
 interface FeedbackItem {
   value: string
@@ -150,6 +143,19 @@ const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>
   { ssr: false }
 )
 
+// Type for Upstash search result document
+type UpstashDoc = {
+  id: string;
+  content: {
+    title?: string;
+    description?: string;
+    slug?: string;
+    [key: string]: unknown;
+  };
+  metadata?: Record<string, unknown>;
+  score?: number;
+};
+
 export function FeedbackSearchBoxExperimental() {
   const router = useRouter()
   const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
@@ -171,13 +177,8 @@ export function FeedbackSearchBoxExperimental() {
         limit: 10,
       });
       console.log("Upstash searchResults:", searchResults);
-      if (searchResults.error) {
-        console.error("Upstash Search Error:", searchResults.error);
-        setFeedbackItems([]);
-        return;
-      }
       const docs = Array.isArray(searchResults) ? searchResults : [];
-      const formattedItems = docs.map((doc: any) => ({
+      const formattedItems = docs.map((doc: UpstashDoc) => ({
         value: doc.id,
         label: doc.content?.title || 'Untitled',
         description: doc.content?.description
@@ -214,14 +215,8 @@ export function FeedbackSearchBoxExperimental() {
     setSearchQuery(inputValue)
   }
 
-  const filterOption = (
-    option: FilterOptionOption<FeedbackItem>,
-    inputValue: string
-  ) => {
-    // Since we're using Upstash search, we don't need client-side filtering
-    // The search results are already filtered by Upstash
-    return true
-  }
+  // No client-side filtering needed; Upstash already filters results
+  const filterOption = () => true;
 
   return (
     <div className="w-full rounded-xl bg-green-200 overflow-hidden">
