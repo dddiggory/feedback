@@ -69,7 +69,7 @@ export default function NewFeedbackPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-100">Create New Feedback Item</h1>
           <p className="text-slate-300 mt-2">
-            Most of the time, you should add your customer's +1 to an existing feedback item, to help build a case for that request. However, if you're certain that you have a brand new type of feedback that hasn't been requested by anyone else before, you can use this form to create a new one.
+            Most of the time, you should add your customer&apos;s +1 to an existing feedback item, to help build a case for that request. However, if you&apos;re certain that you have a brand new type of feedback that hasn&apos;t been requested by anyone else before, you can use this form to create a new one.
           </p>
         </div>
 
