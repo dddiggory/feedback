@@ -147,7 +147,7 @@ export default async function DashboardPage() {
                           </div>
                         )}
                       </td>
-                      <td className="px-5 py-4 whitespace-nowrap">
+                      <td className="pl-1 pr-5 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {entry.submitter_avatar && (
                             <img 
