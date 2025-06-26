@@ -3,7 +3,7 @@ import { executeQuery } from './snowflake'
 interface TestResult {
   success: boolean
   accountsCount?: number
-  sampleData?: any[]
+  sampleData?: unknown[]
   error?: string
 }
 
@@ -23,7 +23,7 @@ export async function testSnowflakeConnection(): Promise<TestResult> {
     
     // Now test querying the ACCOUNTS table
     console.log('Querying DWH_PROD.ANALYTICS.ACCOUNTS...')
-    const accountsResult = await executeQuery(`
+    const accountsResult = await executeQuery<unknown>(`
       SELECT * 
       FROM DWH_PROD.ANALYTICS.ACCOUNTS 
       LIMIT 10
