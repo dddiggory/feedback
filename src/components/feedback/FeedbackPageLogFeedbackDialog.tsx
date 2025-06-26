@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ReactNode, useState, useRef, useEffect } from "react"
-import { AccountOpportunitySelect, accounts } from "./AccountOpportunitySelect"
+import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
 import {
   Select,
   SelectContent,
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select"
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/components/layout/UserContext'
+import { ImpactedOpportunityPills } from './ImpactedOpportunityPills'
+import { useOpportunitiesByAccount } from '@/hooks/use-opportunities-by-account'
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
@@ -46,6 +48,7 @@ export function FeedbackPageLogFeedbackDialog({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+  const { opportunities, selectedId: selectedOpportunityId, setSelectedId: setSelectedOpportunityId, loading: loadingOpportunities } = useOpportunitiesByAccount(accountName)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -104,11 +107,9 @@ export function FeedbackPageLogFeedbackDialog({
 
   // Focus the description textarea after account selection
   const handleAccountChange = (value: string) => {
-    // Find the account option that matches this value
-    const account = accounts.find(acc => acc.value === value)
-    if (account) {
-      setAccountName(account.value)
-    }
+    // value is now the SFDC_ACCOUNT_ID, we'll store the account name separately
+    // For now, we'll use the ID as the account name until we can get the actual name
+    setAccountName(value)
     // Focus the textarea after a short delay to allow react-select to finish
     setTimeout(() => {
       descriptionRef.current?.focus()
@@ -157,6 +158,15 @@ export function FeedbackPageLogFeedbackDialog({
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            {/* Impacted Opportunity section - always reserve space, no layout shift */}
+            <div style={{ minHeight: '64px' }} className="my-2 flex flex-col justify-center">
+              <ImpactedOpportunityPills
+                opportunities={opportunities}
+                selectedId={selectedOpportunityId}
+                setSelectedId={setSelectedOpportunityId}
+                loading={loadingOpportunities}
+              />
             </div>
             <div className="grid gap-2">
               <div className="space-y-1">
