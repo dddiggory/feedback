@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// This file interfaces with the Snowflake SDK, which requires use of 'any' for bind parameters.
 import snowflake from 'snowflake-sdk'
 
 // Snowflake connection configuration
@@ -9,8 +11,7 @@ const snowflakeConfig = {
   warehouse: process.env.SNOWFLAKE_DATA_WAREHOUSE,
 }
 
-// Helper to cast binds for Snowflake SDK (isolates linter disable)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Helper to cast binds for Snowflake SDK
 function toSnowflakeBinds(binds: unknown[]): any[] {
   return binds as any[];
 }
