@@ -27,21 +27,44 @@ const Option = (props: OptionProps<AccountOption, false, GroupBase<AccountOption
         part
     );
   };
+
+  // Format the updated date for display
+  const formatUpdatedDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffInDays === 0) return 'last update: today';
+    if (diffInDays === 1) return 'last update: yesterday';
+    if (diffInDays < 7) return `last update: ${diffInDays}d ago`;
+    if (diffInDays < 30) return `last update: ${Math.floor(diffInDays / 7)}w ago`;
+    if (diffInDays < 365) return `last update: ${Math.floor(diffInDays / 30)}mo ago`;
+    return `last update: ${Math.floor(diffInDays / 365)}y ago`;
+  };
   
   return (
     <components.Option {...props}>
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-start justify-between w-full gap-3">
+        {/* Left side: Account name and ENT badge */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="truncate font-medium">
             {highlightText(account.ACCOUNT_NAME, searchStr)}
           </span>
           {account.IS_ACTIVE_ENTERPRISE_CUSTOMER && (
-            <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800 font-semibold border border-blue-200">ENT</span>
+            <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800 font-semibold border border-blue-200 flex-shrink-0">ENT</span>
           )}
         </div>
-        <span className="text-sm text-gray-600 font-mono tabular-nums whitespace-nowrap">
-          {formatARR(account.ANNUAL_RECURRING_REVENUE)}
-        </span>
+        
+        {/* Right side: ARR and Updated date in two sub-rows */}
+        <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+          <span className="text-sm text-gray-600 font-mono tabular-nums whitespace-nowrap">
+            {formatARR(account.ANNUAL_RECURRING_REVENUE)}
+          </span>
+          <span className="text-xs text-gray-400 font-mono tabular-nums whitespace-nowrap">
+            {formatUpdatedDate(account.UPDATED_AT || '')}
+          </span>
+        </div>
       </div>
     </components.Option>
   );
