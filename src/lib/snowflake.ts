@@ -9,6 +9,12 @@ const snowflakeConfig = {
   warehouse: process.env.SNOWFLAKE_DATA_WAREHOUSE,
 }
 
+// Helper to cast binds for Snowflake SDK (isolates linter disable)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toSnowflakeBinds(binds: unknown[]): any[] {
+  return binds as any[];
+}
+
 // Utility function to execute queries
 export async function executeQuery<T = unknown>(sql: string, binds: unknown[] = []): Promise<T[]> {
   return new Promise((resolve, reject) => {
@@ -22,7 +28,7 @@ export async function executeQuery<T = unknown>(sql: string, binds: unknown[] = 
       
       conn.execute({
         sqlText: sql,
-        binds: binds as any[], // Cast only here for SDK compatibility
+        binds: toSnowflakeBinds(binds),
         complete: (err, stmt, rows) => {
           if (err) {
             reject(err)
