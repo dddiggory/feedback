@@ -90,15 +90,15 @@ export default async function DashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recentEntries?.map((entry) => (
                     <tr key={entry.id} className="hover:bg-gray-50">
-                      <td className="pl-6 py-4 min-w-[10rem] max-w-[15rem] align-middle">
-                        <div className="flex flex-col min-w-[10rem] max-w-[15rem]">
+                      <td className="pl-6 py-4 min-w-40 max-w-60 align-middle">
+                        <div className="flex flex-col min-w-40 max-w-60">
                           <Link 
                             href={`/feedback/${entry.feedback_item_slug}`}
-                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline line-clamp-2 min-w-[10rem] max-w-[15rem]"
+                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline line-clamp-2 min-w-40 max-w-60"
                           >
                             {entry.feedback_item_title}
                           </Link>
-                          <span className="text-xs text-gray-500 mt-1 truncate min-w-[10rem] max-w-[15rem]">
+                          <span className="text-xs text-gray-500 mt-1 truncate min-w-40 max-w-60">
                             {entry.account_name ? (
                               <>
                                 <Link
@@ -113,9 +113,9 @@ export default async function DashboardPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">
+                      <td className="px-6 py-4 max-w-[18rem] xl:max-w-md 2xl:max-w-xl hidden xl:table-cell align-top">
                         <span
-                          className="block line-clamp-3 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] text-xs text-gray-700 break-words"
+                          className="block line-clamp-3 max-w-[18rem] xl:max-w-md 2xl:max-w-xl text-xs text-gray-700 break-words"
                           title={entry.entry_description}
                         >
                           {entry.entry_description && entry.entry_description.length > 225
@@ -123,9 +123,9 @@ export default async function DashboardPage() {
                             : entry.entry_description}
                         </span>
                       </td>
-                      <td className="px-1 py-4 whitespace-nowrap max-w-[6rem]">
+                      <td className="px-1 py-4 whitespace-nowrap max-w-24">
                         {Array.isArray(entry.product_area_names) && entry.product_area_names.length > 0 && (
-                          <div className="flex flex-wrap gap-1 max-w-[6rem]">
+                          <div className="flex flex-wrap gap-1 max-w-24">
                             {entry.product_area_names.map((area: string, idx: number) => (
                               entry.product_area_slugs && entry.product_area_slugs[idx] ? (
                                 <Link

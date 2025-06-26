@@ -30,10 +30,10 @@ interface ProductAreaWithStats extends ProductArea {
 }
 
 const GRADIENTS = [
-  'bg-gradient-to-r from-slate-50 to-emerald-200',
-  'bg-gradient-to-r from-slate-50 to-teal-200',
-  'bg-gradient-to-r from-slate-50 to-pink-200',
-  'bg-gradient-to-r from-slate-50 to-violet-200',
+  'bg-linear-to-r from-slate-50 to-emerald-200',
+  'bg-linear-to-r from-slate-50 to-teal-200',
+  'bg-linear-to-r from-slate-50 to-pink-200',
+  'bg-linear-to-r from-slate-50 to-violet-200',
 ] as const
 
 function getRandomGradient() {
@@ -97,7 +97,7 @@ export default async function AreasPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="h-10 w-10 rounded-md bg-blue-500 flex items-center justify-center">
                     <FolderIcon className="h-5 w-5 text-white" />
                   </div>
@@ -119,7 +119,7 @@ export default async function AreasPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="h-10 w-10 rounded-md bg-green-500 flex items-center justify-center">
                     <ChartBarIcon className="h-5 w-5 text-white" />
                   </div>
@@ -141,7 +141,7 @@ export default async function AreasPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="h-10 w-10 rounded-md bg-purple-500 flex items-center justify-center">
                     <UsersIcon className="h-5 w-5 text-white" />
                   </div>
@@ -163,7 +163,7 @@ export default async function AreasPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="h-10 w-10 rounded-md bg-yellow-500 flex items-center justify-center">
                     <CurrencyDollarIcon className="h-5 w-5 text-white" />
                   </div>
@@ -190,7 +190,7 @@ export default async function AreasPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="h-10 w-10 rounded-md bg-indigo-500 flex items-center justify-center">
                     <SparklesIcon className="h-5 w-5 text-white" />
                   </div>
@@ -249,8 +249,8 @@ export default async function AreasPage() {
                     <tr key={area.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-8 w-8">
-                            <div className="h-8 w-8 rounded-md bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+                          <div className="shrink-0 h-8 w-8">
+                            <div className="h-8 w-8 rounded-md bg-linear-to-r from-blue-500 to-blue-600 flex items-center justify-center">
                               <FolderIcon className="h-4 w-4 text-white" />
                             </div>
                           </div>

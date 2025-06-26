@@ -74,7 +74,7 @@ export default async function AreaPage({
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-lg bg-linear-to-r from-blue-500 to-blue-600 flex items-center justify-center">
               <FolderIcon className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -105,7 +105,7 @@ export default async function AreaPage({
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ChartBarIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -125,7 +125,7 @@ export default async function AreaPage({
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ChartBarIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -145,7 +145,7 @@ export default async function AreaPage({
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ChartBarIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -169,7 +169,7 @@ export default async function AreaPage({
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ChartBarIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">

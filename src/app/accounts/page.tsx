@@ -82,7 +82,7 @@ export default async function AccountsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <BuildingOfficeIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -102,7 +102,7 @@ export default async function AccountsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <UserGroupIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -122,7 +122,7 @@ export default async function AccountsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <BuildingOfficeIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -146,7 +146,7 @@ export default async function AccountsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <BuildingOfficeIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -179,8 +179,8 @@ export default async function AccountsPage() {
                   className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                    <div className="shrink-0">
+                      <div className="h-12 w-12 rounded-lg bg-linear-to-r from-green-500 to-green-600 flex items-center justify-center">
                         <BuildingOfficeIcon className="h-6 w-6 text-white" />
                       </div>
                     </div>
@@ -260,7 +260,7 @@ export default async function AccountsPage() {
                       <tr key={account.name} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                           <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-md bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center mr-3">
+                            <div className="h-8 w-8 rounded-md bg-linear-to-r from-green-500 to-green-600 flex items-center justify-center mr-3">
                               <BuildingOfficeIcon className="h-4 w-4 text-white" />
                             </div>
                             {account.name}

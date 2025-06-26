@@ -66,9 +66,9 @@ export function ImpactedOpportunityPills({ opportunities, selectedId, setSelecte
                 </div>
                 {/* Line 2: Stage (left), ARR (center), Date (right) */}
                 <div className="flex items-center justify-between w-full mt-0.5 gap-1">
-                  <span className="bg-gray-200 text-gray-700 rounded px-1 text-[10px] flex-shrink-0">{opp.OPPORTUNITY_STAGE}</span>
+                  <span className="bg-gray-200 text-gray-700 rounded px-1 text-[10px] shrink-0">{opp.OPPORTUNITY_STAGE}</span>
                   <span className="text-gray-500 font-mono tabular-nums text-xs mx-auto">{formatARR(opp.NEW_AND_EXPANSION_ANNUAL_RECURRING_REVENUE)}</span>
-                  <span className="text-gray-400 text-[10px] flex-shrink-0 ml-2">{opp.CLOSE_ON ? new Date(opp.CLOSE_ON).toLocaleDateString() : ''}</span>
+                  <span className="text-gray-400 text-[10px] shrink-0 ml-2">{opp.CLOSE_ON ? new Date(opp.CLOSE_ON).toLocaleDateString() : ''}</span>
                 </div>
               </button>
             </div>

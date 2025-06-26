@@ -108,7 +108,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
-      <div id="oneTap" className="fixed top-0 right-0 z-[100]" />
+      <div id="oneTap" className="fixed top-0 right-0 z-100" />
     </>
   )
 })

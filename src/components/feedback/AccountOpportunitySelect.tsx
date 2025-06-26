@@ -53,7 +53,7 @@ const SingleValue = (props: SingleValueProps<AccountOption, false>) => {
     <components.SingleValue {...props}>
       <div className="flex items-center justify-between w-full">
         <span className="truncate mr-2">{data.label}</span>
-        <span className="text-gray-500 font-mono tabular-nums text-xs flex-shrink-0">{formatARR(data.account.ANNUAL_RECURRING_REVENUE)}</span>
+        <span className="text-gray-500 font-mono tabular-nums text-xs shrink-0">{formatARR(data.account.ANNUAL_RECURRING_REVENUE)}</span>
       </div>
     </components.SingleValue>
   );

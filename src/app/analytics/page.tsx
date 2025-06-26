@@ -53,7 +53,7 @@ export default async function AnalyticsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ChartBarIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -73,7 +73,7 @@ export default async function AnalyticsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ArrowTrendingUpIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -97,7 +97,7 @@ export default async function AnalyticsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <UsersIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -117,7 +117,7 @@ export default async function AnalyticsPage() {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <ClockIcon className="h-8 w-8 text-gray-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">

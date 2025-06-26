@@ -247,7 +247,7 @@ export function DataTableFilterList<TData>({
         <PopoverContent
           aria-describedby={descriptionId}
           aria-labelledby={labelId}
-          className="flex w-full max-w-[var(--radix-popover-content-available-width)] origin-[var(--radix-popover-content-transform-origin)] flex-col gap-3.5 p-4 sm:min-w-[380px]"
+          className="flex w-full max-w-(--radix-popover-content-available-width) origin-(--radix-popover-content-transform-origin) flex-col gap-3.5 p-4 sm:min-w-[380px]"
           {...props}
         >
           <div className="flex flex-col gap-1">
@@ -410,7 +410,7 @@ function DataTableFilterItem<TData>({
               <SelectTrigger
                 aria-label="Select join operator"
                 aria-controls={joinOperatorListboxId}
-                className="h-8 rounded lowercase [&[data-size]]:h-8"
+                className="h-8 rounded lowercase data-size:h-8"
               >
                 <SelectValue placeholder={joinOperator} />
               </SelectTrigger>
@@ -451,7 +451,7 @@ function DataTableFilterItem<TData>({
           <PopoverContent
             id={fieldListboxId}
             align="start"
-            className="w-40 origin-[var(--radix-popover-content-transform-origin)] p-0"
+            className="w-40 origin-(--radix-popover-content-transform-origin) p-0"
           >
             <Command>
               <CommandInput placeholder="Search fields..." />
@@ -507,7 +507,7 @@ function DataTableFilterItem<TData>({
         >
           <SelectTrigger
             aria-controls={operatorListboxId}
-            className="h-8 w-32 rounded lowercase [&[data-size]]:h-8"
+            className="h-8 w-32 rounded lowercase data-size:h-8"
           >
             <div className="truncate">
               <SelectValue placeholder={filter.operator} />
@@ -515,7 +515,7 @@ function DataTableFilterItem<TData>({
           </SelectTrigger>
           <SelectContent
             id={operatorListboxId}
-            className="origin-[var(--radix-select-content-transform-origin)]"
+            className="origin-(--radix-select-content-transform-origin)"
           >
             {filterOperators.map((operator) => (
               <SelectItem
@@ -654,7 +654,7 @@ function onFilterInputRender<TData>({
             id={inputId}
             aria-controls={inputListboxId}
             aria-label={`${columnMeta?.label} boolean filter`}
-            className="h-8 w-full rounded [&[data-size]]:h-8"
+            className="h-8 w-full rounded data-size:h-8"
           >
             <SelectValue placeholder={filter.value ? "True" : "False"} />
           </SelectTrigger>
@@ -711,7 +711,7 @@ function onFilterInputRender<TData>({
           </FacetedTrigger>
           <FacetedContent
             id={inputListboxId}
-            className="w-[200px] origin-[var(--radix-popover-content-transform-origin)]"
+            className="w-[200px] origin-(--radix-popover-content-transform-origin)"
           >
             <FacetedInput
               aria-label={`Search ${columnMeta?.label} options`}
@@ -776,7 +776,7 @@ function onFilterInputRender<TData>({
           <PopoverContent
             id={inputListboxId}
             align="start"
-            className="w-auto origin-[var(--radix-popover-content-transform-origin)] p-0"
+            className="w-auto origin-(--radix-popover-content-transform-origin) p-0"
           >
             {filter.operator === "isBetween" ? (
               <Calendar
