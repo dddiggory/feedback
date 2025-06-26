@@ -25,6 +25,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/components/layout/UserContext'
 import { ImpactedOpportunityPills } from './ImpactedOpportunityPills'
 import { useOpportunitiesByAccount } from '@/hooks/use-opportunities-by-account'
+import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
+import { Account } from '@/lib/services/account-opportunity'
+import { Opportunity } from '@/lib/services/opportunity'
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
@@ -49,6 +52,7 @@ export function FeedbackPageLogFeedbackDialog({
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const { opportunities, selectedId: selectedOpportunityId, setSelectedId: setSelectedOpportunityId, loading: loadingOpportunities } = useOpportunitiesByAccount(accountName)
+  const { accounts } = useAccountSearch()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,18 +72,22 @@ export function FeedbackPageLogFeedbackDialog({
     e.preventDefault()
     setIsSubmitting(true)
 
+    // Find selected account and opportunity objects
+    const selectedAccount: Account | undefined = accounts.find(acc => acc.SFDC_ACCOUNT_ID === accountName)
+    const selectedOpportunity: Opportunity | undefined = opportunities.find(opp => opp.SFDC_OPPORTUNITY_ID === selectedOpportunityId)
+
     try {
       const supabase = createClient()
       const { error } = await supabase
         .from('entries')
         .upsert({
           feedback_item_id: feedbackItemId,
-          account_name: accountName,
+          account_name: selectedAccount?.ACCOUNT_NAME ?? '',
           severity: severity,
           entry_description: description,
           external_links: links,
-          open_opp_arr: 60000,
-          current_arr: 120000,
+          open_opp_arr: selectedOpportunity?.NEW_AND_EXPANSION_ANNUAL_RECURRING_REVENUE ?? null,
+          current_arr: selectedAccount?.ANNUAL_RECURRING_REVENUE ?? null,
           created_by_user_id: user?.id
         })
 

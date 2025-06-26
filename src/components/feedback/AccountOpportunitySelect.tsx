@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import Select, { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
+import Select, { components, GroupBase, OptionProps, FilterOptionOption, SingleValueProps } from 'react-select'
 import { Label } from "@/components/ui/label"
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
@@ -44,6 +44,18 @@ const Option = (props: OptionProps<AccountOption, false, GroupBase<AccountOption
         </span>
       </div>
     </components.Option>
+  );
+};
+
+const SingleValue = (props: SingleValueProps<AccountOption, false>) => {
+  const { data } = props;
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center justify-between w-full">
+        <span className="truncate mr-2">{data.label}</span>
+        <span className="text-gray-500 font-mono tabular-nums text-xs flex-shrink-0">{formatARR(data.account.ANNUAL_RECURRING_REVENUE)}</span>
+      </div>
+    </components.SingleValue>
   );
 };
 
@@ -108,7 +120,7 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
         onChange={handleChange}
         options={accountOptions}
         filterOption={filterOption}
-        components={{ Option }}
+        components={{ Option, SingleValue }}
         className="react-select-container"
         classNamePrefix="react-select"
         placeholder={loading ? "Loading accounts..." : "Search for an account..."}
