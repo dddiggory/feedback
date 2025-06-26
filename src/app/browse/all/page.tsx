@@ -2,14 +2,15 @@ import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { formatARR } from '@/lib/format';
 
 export default async function BrowseAllPage() {
   const supabase = await createClient();
   
   const { data: feedbackItems } = await supabase
     .from('feedback_items_with_data')
-    .select('id, title, description, created_at, slug, product_area_names')
-    .order('created_at', { ascending: false });
+    .select('id, title, description, created_at, updated_at, slug, product_area_names, entry_count, current_arr_sum, open_opp_arr_sum')
+    .order('updated_at', { ascending: false });
 
   // More detailed debug logging
   console.log('First feedback item:', feedbackItems?.[0]);
@@ -29,16 +30,28 @@ export default async function BrowseAllPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Title
                 </th>
-                <th scope="col" className="w-[35%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Description
                 </th>
-                <th scope="col" className="w-[15%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="w-[8%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Request Count
+                </th>
+                <th scope="col" className="w-[12%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Current Customer ARR
+                </th>
+                <th scope="col" className="w-[12%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Open Opp ARR
+                </th>
+                <th scope="col" className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Created At
                 </th>
-                <th scope="col" className="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Last Updated
+                </th>
+                <th scope="col" className="w-[3%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Product Areas
                 </th>
               </tr>
@@ -60,7 +73,19 @@ export default async function BrowseAllPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.entry_count || 0}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatARR(item.current_arr_sum || 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatARR(item.open_opp_arr_sum || 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {format(new Date(item.created_at), 'MMM d, yyyy')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.updated_at ? format(new Date(item.updated_at), 'MMM d, yyyy') : '-'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       <div className="flex flex-wrap gap-1">

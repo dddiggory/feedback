@@ -25,6 +25,7 @@ export async function searchAccounts(searchTerm: string): Promise<Account[]> {
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
       WHERE ACCOUNT_NAME ILIKE ?
         AND (ACCOUNT_REGION IS NULL OR ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
+        AND UPDATED_AT >= DATEADD(year, -1, CURRENT_DATE())
       ORDER BY ANNUAL_RECURRING_REVENUE DESC NULLS LAST
       LIMIT 20
     `
@@ -50,6 +51,7 @@ export async function getInitialAccounts(): Promise<Account[]> {
         IS_ACTIVE_ENTERPRISE_CUSTOMER
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
       WHERE (ACCOUNT_REGION IS NULL OR ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
+        AND UPDATED_AT >= DATEADD(year, -1, CURRENT_DATE())
       ORDER BY ANNUAL_RECURRING_REVENUE DESC NULLS LAST
       LIMIT 20
     `

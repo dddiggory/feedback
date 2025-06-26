@@ -90,15 +90,15 @@ export default async function DashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recentEntries?.map((entry) => (
                     <tr key={entry.id} className="hover:bg-gray-50">
-                      <td className="pl-6 py-4 min-w-[5rem] max-w-[10rem] truncate align-middle">
-                        <div className="flex flex-col min-w-[5rem] max-w-[15rem]">
+                      <td className="pl-6 py-4 min-w-[10rem] max-w-[15rem] align-middle">
+                        <div className="flex flex-col min-w-[10rem] max-w-[15rem]">
                           <Link 
                             href={`/feedback/${entry.feedback_item_slug}`}
-                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline truncate min-w-[5rem] max-w-[10rem]"
+                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline line-clamp-2 min-w-[10rem] max-w-[15rem]"
                           >
                             {entry.feedback_item_title}
                           </Link>
-                          <span className="text-xs text-gray-500 mt-1 truncate min-w-[5rem] max-w-[10rem]">
+                          <span className="text-xs text-gray-500 mt-1 truncate min-w-[10rem] max-w-[15rem]">
                             {entry.account_name ? (
                               <>
                                 <Link
