@@ -10,7 +10,7 @@ const snowflakeConfig = {
 }
 
 // Utility function to execute queries
-export async function executeQuery<T = unknown>(sql: string, binds: any[] = []): Promise<T[]> {
+export async function executeQuery<T = unknown>(sql: string, binds: unknown[] = []): Promise<T[]> {
   return new Promise((resolve, reject) => {
     const connection = snowflake.createConnection(snowflakeConfig)
     
@@ -22,7 +22,7 @@ export async function executeQuery<T = unknown>(sql: string, binds: any[] = []):
       
       conn.execute({
         sqlText: sql,
-        binds: binds,
+        binds: binds as any[], // Cast only here for SDK compatibility
         complete: (err, stmt, rows) => {
           if (err) {
             reject(err)
