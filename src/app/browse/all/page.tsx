@@ -19,10 +19,10 @@ export default async function BrowseAllPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 text-white">
         <h1 className="text-3xl font-bold mb-6">All Feedback Items</h1>
-        <p className="text-gray-600 mb-8">
-          This is a list of every current feedback item on a single page, for easy browsing and reference. You can click on any item to view its full details.
+        <p className="mb-8">
+          This is just a list of every current feedback item on a single page, for easy browsing for cmd+F enjoyers. You can click on any item to view its full details.
         </p>
         
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">

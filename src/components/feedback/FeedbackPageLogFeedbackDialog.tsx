@@ -46,6 +46,7 @@ export function FeedbackPageLogFeedbackDialog({
   const [open, setOpen] = useState(false)
   const [severity, setSeverity] = useState("med")
   const [accountName, setAccountName] = useState("")
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
   const [description, setDescription] = useState("")
   const [links, setLinks] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -72,8 +73,7 @@ export function FeedbackPageLogFeedbackDialog({
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Find selected account and opportunity objects
-    const selectedAccount: Account | undefined = accounts.find(acc => acc.SFDC_ACCOUNT_ID === accountName)
+    // Use stored selected account data instead of searching in accounts array
     const selectedOpportunity: Opportunity | undefined = opportunities.find(opp => opp.SFDC_OPPORTUNITY_ID === selectedOpportunityId)
 
     try {
@@ -95,6 +95,7 @@ export function FeedbackPageLogFeedbackDialog({
 
       // Reset form
       setAccountName("")
+      setSelectedAccount(null) // Reset selected account
       setSeverity("med")
       setDescription("")
       setLinks("")
@@ -114,10 +115,10 @@ export function FeedbackPageLogFeedbackDialog({
   }
 
   // Focus the description textarea after account selection
-  const handleAccountChange = (value: string) => {
-    // value is now the SFDC_ACCOUNT_ID, we'll store the account name separately
-    // For now, we'll use the ID as the account name until we can get the actual name
+  const handleAccountChange = (value: string, account?: Account) => {
+    // value is the SFDC_ACCOUNT_ID, account is the full account data
     setAccountName(value)
+    setSelectedAccount(account || null)
     // Focus the textarea after a short delay to allow react-select to finish
     setTimeout(() => {
       descriptionRef.current?.focus()
@@ -174,6 +175,7 @@ export function FeedbackPageLogFeedbackDialog({
                 selectedId={selectedOpportunityId}
                 setSelectedId={setSelectedOpportunityId}
                 loading={loadingOpportunities}
+                accountSelected={!!accountName}
               />
             </div>
             <div className="grid gap-2">
@@ -213,13 +215,15 @@ export function FeedbackPageLogFeedbackDialog({
             <Button 
               className="cursor-pointer" 
               type="submit" 
-              disabled={isSubmitting || !accountName || !description.trim()}
+              disabled={isSubmitting || !accountName || !description.trim() || loadingOpportunities}
             >
               {isSubmitting 
                 ? "Submitting..." 
-                : (!accountName || !description.trim())
-                  ? "Complete Required Fields Before Submitting"
-                  : "Submit Feedback (Cmd+Enter)"
+                : loadingOpportunities
+                  ? "Loading opportunities..."
+                  : (!accountName || !description.trim())
+                    ? "Complete Required Fields Before Submitting"
+                    : "Submit Feedback (Cmd+Enter)"
               }
             </Button>
           </DialogFooter>

@@ -53,30 +53,34 @@ export default async function DashboardPage() {
 
   return (
     <Layout>
-      
-
-      {/* Search Box */}
-      <div className="mt-8">
-        <div className="animated-gradient-bg">
-          <div className="p-4">
-            <FeedbackSearchBox />
+      <div className="mx-auto max-w-[80vw]">
+        {/* Search Box */}
+        <div className="mt-8 mb-6">
+          <div className="animated-gradient-bg">
+            <div className="p-4">
+              <FeedbackSearchBox />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto py-8">
-        <div className="flex gap-8">
+        <div className="grid grid-cols-[1fr_0.45fr] gap-8 py-8">
           {/* Recent Feedback Entries */}
-          <div className="flex-grow">
+          <div className="">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Recent Feedback Entries</h2>
+                <h2 className="text-2xl font-medium text-gray-800">Recent Feedback Entries</h2>
               </div>
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 hidden">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Feedback Item
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                      Description
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {/* product areas, headerless */}
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Submitter & Date
@@ -86,23 +90,64 @@ export default async function DashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recentEntries?.map((entry) => (
                     <tr key={entry.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap max-w-xs truncate align-middle">
-                        <div className="flex flex-col">
+                      <td className="pl-6 py-4 min-w-[5rem] max-w-[10rem] truncate align-middle">
+                        <div className="flex flex-col min-w-[5rem] max-w-[15rem]">
                           <Link 
                             href={`/feedback/${entry.feedback_item_slug}`}
-                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline max-w-xs truncate"
+                            className="text-blue-600 hover:text-blue-800 font-medium hover:underline truncate min-w-[5rem] max-w-[10rem]"
                           >
                             {entry.feedback_item_title}
                           </Link>
-                          <span className="text-xs text-gray-500 mt-1 max-w-xs truncate">
-                            {entry.account_name
-                              ? `${entry.account_name.length > 10 ? entry.account_name.slice(0, 10) + '…' : entry.account_name}`
-                              : ''}
-                            {entry.sum_impacted_arr ? ` • ${formatARR(entry.sum_impacted_arr)}` : ''}
+                          <span className="text-xs text-gray-500 mt-1 truncate min-w-[5rem] max-w-[10rem]">
+                            {entry.account_name ? (
+                              <>
+                                <Link
+                                  href={`/accounts/${encodeURIComponent(entry.account_name.toLowerCase().replace(/\s+/g, '-'))}`}
+                                  className="hover:underline text-gray-700"
+                                >
+                                  {entry.account_name.length > 40 ? entry.account_name.slice(0, 40) + '…' : entry.account_name}
+                                </Link>
+                                {entry.total_arr ? ` • ${formatARR(entry.total_arr)}` : ''}
+                              </>
+                            ) : ''}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">
+                        <span
+                          className="block line-clamp-3 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] text-xs text-gray-700 break-words"
+                          title={entry.entry_description}
+                        >
+                          {entry.entry_description && entry.entry_description.length > 225
+                            ? entry.entry_description.slice(0, 225) + '…'
+                            : entry.entry_description}
+                        </span>
+                      </td>
+                      <td className="px-1 py-4 whitespace-nowrap max-w-[6rem]">
+                        {Array.isArray(entry.product_area_names) && entry.product_area_names.length > 0 && (
+                          <div className="flex flex-wrap gap-1 max-w-[6rem]">
+                            {entry.product_area_names.map((area: string, idx: number) => (
+                              entry.product_area_slugs && entry.product_area_slugs[idx] ? (
+                                <Link
+                                  key={area + idx}
+                                  href={`/areas/${entry.product_area_slugs[idx]}`}
+                                  className="inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200 hover:bg-emerald-200 transition-colors"
+                                >
+                                  {area}
+                                </Link>
+                              ) : (
+                                <span
+                                  key={area + idx}
+                                  className="inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200"
+                                >
+                                  {area}
+                                </span>
+                              )
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {entry.submitter_avatar && (
                             <img 
@@ -131,11 +176,11 @@ export default async function DashboardPage() {
           </div>
 
           {/* Submitter Leaderboard */}
-          <div className="w-2/6">
+          <div className="">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden pb-5">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Top Submitters</h2>
-                <h3 className="text-sm text-gray-500 mt-1">Past 30 Days</h3>
+                <h2 className="text-2xl font-medium text-gray-800">Hall of KYC+ITG Goats</h2>
+                <h3 className="text-sm text-gray-500 mt-1">(Top Submitters Past 30 Days)</h3>
               </div>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">

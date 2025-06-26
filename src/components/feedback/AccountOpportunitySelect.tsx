@@ -61,7 +61,7 @@ const SingleValue = (props: SingleValueProps<AccountOption, false>) => {
 
 interface AccountOpportunitySelectProps {
   value?: string; // SFDC_ACCOUNT_ID
-  onChange?: (value: string) => void;
+  onChange?: (value: string, account?: Account) => void; // Modified to pass full account data
 }
 
 export function AccountOpportunitySelect({ value, onChange }: AccountOpportunitySelectProps) {
@@ -95,7 +95,8 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
   const handleChange = (option: AccountOption | null) => {
     setSelectedOption(option)
     if (onChange) {
-      onChange(option?.value || '')
+      // Always pass both parameters - the old signature will ignore the second parameter
+      onChange(option?.value || '', option?.account)
     }
   }
 

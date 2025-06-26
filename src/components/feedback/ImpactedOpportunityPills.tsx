@@ -6,6 +6,7 @@ interface Props {
   selectedId: string | null
   setSelectedId: (id: string) => void
   loading?: boolean
+  accountSelected?: boolean
 }
 
 const ExternalLinkIcon = () => (
@@ -20,14 +21,16 @@ const ExternalLinkIcon = () => (
   </svg>
 )
 
-export function ImpactedOpportunityPills({ opportunities, selectedId, setSelectedId, loading }: Props) {
+export function ImpactedOpportunityPills({ opportunities, selectedId, setSelectedId, loading, accountSelected }: Props) {
   return (
     <div className="w-full">
       <div className="font-semibold text-xs text-gray-700 mb-1 pl-1">Main Impacted Opportunity (default: opp with next close date)</div>
       {loading ? (
         <div className="flex flex-wrap gap-2 text-xs text-gray-400">Loading opportunities...</div>
       ) : !opportunities.length ? (
-        <div className="flex flex-wrap gap-2 text-xs text-gray-400">Select an account to see open opportunities</div>
+        <div className="flex flex-wrap gap-2 text-xs text-gray-400">
+          {accountSelected ? "No current opportunities" : "Select an account to see open opportunities"}
+        </div>
       ) : (
         <div className="flex flex-wrap gap-2">
           {[...opportunities].sort((a, b) => new Date(a.CLOSE_ON).getTime() - new Date(b.CLOSE_ON).getTime()).map(opp => (

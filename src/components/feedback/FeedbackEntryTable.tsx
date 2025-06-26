@@ -22,6 +22,20 @@ export interface FeedbackEntry {
   created_at: string; // Note: This comes as a string from the database
   submitter_name?: string;
   submitter_email?: string;
+  total_arr?: number;
+}
+
+// Helper function to format currency in the desired format
+function formatCurrency(amount: number | null | undefined): string {
+  if (amount == null || !isFinite(amount)) {
+    return "$0";
+  }
+  if (amount >= 1000000) {
+    return `$${(amount / 1000000).toFixed(1)}M`;
+  } else if (amount >= 1000) {
+    return `$${Math.floor(amount / 1000)}k`;
+  }
+  return `$${amount}`;
 }
 
 // Define the column definitions
@@ -67,12 +81,7 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const amount = row.getValue("current_arr") as number;
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount);
+      return formatCurrency(amount);
     },
   },
   {
@@ -82,12 +91,7 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const amount = row.getValue("open_opp_arr") as number;
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount);
+      return formatCurrency(amount);
     },
   },
   {
@@ -96,13 +100,8 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableSorting: true,
     enableColumnFilter: true,
     cell: ({ row }) => {
-      const amount = row.getValue("impacted_arr") as number;
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount);
+      const amount = row.original.total_arr;
+      return formatCurrency(amount);
     },
   },
   {
