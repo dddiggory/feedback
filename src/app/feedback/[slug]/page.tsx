@@ -43,6 +43,25 @@ export default async function FeedbackItemPage({
 
   return (
     <Layout>
+      {/* Shipped Status Banner */}
+      {feedbackItem.status === 'shipped' && (
+        <div className="rounded-md bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 mb-6 shadow-lg">
+          <div className="container mx-auto">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl">🚢</span>
+              <h2 className="text-2xl font-bold">SHIPPED!</h2>
+            </div>
+            <p className="text-lg mb-3">This product feedback item has been resolved.</p>
+            {feedbackItem.shipped_notes && (
+              <div className="bg-white/20 rounded-lg p-4">
+                <p className="font-semibold mb-1">Notes:</p>
+                <p className="text-white/90">{feedbackItem.shipped_notes}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto pb-8 pt-1">
         <div className="flex justify-between items-start mb-3">
           <div className="flex flex-col gap-4">
