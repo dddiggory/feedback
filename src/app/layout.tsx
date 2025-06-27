@@ -4,6 +4,7 @@ import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AuthGate } from "@/components/auth/AuthGate";
 import { UserProvider } from "@/components/layout/UserContext";
+import { SWRConfig } from 'swr'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,22 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NuqsAdapter>
-          <UserProvider>
-            <AuthGate>
-              {children}
-            </AuthGate>
-          </UserProvider>
+          <SWRConfig
+            value={{
+              // Global SWR configuration
+              dedupingInterval: 300000, // 5 minutes
+              revalidateOnFocus: true,
+              revalidateOnReconnect: true,
+              errorRetryCount: 3,
+              errorRetryInterval: 1000,
+            }}
+          >
+            <UserProvider>
+              <AuthGate>
+                {children}
+              </AuthGate>
+            </UserProvider>
+          </SWRConfig>
         </NuqsAdapter>
       </body>
     </html>

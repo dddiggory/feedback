@@ -13,11 +13,17 @@ export async function GET(request: NextRequest) {
       accounts = await getInitialAccounts()
     }
     
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       success: true, 
       accounts,
       count: accounts.length
     })
+
+    // Add Vercel edge caching headers
+    // Cache for 5 minutes - good balance between freshness and performance
+    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+    
+    return response
   } catch (error) {
     console.error('API route error:', error)
     return NextResponse.json({ 

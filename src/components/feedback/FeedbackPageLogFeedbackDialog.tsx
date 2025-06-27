@@ -53,7 +53,15 @@ export function FeedbackPageLogFeedbackDialog({
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const { opportunities, selectedId: selectedOpportunityId, setSelectedId: setSelectedOpportunityId, loading: loadingOpportunities } = useOpportunitiesByAccount(accountName)
-  const { accounts } = useAccountSearch()
+  const { accounts, handleSearchChange } = useAccountSearch()
+
+  // Prefetch initial accounts when dialog opens
+  useEffect(() => {
+    if (open) {
+      // Trigger initial account load immediately when dialog opens
+      handleSearchChange('')
+    }
+  }, [open, handleSearchChange])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

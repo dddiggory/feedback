@@ -13,6 +13,20 @@ interface AccountOption {
   account: Account // Full account data
 }
 
+// Prefetch common account searches
+const prefetchCommonSearches = () => {
+  // Common company names that users might search for
+  const commonSearches = ['google', 'microsoft', 'amazon', 'apple', 'meta', 'netflix', 'uber', 'airbnb']
+  
+  commonSearches.forEach(search => {
+    // Use link prefetching for common searches
+    const link = document.createElement('link')
+    link.rel = 'prefetch'
+    link.href = `/api/accounts/search?q=${encodeURIComponent(search)}`
+    document.head.appendChild(link)
+  })
+}
+
 const Option = (props: OptionProps<AccountOption, false, GroupBase<AccountOption>>) => {
   const { data, selectProps } = props;
   const searchStr = selectProps.inputValue;
@@ -88,8 +102,13 @@ interface AccountOpportunitySelectProps {
 }
 
 export function AccountOpportunitySelect({ value, onChange }: AccountOpportunitySelectProps) {
-  const { accounts, loading, error, searchTerm, handleSearchChange } = useAccountSearch()
+  const { accounts, loading, error, searchTerm, handleSearchChange, lastSearchedTerm } = useAccountSearch()
   const [selectedOption, setSelectedOption] = useState<AccountOption | null>(null)
+
+  // Prefetch common searches on mount
+  useEffect(() => {
+    prefetchCommonSearches()
+  }, [])
 
   // Convert accounts to options format
   const accountOptions: AccountOption[] = accounts.map(account => ({
@@ -135,6 +154,38 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
     return label.toLowerCase().includes(inputValue.toLowerCase())
   }
 
+  // Determine if we should show loading state in the dropdown
+  // Only show loading if we have no accounts AND we're loading
+  const showLoadingInDropdown = loading && accounts.length === 0
+
+  // Custom NoOptionsMessage component (closure has access to all needed state)
+  const NoOptionsMessage = (props: any) => {
+    const { selectProps } = props;
+    const { inputValue } = selectProps;
+    // If loading and the input value does not match the last searched term, we're still searching
+    if (loading && inputValue !== lastSearchedTerm) {
+      return (
+        <div className="px-3 py-2 text-sm text-gray-500">
+          Searching accounts...
+        </div>
+      );
+    }
+    // If not loading, input matches last searched term, and there are no options, show no results
+    if (!loading && inputValue === lastSearchedTerm && accountOptions.length === 0 && inputValue.trim()) {
+      return (
+        <div className="px-3 py-2 text-sm text-gray-500">
+          No accounts found for "{inputValue}"
+        </div>
+      );
+    }
+    // Otherwise, show the default prompt
+    return (
+      <div className="px-3 py-2 text-sm text-gray-500">
+        Start typing to search for accounts...
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-2">
       {/* <Label htmlFor="account-opportunity">Account/Opportunity<span className="text-red-500">*</span></Label> */}
@@ -144,13 +195,13 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
         onChange={handleChange}
         options={accountOptions}
         filterOption={filterOption}
-        components={{ Option, SingleValue }}
+        components={{ Option, SingleValue, NoOptionsMessage }}
         className="react-select-container"
         classNamePrefix="react-select"
         placeholder={loading ? "Loading accounts..." : "Search for an account..."}
         isClearable
         isSearchable
-        isLoading={loading}
+        isLoading={showLoadingInDropdown}
         onInputChange={handleInputChange}
         inputValue={searchTerm}
         menuIsOpen={undefined}
