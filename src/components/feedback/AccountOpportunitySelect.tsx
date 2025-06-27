@@ -196,7 +196,7 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
         options={accountOptions}
         filterOption={filterOption}
         components={{ Option, SingleValue, NoOptionsMessage }}
-        className="react-select-container"
+        className="react-select-container bg-white"
         classNamePrefix="react-select"
         placeholder={loading ? "Loading accounts..." : "Search for an account..."}
         isClearable

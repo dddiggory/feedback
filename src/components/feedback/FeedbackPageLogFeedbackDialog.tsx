@@ -159,13 +159,13 @@ export function FeedbackPageLogFeedbackDialog({
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-6 gap-4">
               <div className="col-span-4">
-                <Label className="pb-2"htmlFor="account">Account/Opportunity<span className="text-red-500">*</span></Label>
+                <Label className="pb-2"htmlFor="account">Customer / Account<span className="text-red-500">*</span></Label>
                 <AccountOpportunitySelect value={accountName} onChange={handleAccountChange} />
               </div>
               <div className="col-span-2">
                 <Label htmlFor="severity">Severity</Label>
                 <Select value={severity} onValueChange={setSeverity}>
-                  <SelectTrigger id="severity" className="py-5 mt-2">
+                  <SelectTrigger id="severity" className="py-5 mt-2 bg-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -197,7 +197,7 @@ export function FeedbackPageLogFeedbackDialog({
               <Textarea
                 id="description"
                 placeholder="Briefly describe customer situation here"
-                className="min-h-[100px]"
+                className="min-h-[100px] bg-white"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 ref={descriptionRef}
@@ -205,7 +205,7 @@ export function FeedbackPageLogFeedbackDialog({
             </div>
             <div className="grid gap-2">
               <div className="space-y-1">
-                <Label htmlFor="links">Relevant External Links</Label>
+                <Label htmlFor="links">Relevant External Links (optional)</Label>
                 <p className="text-sm text-gray-500">
                   Add any relevant links (one per line, please) that provide additional context (e.g., Slack, Notion, Gong clips, etc.)
                 </p>
@@ -213,7 +213,7 @@ export function FeedbackPageLogFeedbackDialog({
               <Textarea
                 id="links"
                 placeholder="https://..."
-                className="min-h-[60px]"
+                className="min-h-[60px] bg-white"
                 value={links}
                 onChange={(e) => setLinks(e.target.value)}
               />
