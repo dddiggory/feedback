@@ -258,13 +258,14 @@ export function TopItemsBarChart(_: TopItemsBarChartProps) {
                   />
                   <ChartTooltip
                     cursor={false}
-                    content={
-                      <ChartTooltipContent
-                        indicator="line"
-                        className="px-6 py-4 bg-white"
-                        labelClassName="grid grid-cols-3 outline outline-red-500" // Add margin below label
-                        labelKey="title"
-                        formatter={(value) => (
+                    content={props => (
+                      (ChartTooltipContent as any)({
+                        ...props,
+                        indicator: "line",
+                        className: "px-6 py-4 bg-white",
+                        labelClassName: "grid grid-cols-3 outline outline-red-500", // Add margin below label
+                        labelKey: "title",
+                        formatter: (value: unknown) => (
                           <div>
                             <div className="text-xl">
                               {typeof value === 'number'
@@ -277,9 +278,9 @@ export function TopItemsBarChart(_: TopItemsBarChartProps) {
                                 : ''}
                             </div>
                           </div>
-                        )}
-                      />
-                    }
+                        ),
+                      })
+                    )}
                   />
                   <Bar
                     dataKey="combined_arr_impact"
