@@ -18,7 +18,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 
-type TopItemsBarChartProps = {};
+type TopItemsBarChartProps = object;
 
 interface ProductAreaOption {
   label: string;
