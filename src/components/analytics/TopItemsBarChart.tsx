@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client"
 
 import React, { useEffect, useState } from 'react'
@@ -9,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardAction,
 } from "@/components/ui/card"
 import {
   ChartConfig,
@@ -20,7 +18,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 
-interface TopItemsBarChartProps {}
+type TopItemsBarChartProps = Record<string, unknown>;
 
 const chartConfig = {
   entry_count: {
@@ -110,28 +108,6 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
     }
     fetchData()
   }, [selectedProductArea])
-
-  // Custom label renderer for clickable value labels
-  const renderClickableLabel = (data, dataKey) => (props) => {
-    const { x, y, value, index } = props;
-    const slug = data[index]?.slug;
-    return (
-      <text
-        x={x}
-        y={y}
-        dy={4}
-        textAnchor="start"
-        className="font-semibold text-xs cursor-pointer"
-        style={{ pointerEvents: "all" }}
-        onClick={e => {
-          e.stopPropagation();
-          if (slug) window.open(`/feedback/${slug}`, '_blank');
-        }}
-      >
-        {value}
-      </text>
-    );
-  };
 
   return (
     <div>
@@ -276,16 +252,17 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
                         className="px-6 py-4 bg-white"
                         labelClassName="grid grid-cols-3 outline outline-red-500" // Add margin below label
                         labelKey="title"
-                        formatter={(value, name, entry, index, payload) => (
+                        formatter={(value) => (
                           <div>
-                            <div className="">{payload?.title}</div>
                             <div className="text-xl">
-                              {new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                notation: "compact",
-                                maximumFractionDigits: 2,
-                              }).format(value)}
+                              {typeof value === 'number'
+                                ? new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency: "USD",
+                                    notation: "compact",
+                                    maximumFractionDigits: 2,
+                                  }).format(value)
+                                : ''}
                             </div>
                           </div>
                         )}
@@ -326,4 +303,6 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
       </Tabs>
     </div>
   )
-} 
+}
+
+TopItemsBarChart.displayName = "TopItemsBarChart"; 
