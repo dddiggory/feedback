@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import Select, { components, GroupBase, OptionProps, FilterOptionOption, SingleValueProps } from 'react-select'
+import Select, { components, GroupBase, OptionProps, FilterOptionOption, SingleValueProps, NoticeProps } from 'react-select'
 import { Label } from "@/components/ui/label"
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
@@ -159,7 +159,7 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
   const showLoadingInDropdown = loading && accounts.length === 0
 
   // Custom NoOptionsMessage component (closure has access to all needed state)
-  const NoOptionsMessage = (props: any) => {
+  const NoOptionsMessage = (props: NoticeProps<AccountOption, false, GroupBase<AccountOption>>) => {
     const { selectProps } = props;
     const { inputValue } = selectProps;
     // If loading and the input value does not match the last searched term, we're still searching
@@ -174,7 +174,7 @@ export function AccountOpportunitySelect({ value, onChange }: AccountOpportunity
     if (!loading && inputValue === lastSearchedTerm && accountOptions.length === 0 && inputValue.trim()) {
       return (
         <div className="px-3 py-2 text-sm text-gray-500">
-          No accounts found for "{inputValue}"
+          No accounts found for &quot;{inputValue}&quot;
         </div>
       );
     }
