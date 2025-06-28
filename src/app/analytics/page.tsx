@@ -2,6 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, ClockIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { TopItemsBarChart } from '@/components/analytics/TopItemsBarChart';
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
@@ -46,6 +47,13 @@ export default async function AnalyticsPage() {
           <p className="mt-2 text-gray-600">
             Insights and metrics about your product feedback
           </p>
+        </div>
+
+        {/* Top Items Bar Chart */}
+        <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="p-6">
+            <TopItemsBarChart />
+          </div>
         </div>
 
         {/* Key Metrics */}
