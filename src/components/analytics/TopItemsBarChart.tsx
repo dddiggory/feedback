@@ -258,13 +258,13 @@ export function TopItemsBarChart() {
                   />
                   <ChartTooltip
                     cursor={false}
-                    // @ts-expect-error: ChartTooltipContent is a valid custom tooltip, but types do not align perfectly
+                    // @ts-ignore
                     content={props => (
                       <ChartTooltipContent
                         {...props}
                         indicator="line"
                         className="px-6 py-4 bg-white"
-                        labelClassName="grid grid-cols-3 outline outline-red-500" // Add margin below label
+                        labelClassName="grid grid-cols-3 outline outline-red-500"
                         labelKey="title"
                         formatter={(value: unknown) => (
                           <div>
