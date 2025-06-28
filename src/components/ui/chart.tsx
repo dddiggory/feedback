@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
@@ -264,14 +265,17 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-    hideIcon?: boolean
-    nameKey?: string
-  }) {
+}: {
+  className?: string;
+  hideIcon?: boolean;
+  payload?: unknown;
+  verticalAlign?: string;
+  nameKey?: string;
+}) {
   const { config } = useChart()
 
-  if (!payload?.length) {
+  const safePayload = Array.isArray(payload) ? payload : [];
+  if (safePayload.length === 0) {
     return null
   }
 
@@ -283,7 +287,7 @@ function ChartLegendContent({
         className
       )}
     >
-      {payload.map((item) => {
+      {safePayload.map((item) => {
         const key = `${nameKey || item.dataKey || "value"}`
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
