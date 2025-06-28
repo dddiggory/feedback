@@ -18,7 +18,22 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 
-type TopItemsBarChartProps = Record<string, unknown>;
+type TopItemsBarChartProps = {};
+
+interface ProductAreaOption {
+  label: string;
+  value: string;
+}
+
+interface ChartDataItem {
+  [key: string]: unknown;
+  entry_count?: number;
+  entry_count_label?: string;
+  combined_arr_impact?: number;
+  combined_arr_impact_label?: string;
+  slug?: string;
+  title?: string;
+}
 
 const chartConfig = {
   entry_count: {
@@ -34,11 +49,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function TopItemsBarChart(props: TopItemsBarChartProps) {
-  const [topByEntryCount, setTopByEntryCount] = useState<any[]>([])
-  const [topByRevenueImpact, setTopByRevenueImpact] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [productAreas, setProductAreas] = useState<{ label: string; value: string }[]>([])
+export function TopItemsBarChart(_: TopItemsBarChartProps) {
+  const [topByEntryCount, setTopByEntryCount] = useState<ChartDataItem[]>([])
+  const [topByRevenueImpact, setTopByRevenueImpact] = useState<ChartDataItem[]>([])
+  const [productAreas, setProductAreas] = useState<ProductAreaOption[]>([])
   const [selectedProductArea, setSelectedProductArea] = useState<string | undefined>(undefined)
 
   // Fetch product areas for dropdown
@@ -53,7 +67,7 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
         setProductAreas([])
         return
       }
-      const options = (data || []).map((area: any) => ({
+      const options = (data || []).map((area: { name: string; slug: string }) => ({
         label: area.name,
         value: area.slug,
       }))
@@ -66,7 +80,6 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
   useEffect(() => {
     const supabase = createClient()
     async function fetchData() {
-      setLoading(true)
       let entryQuery = supabase
         .from('feedback_items_with_data')
         .select('*')
@@ -83,7 +96,7 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
       }
       const { data: entryData } = await entryQuery
       setTopByEntryCount(
-        (entryData || []).map(item => ({
+        (entryData || []).map((item: ChartDataItem) => ({
           ...item,
           entry_count_label: typeof item.entry_count === 'number'
             ? item.entry_count.toLocaleString('en-US', { maximumFractionDigits: 0 })
@@ -92,7 +105,7 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
       )
       const { data: revenueData } = await revenueQuery
       setTopByRevenueImpact(
-        (revenueData || []).map(item => ({
+        (revenueData || []).map((item: ChartDataItem) => ({
           ...item,
           combined_arr_impact_label: typeof item.combined_arr_impact === 'number'
             ? new Intl.NumberFormat('en-US', {
@@ -104,7 +117,6 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
             : '',
         }))
       )
-      setLoading(false)
     }
     fetchData()
   }, [selectedProductArea])
