@@ -258,6 +258,7 @@ export function TopItemsBarChart() {
                   />
                   <ChartTooltip
                     cursor={false}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     content={props => (
                       <ChartTooltipContent
