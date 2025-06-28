@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, LabelList } from "recharts"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  CardAction,
 } from "@/components/ui/card"
 import {
   ChartConfig,
@@ -16,6 +17,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 
 interface TopItemsBarChartProps {}
 
@@ -37,37 +39,140 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
   const [topByEntryCount, setTopByEntryCount] = useState<any[]>([])
   const [topByRevenueImpact, setTopByRevenueImpact] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [productAreas, setProductAreas] = useState<{ label: string; value: string }[]>([])
+  const [selectedProductArea, setSelectedProductArea] = useState<string | undefined>(undefined)
 
+  // Fetch product areas for dropdown
+  useEffect(() => {
+    const supabase = createClient()
+    async function fetchProductAreas() {
+      const { data, error } = await supabase
+        .from('product_areas')
+        .select('name, slug')
+        .order('name')
+      if (error) {
+        setProductAreas([])
+        return
+      }
+      const options = (data || []).map((area: any) => ({
+        label: area.name,
+        value: area.slug,
+      }))
+      setProductAreas(options)
+    }
+    fetchProductAreas()
+  }, [])
+
+  // Fetch chart data, filtered by selected product area
   useEffect(() => {
     const supabase = createClient()
     async function fetchData() {
       setLoading(true)
-      const { data: entryData } = await supabase
+      let entryQuery = supabase
         .from('feedback_items_with_data')
         .select('*')
         .order('entry_count', { ascending: false })
         .limit(10)
-      setTopByEntryCount(entryData || [])
-
-      const { data: revenueData } = await supabase
+      let revenueQuery = supabase
         .from('feedback_items_with_data')
         .select('*')
         .order('combined_arr_impact', { ascending: false })
         .limit(10)
-      setTopByRevenueImpact(revenueData || [])
+      if (selectedProductArea && selectedProductArea !== 'all') {
+        entryQuery = entryQuery.contains('product_area_slugs', [selectedProductArea])
+        revenueQuery = revenueQuery.contains('product_area_slugs', [selectedProductArea])
+      }
+      const { data: entryData } = await entryQuery
+      setTopByEntryCount(
+        (entryData || []).map(item => ({
+          ...item,
+          entry_count_label: typeof item.entry_count === 'number'
+            ? item.entry_count.toLocaleString('en-US', { maximumFractionDigits: 0 })
+            : '',
+        }))
+      )
+      const { data: revenueData } = await revenueQuery
+      setTopByRevenueImpact(
+        (revenueData || []).map(item => ({
+          ...item,
+          combined_arr_impact_label: typeof item.combined_arr_impact === 'number'
+            ? new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                notation: 'compact',
+                maximumFractionDigits: 2,
+              }).format(item.combined_arr_impact)
+            : '',
+        }))
+      )
       setLoading(false)
     }
     fetchData()
-  }, [])
+  }, [selectedProductArea])
+
+  // Custom label renderer for clickable value labels
+  const renderClickableLabel = (data, dataKey) => (props) => {
+    const { x, y, value, index } = props;
+    const slug = data[index]?.slug;
+    return (
+      <text
+        x={x}
+        y={y}
+        dy={4}
+        textAnchor="start"
+        className="font-semibold text-xs cursor-pointer"
+        style={{ pointerEvents: "all" }}
+        onClick={e => {
+          e.stopPropagation();
+          if (slug) window.open(`/feedback/${slug}`, '_blank');
+        }}
+      >
+        {value}
+      </text>
+    );
+  };
 
   return (
     <div>
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Top Items Bar Chart</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-4">Top Feedback Items</h3>
+      <h4 className="text-sm text-gray-500 mb-4">
+        Click any bar for full descriptions and customer-specific reports.
+      </h4>
       <Tabs defaultValue="count" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="count">Top Request Count</TabsTrigger>
-          <TabsTrigger value="revenue">Top Revenue Impact</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between mb-4 gap-4">
+          <TabsList className="bg-muted p-1 rounded-lg">
+            <TabsTrigger
+              value="count"
+              className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow data-[state=inactive]:text-muted-foreground data-[state=inactive]:opacity-70 font-semibold px-6 py-2 rounded-md transition"
+            >
+              By Request Count
+            </TabsTrigger>
+            <TabsTrigger
+              value="revenue"
+              className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow data-[state=inactive]:text-muted-foreground data-[state=inactive]:opacity-70 font-semibold px-6 py-2 rounded-md transition"
+            >
+              By Revenue Impact
+            </TabsTrigger>
+          </TabsList>
+          <div>
+            <Select
+              value={selectedProductArea}
+              onValueChange={v => setSelectedProductArea(v === 'all' ? undefined : v)}
+            >
+              <SelectTrigger className="min-w-[200px] cursor-pointer">
+                <SelectValue placeholder={<span className="text-black">All Product Areas</span>} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="cursor-pointer">All Product Areas</SelectItem>
+                {productAreas.map((area) => (
+                  <SelectItem key={area.value} value={area.value} className="cursor-pointer">
+                    {area.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <TabsContent value="count">
           <Card>
             <CardHeader>
@@ -78,7 +183,7 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
                 <BarChart
                   data={topByEntryCount}
                   layout="vertical"
-                  margin={{ right: 16 }}
+                  margin={{ right: 40 }}
                   width={600}
                   height={400}
                 >
@@ -104,7 +209,23 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
                     dataKey="entry_count"
                     fill="var(--chart-2)"
                     radius={4}
-                  />
+                    cursor="pointer"
+                    onClick={(_, index) => {
+                      const slug = topByEntryCount[index]?.slug;
+                      if (slug) window.open(`/feedback/${slug}`, '_blank');
+                    }}
+                  >
+                    <LabelList
+                      dataKey="entry_count"
+                      position="right"
+                      className="font-semibold text-xs"
+                      formatter={value =>
+                        typeof value === "number"
+                          ? value.toLocaleString("en-US", { maximumFractionDigits: 0 })
+                          : ""
+                      }
+                    />
+                  </Bar>
                 </BarChart>
               </ChartContainer>
             </CardContent>
@@ -120,7 +241,7 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
                 <BarChart
                   data={topByRevenueImpact}
                   layout="vertical"
-                  margin={{ right: 16 }}
+                  margin={{ right: 40 }}
                   width={600}
                   height={400}
                 >
@@ -174,7 +295,28 @@ export function TopItemsBarChart(props: TopItemsBarChartProps) {
                     dataKey="combined_arr_impact"
                     fill="var(--chart-3)"
                     radius={4}
-                  />
+                    cursor="pointer"
+                    onClick={(_, index) => {
+                      const slug = topByRevenueImpact[index]?.slug;
+                      if (slug) window.open(`/feedback/${slug}`, '_blank');
+                    }}
+                  >
+                    <LabelList
+                      dataKey="combined_arr_impact"
+                      position="right"
+                      className="font-semibold text-xs"
+                      formatter={value =>
+                        typeof value === "number"
+                          ? new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                              notation: "compact",
+                              maximumFractionDigits: 2,
+                            }).format(value)
+                          : ""
+                      }
+                    />
+                  </Bar>
                 </BarChart>
               </ChartContainer>
             </CardContent>
