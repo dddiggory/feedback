@@ -258,9 +258,7 @@ export function TopItemsBarChart() {
                   />
                   <ChartTooltip
                     cursor={false}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    content={props => (
+                    content={((props) => (
                       <ChartTooltipContent
                         {...props}
                         indicator="line"
@@ -282,7 +280,7 @@ export function TopItemsBarChart() {
                           </div>
                         )}
                       />
-                    )}
+                    )) as any}
                   />
                   <Bar
                     dataKey="combined_arr_impact"
