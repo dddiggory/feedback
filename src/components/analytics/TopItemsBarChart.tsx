@@ -49,7 +49,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function TopItemsBarChart(_: TopItemsBarChartProps) {
+export function TopItemsBarChart() {
   const [topByEntryCount, setTopByEntryCount] = useState<ChartDataItem[]>([])
   const [topByRevenueImpact, setTopByRevenueImpact] = useState<ChartDataItem[]>([])
   const [productAreas, setProductAreas] = useState<ProductAreaOption[]>([])
@@ -258,7 +258,7 @@ export function TopItemsBarChart(_: TopItemsBarChartProps) {
                   />
                   <ChartTooltip
                     cursor={false}
-                    // @ts-ignore: ChartTooltipContent is a valid custom tooltip, but types do not align perfectly
+                    // @ts-expect-error: ChartTooltipContent is a valid custom tooltip, but types do not align perfectly
                     content={props => (
                       <ChartTooltipContent
                         {...props}
