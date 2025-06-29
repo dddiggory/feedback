@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import GoogleOneTapComponent from './GoogleOneTap'
@@ -70,9 +71,9 @@ export function AuthGate({ children }: AuthGateProps) {
             <div className="text-center">
               <p
                 className="text-sm text-gray-500 cursor-pointer underline"
-                onClick={() => oneTapRef.current?.prompt()}
+                // onClick={() => oneTapRef.current?.prompt()}
               >
-                Sign in with your Google account to continue
+                <Link target="_blank" href="https://vercel.okta.com">Sign in with your Google account in Okta first, then come back and refresh the page.</Link>
               </p>
             </div>
           </div>
