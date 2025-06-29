@@ -15,7 +15,7 @@ interface LayoutProps {
 const navigation = [
   { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Browse', href: '/browse', icon: ChartBarIcon },
+  { name: 'Browse', href: '/browse/all', icon: ChartBarIcon },
   { name: 'Product Areas', href: '/areas', icon: TableCellsIcon },
   { name: 'Accounts', href: '/accounts', icon: TableCellsIcon },
 ];
