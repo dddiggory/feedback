@@ -16,6 +16,27 @@ function getRandomGradient() {
   return GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)]
 }
 
+// Helper functions for avatar fallbacks
+function getRandomColor() {
+  const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-gray-500'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+interface TopSubmitter {
+  submitter_name: string;
+  submitter_avatar?: string;
+  entry_count: number;
+}
+
 export default async function FeedbackItemPage({
   params,
 }: {
@@ -40,6 +61,38 @@ export default async function FeedbackItemPage({
     .select('*')
     .eq('feedback_item_id', feedbackItem.id)
     .order('created_at', { ascending: false })
+
+  // Fetch top 6 submitters by count for this feedback item
+  const { data: topSubmitters } = await supabase
+    .from('entries_with_data')
+    .select('submitter_name, submitter_avatar')
+    .eq('feedback_item_id', feedbackItem.id)
+    .not('submitter_name', 'is', null)
+    .then(async (result) => {
+      if (!result.data) return { data: [] }
+      
+      // Group by submitter and count entries
+      const submitterCounts: Record<string, TopSubmitter> = {}
+      result.data.forEach(entry => {
+        const name = entry.submitter_name
+        if (submitterCounts[name]) {
+          submitterCounts[name].entry_count++
+        } else {
+          submitterCounts[name] = {
+            submitter_name: name,
+            submitter_avatar: entry.submitter_avatar,
+            entry_count: 1
+          }
+        }
+      })
+      
+      // Sort by count and take top 6
+      const sorted = Object.values(submitterCounts)
+        .sort((a, b) => b.entry_count - a.entry_count)
+        .slice(0, 6)
+      
+      return { data: sorted }
+    })
 
   return (
     <Layout>
@@ -79,7 +132,38 @@ export default async function FeedbackItemPage({
             
             <h1 className={`font-bold text-slate-100 text-shadow-sky-950 max-w-[70vw] pr-2 ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
             <div>
-            <p className="text-slate-950 min-h-[150px] max-h-[150px] overflow-y-scroll mr-12 p-4 wrap-normal bg-slate-100/80 rounded-lg">{feedbackItem.description}</p>
+              <p className="text-slate-950 min-h-[150px] max-h-[150px] overflow-y-scroll mr-12 p-4 wrap-normal bg-slate-100/80 rounded-lg">{feedbackItem.description}</p>
+              
+              {/* Top Submitters Section */}
+              {topSubmitters && topSubmitters.length > 0 && (
+                <div className="mt-4 mr-12 p-4 bg-slate-50/90 rounded-lg border-l-4 border-teal-400">
+                  <h4 className="text-slate-800 font-semibold text-sm mb-3">Top Vercelian Advocates:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {topSubmitters.map((submitter, index) => (
+                      <div
+                        key={`${submitter.submitter_name}-${index}`}
+                        className="flex items-center gap-2 px-3 py-2 bg-white rounded-full border border-gray-200 shadow-sm"
+                      >
+                        {submitter.submitter_avatar ? (
+                          <img 
+                            src={submitter.submitter_avatar} 
+                            alt={`${submitter.submitter_name}'s avatar`}
+                            className="w-6 h-6 rounded-full"
+                          />
+                        ) : (
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                            {getInitials(submitter.submitter_name)}
+                          </div>
+                        )}
+                        <span className="text-sm text-gray-700">{submitter.submitter_name}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                          {submitter.entry_count}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-y-3 min-w-[30vh] w-fit">

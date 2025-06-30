@@ -45,7 +45,7 @@ export default async function AnalyticsPage() {
         <div>
           <h1 className="text-3xl font-bold text-white">Analytics & Reporting</h1>
           <p className="mt-2 text-white">
-            Insights and metrics about your product feedback
+            High-level reporting on feedback items, measurable by raw count or revenue, and 
           </p>
         </div>
 
