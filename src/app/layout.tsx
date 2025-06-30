@@ -34,12 +34,17 @@ export default function RootLayout({
         <NuqsAdapter>
           <SWRConfig
             value={{
-              // Global SWR configuration
+              // Optimized for instant navigation
               dedupingInterval: 300000, // 5 minutes
-              revalidateOnFocus: true,
+              revalidateOnFocus: false, // Don't refetch when tabbing back
               revalidateOnReconnect: true,
+              revalidateIfStale: false, // Use cached data for instant loading
               errorRetryCount: 3,
               errorRetryInterval: 1000,
+              // Use stale data while revalidating for instant perceived performance
+              keepPreviousData: true,
+              // Enable background updates
+              refreshInterval: 0, // Disable automatic refresh
             }}
           >
             <UserProvider>
