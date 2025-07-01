@@ -134,6 +134,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         .replace(/^https?:\/\//, '') // Remove protocol
         .replace(/^www\./, '')       // Remove www prefix
         .replace(/\/$/, '')          // Remove trailing slash
+        .split('/')[0]               // Remove path - keep only domain
         .toLowerCase()               // Ensure lowercase
     : null;
   
@@ -345,7 +346,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 underline text-sm"
           >
-            View in Salesforce →
+            View Account in Salesforce →
           </a>
         </div>
       )}

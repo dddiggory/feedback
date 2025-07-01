@@ -114,6 +114,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
               .replace(/^https?:\/\//, '') // Remove protocol
               .replace(/^www\./, '')       // Remove www prefix
               .replace(/\/$/, '')          // Remove trailing slash
+              .split('/')[0]               // Remove path - keep only domain
               .toLowerCase()               // Ensure lowercase
           : null;
         
