@@ -227,7 +227,7 @@ export default async function FeedbackItemPage({
         </div>
         
         <div className="pt-2 prose">
-            <h3 className="text-white text-2xl font-medium">Customer Feedback Entries (WIP)</h3>
+            <h3 className="text-white text-2xl font-medium">Customer Feedback Entries</h3>
             <FeedbackEntriesTable data={entries || []} feedbackItemSlug={slug} />
             {/* <div className="mt-6 ">
               <h4 className="text-white text-xl font-medium mb-4">Current Table (will be replaced)</h4>
