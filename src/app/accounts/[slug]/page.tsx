@@ -16,7 +16,7 @@ export default async function AccountPage({
           </h1>
           <div className="text-gray-600">
             <p>Account slug: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{slug}</span></p>
-            <p className="mt-2 text-sm">This page will show detailed account information and related feedback.</p>
+            <p className="mt-2 text-sm">This page is in development. It will show detailed account information and related feedback.</p>
           </div>
         </div>
       </div>

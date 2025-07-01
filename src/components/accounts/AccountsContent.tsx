@@ -354,9 +354,9 @@ export default function AccountsContent() {
     <div className="space-y-8">
       {/* Header - Shows immediately */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Browse by Account</h1>
-        <p className="mt-2 text-gray-600">
-          View feedback entries organized by customer accounts
+        <h1 className="text-3xl font-bold text-white">Browse by Account</h1>
+        <p className="mt-2 text-white">
+          View accounts with feedback entries.
         </p>
       </div>
 
