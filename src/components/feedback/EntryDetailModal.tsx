@@ -9,11 +9,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
+import { Edit, Save, X } from "lucide-react"
+import { useUser } from "@/components/layout/UserContext"
+import { createClient } from "@/lib/supabase/client"
 
 interface FeedbackEntry {
   id: string;
@@ -63,7 +67,15 @@ function formatCurrency(amount: number | null | undefined): string {
 
 export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }: EntryDetailModalProps) {
   const [open, setOpen] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedDescription, setEditedDescription] = useState(entry.entry_description)
+  const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
+  const { user } = useUser()
+  const supabase = createClient()
+
+  // Check if current user is the submitter
+  const isOwner = user?.id === entry.created_by_user_id
 
   // Close modal handler
   const handleClose = () => {
@@ -71,6 +83,49 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
     if (isIntercepted) {
       router.back()
     }
+  }
+
+  // Handle edit mode toggle
+  const handleEditToggle = () => {
+    if (!isOwner) return
+    setIsEditing(!isEditing)
+    if (!isEditing) {
+      // Reset to original description when entering edit mode
+      setEditedDescription(entry.entry_description)
+    }
+  }
+
+  // Handle save changes
+  const handleSave = async () => {
+    if (!isOwner || isSaving) return
+    
+    setIsSaving(true)
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .update({ entry_description: editedDescription })
+        .eq('id', entry.id)
+
+      if (error) {
+        console.error('Error updating entry:', error)
+        alert('Failed to save changes. Please try again.')
+      } else {
+        // Update local state
+        entry.entry_description = editedDescription
+        setIsEditing(false)
+      }
+    } catch (error) {
+      console.error('Error saving entry:', error)
+      alert('Failed to save changes. Please try again.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  // Handle cancel edit
+  const handleCancel = () => {
+    setEditedDescription(entry.entry_description)
+    setIsEditing(false)
   }
 
   // Clean up the website URL for logo display
@@ -180,10 +235,66 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
 
       {/* Description */}
       <div className="grid gap-2">
-        <Label className="text-base font-semibold">Customer Pain Description</Label>
-        <div className="bg-white rounded-lg p-4 border min-h-[120px] whitespace-pre-wrap">
-          {entry.entry_description}
+        <div className="flex items-center justify-between">
+          <Label className="text-base font-semibold">Customer Pain Description</Label>
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <>
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  size="sm"
+                  disabled={isSaving}
+                  className="cursor-pointer"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  size="sm"
+                  disabled={isSaving}
+                  className="cursor-pointer"
+                >
+                  <Save className="w-4 h-4 mr-1" />
+                  {isSaving ? 'Saving...' : 'Save'}
+                </Button>
+              </>
+            ) : (
+              <div className="relative group">
+                <Button
+                  onClick={handleEditToggle}
+                  variant="outline"
+                  size="sm"
+                  disabled={!isOwner}
+                  className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-sky-200'}
+                >
+                                   <Edit className="w-4 h-4 mr-1" />
+                  Edit
+                </Button>
+                {!isOwner && (
+                  <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+                    Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can edit this feedback entry. Reach out to Field Engineering for exceptions.
+                    <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+        {isEditing ? (
+          <Textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            className="min-h-[120px] bg-white rounded-lg border resize-none"
+            placeholder="Enter customer pain description..."
+            disabled={isSaving}
+          />
+        ) : (
+          <div className="bg-white rounded-lg p-4 border min-h-[120px] whitespace-pre-wrap">
+            {entry.entry_description}
+          </div>
+        )}
       </div>
 
       {/* External Links */}
@@ -249,7 +360,12 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
           <div className="mb-6">
             <div className="text-xs text-gray-500 mb-2">Customer Feedback Entry</div>
             <h1 className="text-2xl text-blue-800 font-bold mb-4">
-              {feedbackItem.title}
+              <Link 
+                href={`/feedback/${feedbackItem.slug}`}
+                className="hover:text-blue-600 underline hover:underline"
+              >
+                {feedbackItem.title}
+              </Link>
             </h1>
             <div className="outline-dotted rounded-sm p-1 text-sm text-gray-600 max-h-[100px] overflow-y-scroll">
               {feedbackItem.description}
@@ -267,7 +383,12 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         <DialogHeader>
           <div className="text-xs text-gray-500">Customer Feedback Entry</div>
           <DialogTitle className="text-2xl text-blue-800 font-bold">
-            {feedbackItem.title}
+            <Link 
+              href={`/feedback/${feedbackItem.slug}`}
+              className="hover:text-blue-600 underline hover:underline"
+            >
+              {feedbackItem.title}
+            </Link>
           </DialogTitle>
           <DialogDescription className="outline-dotted rounded-sm p-1 text-sm text-gray-600 mt-2 max-h-[100px] overflow-y-scroll">
             {feedbackItem.description}

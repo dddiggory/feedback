@@ -179,7 +179,7 @@ export default async function DashboardPage() {
           <div className="">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden pb-5">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <h2 className="text-2xl font-medium text-gray-800">Hall of KYC+ITG Goats</h2>
+                <h2 className="text-2xl font-medium text-gray-800">ITG Hall of Fame</h2>
                 <h3 className="text-sm text-gray-500 mt-1">(Top Submitters Past 30 Days)</h3>
               </div>
               <table className="min-w-full divide-y divide-gray-200">

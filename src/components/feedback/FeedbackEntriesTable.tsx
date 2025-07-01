@@ -97,9 +97,10 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
           >
             Account Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
       },
@@ -187,7 +188,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 flex-shrink-0 hover:bg-gray-100"
+                className="cursor-pointer h-6 w-6 p-0 flex-shrink-0 hover:bg-sky-100 outline-slate-300 outline"
                 onClick={() => handleViewEntry(entryKey)}
               >
                 <Eye className="h-4 w-4 text-gray-500" />
@@ -204,9 +205,10 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
           >
             Severity
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
       },
@@ -239,15 +241,35 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
       },
     },
     {
+      accessorKey: "total_arr",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
+          >
+            Impacted ARR
+            <ArrowUpDown className="ml-1 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const amount = row.original.total_arr;
+        return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
+      },
+    },
+    {
       accessorKey: "current_arr",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
           >
             Current ARR
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
       },
@@ -263,32 +285,15 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
           >
             Open Opp ARR
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => {
         const amount = row.getValue("open_opp_arr") as number;
-        return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
-      },
-    },
-    {
-      accessorKey: "total_arr",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Impacted ARR
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const amount = row.original.total_arr;
         return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
       },
     },
@@ -317,9 +322,10 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 -ml-2"
           >
             Submit Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
       },
