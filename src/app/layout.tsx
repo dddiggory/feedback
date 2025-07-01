@@ -5,6 +5,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AuthGate } from "@/components/auth/AuthGate";
 import { UserProvider } from "@/components/layout/UserContext";
 import { SWRConfig } from 'swr'
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default function RootLayout({
             </UserProvider>
           </SWRConfig>
         </NuqsAdapter>
+        <Analytics />
       </body>
     </html>
   );
