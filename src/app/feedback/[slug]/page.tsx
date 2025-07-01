@@ -158,7 +158,7 @@ export default async function FeedbackItemPage({
               ))}
             </div>
             
-            <h1 className={`font-bold text-slate-100 text-shadow-sky-950 max-w-[70vw] pr-2 ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
+            <h1 className={`font-bold text-slate-100 text-shadow-lg max-w-[70vw] pr-2 ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
             <div>
               <p className="text-slate-950 min-h-[150px] max-h-[150px] overflow-y-scroll mr-12 p-4 wrap-normal bg-slate-100/80 rounded-lg">{feedbackItem.description}</p>
               
@@ -254,7 +254,7 @@ export default async function FeedbackItemPage({
         </div>
         
         <div className="pt-2 prose">
-            <h3 className="text-white text-2xl font-medium">Customer Feedback Entries</h3>
+            <h3 className="text-white text-shadow-lg text-2xl font-medium">Customer Feedback Entries</h3>
             <FeedbackEntriesTable data={entries || []} feedbackItemSlug={slug} />
             {/* <div className="mt-6 ">
               <h4 className="text-white text-xl font-medium mb-4">Current Table (will be replaced)</h4>
