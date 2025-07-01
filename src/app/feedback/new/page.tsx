@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,24 @@ export default function NewFeedbackPage() {
   const [selectedProductAreas, setSelectedProductAreas] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
+
+  // Add keyboard shortcut for cmd+enter to submit form
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault()
+        if (!isSubmitting && title.trim() && description.trim()) {
+          const form = document.querySelector('form') as HTMLFormElement
+          if (form) {
+            form.requestSubmit()
+          }
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isSubmitting, title, description])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,6 +100,7 @@ export default function NewFeedbackPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter a clear, descriptive title for the request"
               required
+              autoFocus
               style={{backgroundColor: 'rgb(248 250 252)'}}
             />
           </div>
@@ -99,7 +118,7 @@ export default function NewFeedbackPage() {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the pain point and the potential solution, in a general, customer-agnostic way. You can provide a customer-specific anecdote on the next step."
+              placeholder="Describe the pain point in a general, customer-agnostic way. You can provide a customer-specific anecdote on the next step. Generally, focus on the problem and the pain rather than prescribing a specific solution."
               className="min-h-[120px]"
               style={{backgroundColor: 'rgb(248 250 252)'}}
               required
@@ -113,7 +132,7 @@ export default function NewFeedbackPage() {
             disabled={isSubmitting || !title.trim() || !description.trim()}
             className="w-full"
           >
-            {isSubmitting ? 'Creating...' : 'Create Feedback Item'}
+            {isSubmitting ? 'Creating...' : 'Create Feedback Item (⌘+Enter)'}
           </Button>
         </form>
       </div>
