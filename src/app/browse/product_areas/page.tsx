@@ -20,7 +20,7 @@ export default async function BrowseProductAreasPage() {
     <Layout>
       <div className="container mx-auto py-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Product Areas</h1>
+          <h1 className="text-2xl font-bold text-white">Product Areas</h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -31,7 +31,7 @@ export default async function BrowseProductAreasPage() {
               className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
             >
               <h2 className="text-xl font-semibold mb-2">{area.name}</h2>
-              <p className="text-gray-600">{area.description}</p>
+              <p className="text-white">{area.description}</p>
             </Link>
           ))}
         </div>
