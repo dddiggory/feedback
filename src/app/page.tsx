@@ -153,14 +153,26 @@ export default async function DashboardPage() {
                       </td>
                       <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">
                         <div className="flex items-center gap-2">
-                          <span
-                            className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1"
-                            title={entry.entry_description}
-                          >
-                            {entry.entry_description && entry.entry_description.length > 225
-                              ? entry.entry_description.slice(0, 225) + '…'
-                              : entry.entry_description}
-                          </span>
+                          {entry.entry_key && entry.feedback_item_slug ? (
+                            <Link
+                              href={`/feedback/${entry.feedback_item_slug}/entries/${entry.entry_key}`}
+                              className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1 cursor-pointer hover:text-gray-900 hover:underline"
+                              title={entry.entry_description}
+                            >
+                              {entry.entry_description && entry.entry_description.length > 225
+                                ? entry.entry_description.slice(0, 225) + '…'
+                                : entry.entry_description}
+                            </Link>
+                          ) : (
+                            <span
+                              className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1"
+                              title={entry.entry_description}
+                            >
+                              {entry.entry_description && entry.entry_description.length > 225
+                                ? entry.entry_description.slice(0, 225) + '…'
+                                : entry.entry_description}
+                            </span>
+                          )}
                           {entry.entry_key && entry.feedback_item_slug && (
                             <div className="flex-shrink-0">
                               <EntryViewButton 

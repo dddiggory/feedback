@@ -182,7 +182,11 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
         const entryKey = row.original.entry_key;
         return (
           <div className="flex items-center gap-2 max-w-[300px]">
-            <div className="text-sm truncate flex-1" title={description}>
+            <div 
+              className="text-sm truncate flex-1 cursor-pointer hover:text-gray-700 hover:underline" 
+              title={description}
+              onClick={entryKey ? () => handleViewEntry(entryKey) : undefined}
+            >
               {description}
             </div>
             {entryKey && (

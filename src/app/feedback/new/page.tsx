@@ -89,11 +89,20 @@ export default function NewFeedbackPage() {
           <p className="text-slate-300 mt-2">
             Most of the time, you should add your customer&apos;s +1 to an existing feedback item, to help build a case for that request. However, if you&apos;re certain that you have a brand new type of feedback that hasn&apos;t been requested by anyone else before, you can use this form to create a new one.
           </p>
+
+          <p className="mt-5 p-4 bg-yellow-50 rounded-md text-sm">
+            <span className="font-bold">Please note!</span> This is the creation of a general 'container' or description of the request. You can add a customer-specific "entry" on the next step.
+            <br />
+            <br />
+            ✅ "Productized Bot Protection"
+            <br />
+            ❌ "DoorDash needs Bot Protection" (You'll do this on the next step)
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Title (General description, NOT customer-specific)</Label>
             <Input
               id="title"
               value={title}
