@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import { BuildingOfficeIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import useSWR from 'swr';
 import { Suspense } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface DatabaseEntry {
   id: string;
@@ -12,6 +14,7 @@ interface DatabaseEntry {
   current_arr: number | null;
   open_opp_arr: number | null;
   created_at: string;
+  company_website?: string | null;
   [key: string]: unknown;
 }
 
@@ -189,50 +192,101 @@ function AccountsData() {
         <div className="p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Top Accounts by Engagement</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {accounts.slice(0, 6).map((account: AggregatedAccount) => (
-              <div
-                key={account.name}
-                className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                      <BuildingOfficeIcon className="h-6 w-6 text-white" />
+            {accounts.slice(0, 6).map((account: AggregatedAccount) => {
+              // Get company website from the first entry that has one
+              const companyWebsite = account.entries.find(entry => entry.company_website)?.company_website;
+              
+              // Clean up the website URL for logo.dev (same logic as FeedbackEntriesTable)
+              const cleanWebsite = companyWebsite 
+                ? companyWebsite
+                    .replace(/^https?:\/\//, '') // Remove protocol
+                    .replace(/^www\./, '')       // Remove www prefix
+                    .replace(/\/$/, '')          // Remove trailing slash
+                    .split('/')[0]               // Remove path - keep only domain
+                    .toLowerCase()               // Ensure lowercase
+                : null;
+              
+              // Generate logo URL if company website is available
+              const logoUrl = cleanWebsite 
+                ? `https://img.logo.dev/${cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=48&format=webp`
+                : null;
+
+              const AccountCard = (
+                <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      {logoUrl ? (
+                        <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                          <Image
+                            src={logoUrl}
+                            alt={`${account.name} logo`}
+                            width={48}
+                            height={48}
+                            className="object-contain"
+                            unoptimized
+                            onError={(e) => {
+                              // Hide the image container if logo fails to load and show fallback
+                              const target = e.target as HTMLElement;
+                              const container = target.closest('div');
+                              if (container) {
+                                container.innerHTML = `<div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center"><span class="text-gray-500 text-lg font-medium">${account.name.charAt(0).toUpperCase()}</span></div>`;
+                              }
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-500 text-lg font-medium">
+                            {account.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {account.name}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {account.entryCount} feedback entries
+                      </p>
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {account.name}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {account.entryCount} feedback entries
-                    </p>
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Current ARR</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          maximumFractionDigits: 0
+                        }).format(account.currentARR)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Open Opp ARR</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          maximumFractionDigits: 0
+                        }).format(account.openOppARR)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Current ARR</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0
-                      }).format(account.currentARR)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Open Opp ARR</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0
-                      }).format(account.openOppARR)}
-                    </p>
-                  </div>
+              );
+
+              // If we have a clean website, make it a link, otherwise just show the card
+              return cleanWebsite ? (
+                <Link key={account.name} href={`/accounts/${cleanWebsite}`}>
+                  {AccountCard}
+                </Link>
+              ) : (
+                <div key={account.name}>
+                  {AccountCard}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
