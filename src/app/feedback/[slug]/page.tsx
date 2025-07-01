@@ -6,6 +6,7 @@ import { Layout } from '@/components/layout/Layout'
 
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 const GRADIENTS = [
   'bg-gradient-to-r from-slate-50 to-emerald-200',
@@ -37,6 +38,31 @@ interface TopSubmitter {
   submitter_name: string;
   submitter_avatar?: string;
   entry_count: number;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const supabase = await createClient()
+  const { slug } = await params
+  
+  const { data: feedbackItem } = await supabase
+    .from('feedback_items_with_data')
+    .select('title')
+    .eq('slug', slug)
+    .single()
+
+  if (!feedbackItem) {
+    return {
+      title: "▲ vercel/Feedback"
+    }
+  }
+
+  return {
+    title: `▲ ${feedbackItem.title}`
+  }
 }
 
 export default async function FeedbackItemPage({

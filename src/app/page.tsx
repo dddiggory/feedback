@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     .from('entries_with_data')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(10);
+    .limit(50);
 
   // Fetch top submitters
   const { data: topSubmitters } = await supabase
