@@ -23,6 +23,8 @@ export interface FeedbackEntry {
   submitter_name?: string;
   submitter_email?: string;
   total_arr?: number;
+  sfdc_account?: string | null;
+  company_website?: string | null;
 }
 
 // Helper function to format currency in the desired format
