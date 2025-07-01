@@ -33,7 +33,7 @@ export default async function BrowseAllPage() {
                 <th scope="col" className="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Title
                 </th>
-                <th scope="col" className="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="w-[25%] px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Description
                 </th>
                 <th scope="col" className="w-[8%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -62,29 +62,29 @@ export default async function BrowseAllPage() {
                 console.log('Item product areas:', item.product_area_names);
                 return (
                   <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 underline">
                       <Link href={`/feedback/${item.slug}`} className="hover:text-blue-600 block break-words">
                         {item.title}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-slate-800">
                       <div className="break-words">
                         {item.description}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">
                       {item.entry_count || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">
                       {formatARR(item.current_arr_sum || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">
                       {formatARR(item.open_opp_arr_sum || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">
                       {format(new Date(item.created_at), 'MMM d, yyyy')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">
                       {item.updated_at ? format(new Date(item.updated_at), 'MMM d, yyyy') : '-'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
