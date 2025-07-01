@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Utility function to format ARR values
 function formatARR(value: number): string {
@@ -99,9 +100,45 @@ export default async function DashboardPage() {
                           >
                             {entry.feedback_item_title}
                           </Link>
-                          <span className="text-xs text-gray-500 mt-1 truncate min-w-[10rem] max-w-[15rem]">
-                            {entry.account_name ? (
-                              <>
+                          {entry.account_name ? (
+                            <div className="flex items-center gap-2 mt-1">
+                              {(() => {
+                                // Clean up the website URL for logo.dev (same logic as FeedbackEntriesTable)
+                                const companyWebsite = entry.company_website;
+                                const cleanWebsite = companyWebsite 
+                                  ? companyWebsite
+                                      .replace(/^https?:\/\//, '') // Remove protocol
+                                      .replace(/^www\./, '')       // Remove www prefix
+                                      .replace(/\/$/, '')          // Remove trailing slash
+                                      .split('/')[0]               // Remove path - keep only domain
+                                      .toLowerCase()               // Ensure lowercase
+                                  : null;
+                                
+                                // Generate logo URL if company website is available
+                                const logoUrl = cleanWebsite 
+                                  ? `https://img.logo.dev/${cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=20&format=webp`
+                                  : null;
+
+                                return logoUrl ? (
+                                  <div className="flex-shrink-0 w-5 h-5 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                    <Image
+                                      src={logoUrl}
+                                      alt={`${entry.account_name} logo`}
+                                      width={20}
+                                      height={20}
+                                      className="object-contain"
+                                      unoptimized
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <span className="text-gray-500 text-[10px] font-medium">
+                                      {entry.account_name.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                );
+                              })()}
+                              <span className="text-xs text-gray-500 truncate flex-1">
                                 <Link
                                   href={`/accounts/${encodeURIComponent(entry.account_name.toLowerCase().replace(/\s+/g, '-'))}`}
                                   className="hover:underline text-gray-700"
@@ -109,9 +146,9 @@ export default async function DashboardPage() {
                                   {entry.account_name.length > 40 ? entry.account_name.slice(0, 40) + '…' : entry.account_name}
                                 </Link>
                                 {entry.total_arr ? ` • ${formatARR(entry.total_arr)}` : ''}
-                              </>
-                            ) : ''}
-                          </span>
+                              </span>
+                            </div>
+                          ) : null}
                         </div>
                       </td>
                       <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">

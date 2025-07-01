@@ -182,7 +182,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
         const entryKey = row.original.entry_key;
         return (
           <div className="flex items-center gap-2 max-w-[300px]">
-            <div className="truncate flex-1" title={description}>
+            <div className="text-sm truncate flex-1" title={description}>
               {description}
             </div>
             {entryKey && (
@@ -250,7 +250,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 -ml-2"
           >
-            Impacted ARR
+            ARR Impact
             <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
@@ -288,7 +288,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 -ml-2"
           >
-            Open Opp ARR
+            Open ARR
             <ArrowUpDown className="ml-1 h-4 w-4" />
           </Button>
         );
