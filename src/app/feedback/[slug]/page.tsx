@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { FeedbackPageLogFeedbackDialog } from '@/components/feedback/FeedbackPageLogFeedbackDialog'
 import { Layout } from '@/components/layout/Layout'
-import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
+// import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import Link from 'next/link'
 
@@ -229,10 +229,10 @@ export default async function FeedbackItemPage({
         <div className="pt-2 prose">
             <h3 className="text-white text-2xl font-medium">Customer Feedback Entries (WIP)</h3>
             <FeedbackEntriesTable data={entries || []} feedbackItemSlug={slug} />
-            <div className="mt-6">
+            {/* <div className="mt-6 ">
               <h4 className="text-white text-xl font-medium mb-4">Current Table (will be replaced)</h4>
               <FeedbackEntryTable data={entries || []} />
-            </div>
+            </div> */}
         </div>
       </div>
     </Layout>
