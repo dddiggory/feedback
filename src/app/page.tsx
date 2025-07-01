@@ -1,6 +1,7 @@
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
+import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import Link from 'next/link';
 
 // Utility function to format ARR values
@@ -114,14 +115,24 @@ export default async function DashboardPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">
-                        <span
-                          className="block line-clamp-3 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] text-xs text-gray-700 break-words"
-                          title={entry.entry_description}
-                        >
-                          {entry.entry_description && entry.entry_description.length > 225
-                            ? entry.entry_description.slice(0, 225) + '…'
-                            : entry.entry_description}
-                        </span>
+                        <div className="flex items-start gap-2">
+                          <span
+                            className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1"
+                            title={entry.entry_description}
+                          >
+                            {entry.entry_description && entry.entry_description.length > 225
+                              ? entry.entry_description.slice(0, 225) + '…'
+                              : entry.entry_description}
+                          </span>
+                          {entry.entry_key && entry.feedback_item_slug && (
+                            <div className="flex-shrink-0 mt-0.5">
+                              <EntryViewButton 
+                                feedbackItemSlug={entry.feedback_item_slug}
+                                entryKey={entry.entry_key}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-1 py-4 whitespace-nowrap max-w-[6rem]">
                         {Array.isArray(entry.product_area_names) && entry.product_area_names.length > 0 && (
