@@ -12,6 +12,32 @@ interface GoogleOneTapConfig {
   use_fedcm_for_prompt?: boolean
 }
 
+interface PromptNotification {
+  isNotDisplayed: () => boolean
+  isSkippedMoment: () => boolean
+  isDismissedMoment: () => boolean
+  getMomentType: () => string
+}
+
+interface TokenResponse {
+  access_token: string
+  token_type?: string
+  expires_in?: number
+  scope?: string
+}
+
+interface TokenClient {
+  requestAccessToken: () => void
+}
+
+interface GoogleButtonConfig {
+  theme: 'outline' | 'filled_blue' | 'filled_black'
+  size: 'large' | 'medium' | 'small'
+  type: 'standard' | 'icon'
+  text: 'signin_with' | 'signup_with' | 'continue_with' | 'signin'
+  width?: number
+}
+
 // Type declarations for Google One Tap
 declare global {
   interface Window {
@@ -19,12 +45,16 @@ declare global {
       accounts: {
         id: {
           initialize: (config: GoogleOneTapConfig) => void
-          prompt: (callback?: (notification: any) => void) => void
+          prompt: (callback?: (notification: PromptNotification) => void) => void
           cancel: () => void
-          renderButton: (element: HTMLElement, config: any) => void
+          renderButton: (element: HTMLElement, config: GoogleButtonConfig) => void
         }
         oauth2: {
-          initTokenClient: (config: any) => any
+          initTokenClient: (config: {
+            client_id: string
+            scope: string
+            callback: (response: TokenResponse) => void
+          }) => TokenClient
         }
       }
     }
@@ -56,7 +86,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     if (!mountedRef.current) return
     
     try {
-      const { data, error } = await supabase.auth.signInWithIdToken({
+      const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: credential,
         nonce,
@@ -72,8 +102,6 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
 
   const initializeFallbackButton = async () => {
     if (!fallbackButtonRef.current || !window.google?.accounts?.id) return
-
-    const [nonce] = await generateNonce()
     
     // Clear any existing content
     fallbackButtonRef.current.innerHTML = ''
@@ -95,10 +123,10 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
           const client = window.google.accounts.oauth2.initTokenClient({
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
             scope: 'openid email profile',
-            callback: async (response: any) => {
+            callback: async (response: TokenResponse) => {
               if (response.access_token) {
                 // Convert access token to ID token via Supabase
-                const { data, error } = await supabase.auth.signInWithOAuth({
+                const { error } = await supabase.auth.signInWithOAuth({
                   provider: 'google',
                   options: {
                     redirectTo: `${window.location.origin}/auth/callback`,
@@ -119,7 +147,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
   useImperativeHandle(ref, () => ({
     prompt: () => {
       if (window.google?.accounts?.id && initializedRef.current) {
-        window.google.accounts.id.prompt((notification) => {
+        window.google.accounts.id.prompt((notification: PromptNotification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             console.log('FedCM not available, showing fallback button')
             initializeFallbackButton()
@@ -173,7 +201,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
         
         // Try to prompt, but handle failure gracefully
         if (mountedRef.current && !cancelled) {
-          window.google.accounts.id.prompt((notification) => {
+          window.google.accounts.id.prompt((notification: PromptNotification) => {
             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
               console.log('One Tap not available, showing fallback button')
               initializeFallbackButton()
