@@ -17,20 +17,7 @@ interface User {
 }
 
 // Footer component
-const Footer = () => (
-  <footer className="bg-gray-50 border-t border-gray-200 py-4">
-    <div className="text-center">
-      <a 
-        href="https://logo.dev" 
-        className="text-xs text-gray-500 hover:text-gray-700 underline"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Logos provided by Logo.dev
-      </a>
-    </div>
-  </footer>
-)
+
 
 export function AuthGate({ children }: AuthGateProps) {
   const [user, setUser] = useState<User | null>(null)
@@ -109,7 +96,6 @@ export function AuthGate({ children }: AuthGateProps) {
       <div className="flex-1">
         {children}
       </div>
-      <Footer />
     </div>
   )
 } 
