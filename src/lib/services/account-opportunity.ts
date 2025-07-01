@@ -10,6 +10,8 @@ export interface Account {
   ANNUAL_RECURRING_REVENUE?: number
   IS_ACTIVE_ENTERPRISE_CUSTOMER?: boolean
   UPDATED_AT?: string
+  ACCOUNT_LINK?: string
+  WEBSITE?: string
 }
 
 // Search accounts by name
@@ -23,7 +25,9 @@ export async function searchAccounts(searchTerm: string): Promise<Account[]> {
         ACCOUNT_REGION,
         ANNUAL_RECURRING_REVENUE,
         IS_ACTIVE_ENTERPRISE_CUSTOMER,
-        UPDATED_AT
+        UPDATED_AT,
+        ACCOUNT_LINK,
+        WEBSITE
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
       WHERE ACCOUNT_NAME ILIKE ?
         AND (ACCOUNT_REGION IS NULL OR ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
@@ -51,7 +55,9 @@ export async function getInitialAccounts(): Promise<Account[]> {
         ACCOUNT_REGION,
         ANNUAL_RECURRING_REVENUE,
         IS_ACTIVE_ENTERPRISE_CUSTOMER,
-        UPDATED_AT
+        UPDATED_AT,
+        ACCOUNT_LINK,
+        WEBSITE
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
       WHERE (ACCOUNT_REGION IS NULL OR ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
         AND UPDATED_AT >= DATEADD(year, -1, CURRENT_DATE())

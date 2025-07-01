@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useImperativeHandle, forwardRef, useEffect } from 'react'
+import React, { useImperativeHandle, forwardRef, useEffect, useRef } from 'react'
 import Script from 'next/script'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -9,7 +9,7 @@ interface GoogleOneTapConfig {
   client_id: string
   callback: (response: CredentialResponse) => void
   nonce: string
-  use_fedcm_for_prompt: boolean
+  use_fedcm_for_prompt?: boolean
 }
 
 // Type declarations for Google One Tap
@@ -19,7 +19,12 @@ declare global {
       accounts: {
         id: {
           initialize: (config: GoogleOneTapConfig) => void
-          prompt: () => void
+          prompt: (callback?: (notification: any) => void) => void
+          cancel: () => void
+          renderButton: (element: HTMLElement, config: any) => void
+        }
+        oauth2: {
+          initTokenClient: (config: any) => any
         }
       }
     }
@@ -33,6 +38,9 @@ interface CredentialResponse {
 const GoogleOneTapComponent = forwardRef((_props, ref) => {
   const supabase = createClient()
   const router = useRouter()
+  const initializedRef = useRef(false)
+  const mountedRef = useRef(true)
+  const fallbackButtonRef = useRef<HTMLDivElement>(null)
 
   const generateNonce = async (): Promise<string[]> => {
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
@@ -44,71 +52,186 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     return [nonce, hashedNonce]
   }
 
+  const handleGoogleSignIn = async (credential: string, nonce: string) => {
+    if (!mountedRef.current) return
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: credential,
+        nonce,
+      })
+      if (error) throw error
+      if (mountedRef.current) {
+        router.push('/')
+      }
+    } catch (error) {
+      console.error('Error logging in with Google', error)
+    }
+  }
+
+  const initializeFallbackButton = async () => {
+    if (!fallbackButtonRef.current || !window.google?.accounts?.id) return
+
+    const [nonce] = await generateNonce()
+    
+    // Clear any existing content
+    fallbackButtonRef.current.innerHTML = ''
+    
+    window.google.accounts.id.renderButton(fallbackButtonRef.current, {
+      theme: 'filled_blue',
+      size: 'large',
+      type: 'standard',
+      text: 'signin_with',
+      width: 300,
+    })
+
+    // Set up click handler for the rendered button
+    const button = fallbackButtonRef.current.querySelector('div[role="button"]')
+    if (button) {
+      button.addEventListener('click', async () => {
+        try {
+          // Use OAuth2 popup as fallback
+          const client = window.google.accounts.oauth2.initTokenClient({
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+            scope: 'openid email profile',
+            callback: async (response: any) => {
+              if (response.access_token) {
+                // Convert access token to ID token via Supabase
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                  provider: 'google',
+                  options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                  }
+                })
+                if (error) throw error
+              }
+            },
+          })
+          client.requestAccessToken()
+        } catch (error) {
+          console.error('Fallback auth error:', error)
+        }
+      })
+    }
+  }
+
   useImperativeHandle(ref, () => ({
     prompt: () => {
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.prompt();
+      if (window.google?.accounts?.id && initializedRef.current) {
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log('FedCM not available, showing fallback button')
+            initializeFallbackButton()
+          }
+        });
       }
     }
   }), [])
 
   useEffect(() => {
+    mountedRef.current = true
     let cancelled = false
 
-    const run = async () => {
-      const [nonce, hashedNonce] = await generateNonce()
+    const initializeGoogleOneTap = async () => {
+      // Don't initialize if already done or component unmounted
+      if (initializedRef.current || !mountedRef.current) return
+
+      // Check session first to avoid unnecessary initialization
       const { data, error } = await supabase.auth.getSession()
       if (error) {
         console.error('Error getting session', error)
+        return
       }
       if (data.session) {
         router.push('/')
         return
       }
+
+      // Don't proceed if component was unmounted during session check
+      if (!mountedRef.current || cancelled) return
+
       if (!window.google?.accounts?.id) return
 
-      window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-        callback: async (response: CredentialResponse) => {
-          try {
-            const { data, error } = await supabase.auth.signInWithIdToken({
-              provider: 'google',
-              token: response.credential,
-              nonce,
-            })
-            if (error) throw error
-            router.push('/')
-          } catch (error) {
-            console.error('Error logging in with Google One Tap', error)
-          }
-        },
-        nonce: hashedNonce,
-        use_fedcm_for_prompt: true,
-      })
-      window.google.accounts.id.prompt()
+      try {
+        const [nonce, hashedNonce] = await generateNonce()
+        
+        // Double-check we're still mounted after async operation
+        if (!mountedRef.current || cancelled) return
+
+        window.google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+          callback: async (response: CredentialResponse) => {
+            await handleGoogleSignIn(response.credential, nonce)
+          },
+          nonce: hashedNonce,
+          // Disable FedCM to avoid the NetworkError
+          use_fedcm_for_prompt: false,
+        })
+
+        initializedRef.current = true
+        
+        // Try to prompt, but handle failure gracefully
+        if (mountedRef.current && !cancelled) {
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              console.log('One Tap not available, showing fallback button')
+              initializeFallbackButton()
+            }
+          })
+        }
+      } catch (error) {
+        console.error('Error initializing Google One Tap', error)
+        // Show fallback button on any error
+        initializeFallbackButton()
+      }
     }
 
     // Wait for the Google script to be loaded
     if (window.google?.accounts?.id) {
-      run()
+      initializeGoogleOneTap()
     } else {
       const interval = setInterval(() => {
         if (window.google?.accounts?.id) {
           clearInterval(interval)
-          if (!cancelled) run()
+          if (!cancelled && mountedRef.current) {
+            initializeGoogleOneTap()
+          }
         }
       }, 100)
+      
       return () => {
         cancelled = true
         clearInterval(interval)
       }
     }
-  }, [router, supabase.auth])
+
+    return () => {
+      cancelled = true
+    }
+  }, []) // Remove dependencies to prevent re-initialization
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false
+      // Cancel any pending Google One Tap prompts
+      if (window.google?.accounts?.id?.cancel) {
+        try {
+          window.google.accounts.id.cancel()
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+    }
+  }, [])
 
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
       <div id="oneTap" className="fixed top-0 right-0 z-[100]" />
+      {/* Fallback button when One Tap fails */}
+      <div ref={fallbackButtonRef} className="flex justify-center mt-4" />
     </>
   )
 })

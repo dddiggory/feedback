@@ -96,6 +96,8 @@ export function FeedbackPageLogFeedbackDialog({
           external_links: links,
           open_opp_arr: selectedOpportunity?.NEW_AND_EXPANSION_ANNUAL_RECURRING_REVENUE ?? null,
           current_arr: selectedAccount?.ANNUAL_RECURRING_REVENUE ?? null,
+          sfdc_account: selectedAccount?.ACCOUNT_LINK ?? null,
+          company_website: selectedAccount?.WEBSITE ?? null,
           created_by_user_id: user?.id
         })
 
