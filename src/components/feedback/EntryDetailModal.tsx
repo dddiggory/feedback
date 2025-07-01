@@ -167,22 +167,47 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             {logoUrl ? (
-              <div className="flex-shrink-0 w-8 h-8 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
-                <Image
-                  src={logoUrl}
-                  alt={`${entry.account_name} logo`}
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                  unoptimized
-                />
-              </div>
+              cleanWebsite ? (
+                <Link href={`/accounts/${cleanWebsite}`}>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors cursor-pointer">
+                    <Image
+                      src={logoUrl}
+                      alt={`${entry.account_name} logo`}
+                      width={32}
+                      height={32}
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                </Link>
+              ) : (
+                <div className="flex-shrink-0 w-8 h-8 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center border border-black">
+                  <Image
+                    src={logoUrl}
+                    alt={`${entry.account_name} logo`}
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                    unoptimized
+                  />
+                </div>
+              )
             ) : (
-              <div className="flex-shrink-0 w-8 h-8 rounded-md bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500 text-xs font-medium">
-                  {entry.account_name.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              cleanWebsite ? (
+                <Link href={`/accounts/${cleanWebsite}`}>
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-gray-200 flex items-center justify-center border border-black hover:bg-gray-300 transition-colors cursor-pointer">
+                    <span className="text-gray-500 text-xs font-medium">
+                      {entry.account_name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                </Link>
+              ) : (
+                <div className="flex-shrink-0 w-8 h-8 rounded-md bg-gray-200 flex items-center justify-center border border-black">
+                  <span className="text-gray-500 text-xs font-medium">
+                    {entry.account_name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )
             )}
             <div>
               <Label className="text-sm text-gray-500">Customer / Account</Label>
@@ -360,15 +385,15 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         <div className="max-w-4xl mx-auto bg-stone-100 rounded-xl p-8">
           <div className="mb-6">
             <div className="text-xs text-gray-500 mb-2">Customer Feedback Entry</div>
-            <h1 className="text-2xl text-blue-800 font-bold mb-4">
+            <h1 className="text-2xl text-sky-800 font-bold mb-4">
               <Link 
                 href={`/feedback/${feedbackItem.slug}`}
-                className="hover:text-blue-600 underline hover:underline"
+                className="hover:text-sky-900 underline hover:underline"
               >
                 {feedbackItem.title}
               </Link>
             </h1>
-            <div className="outline-dotted rounded-sm p-1 text-sm text-gray-600 max-h-[100px] overflow-y-scroll">
+            <div className="outline-dotted rounded-sm p-1 text-sm text-black max-h-[100px] overflow-y-scroll">
               {feedbackItem.description}
             </div>
           </div>

@@ -115,7 +115,7 @@ export default async function DashboardPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 max-w-[18rem] xl:max-w-[28rem] 2xl:max-w-[36rem] hidden xl:table-cell align-top">
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-center gap-2">
                           <span
                             className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1"
                             title={entry.entry_description}
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
                               : entry.entry_description}
                           </span>
                           {entry.entry_key && entry.feedback_item_slug && (
-                            <div className="flex-shrink-0 mt-0.5">
+                            <div className="flex-shrink-0">
                               <EntryViewButton 
                                 feedbackItemSlug={entry.feedback_item_slug}
                                 entryKey={entry.entry_key}

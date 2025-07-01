@@ -216,7 +216,7 @@ function AccountsData() {
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
                       {logoUrl ? (
-                        <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <div className="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center shadow hover:shadow-md active:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95">
                           <Image
                             src={logoUrl}
                             alt={`${account.name} logo`}
@@ -229,13 +229,13 @@ function AccountsData() {
                               const target = e.target as HTMLElement;
                               const container = target.closest('div');
                               if (container) {
-                                container.innerHTML = `<div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center"><span class="text-gray-500 text-lg font-medium">${account.name.charAt(0).toUpperCase()}</span></div>`;
+                                container.innerHTML = `<div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center shadow hover:shadow-md active:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"><span class="text-gray-500 text-lg font-medium">${account.name.charAt(0).toUpperCase()}</span></div>`;
                               }
                             }}
                           />
                         </div>
                       ) : (
-                        <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                        <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center shadow hover:shadow-md active:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95">
                           <span className="text-gray-500 text-lg font-medium">
                             {account.name.charAt(0).toUpperCase()}
                           </span>
