@@ -56,6 +56,12 @@ export default async function DashboardPage() {
   return (
     <Layout>
       <div className="mx-auto max-w-[80vw]">
+        <div className="text-white text-center text-md cursor-pointer hover:underline">
+          <Link href="/about">
+            Readme: What is this? What is it for? What is it NOT for?
+          </Link>
+        </div>
+        
         {/* Search Box */}
         <div className="mt-8 mb-6">
           <div className="animated-gradient-bg">
