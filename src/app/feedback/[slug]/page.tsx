@@ -6,6 +6,7 @@ import { Layout } from '@/components/layout/Layout'
 
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import { Comments } from '@/components/feedback/Comments'
+import { getComments, type Comment } from '@/lib/actions/comments'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -90,6 +91,12 @@ export default async function FeedbackItemPage({
     .select('*')
     .eq('feedback_item_id', feedbackItem.id)
     .order('created_at', { ascending: false })
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Fetch comments for this feedback item
+  const comments = await getComments(feedbackItem.id)
 
   // Fetch top 6 submitters by count for this feedback item
   const { data: topSubmitters } = await supabase
@@ -228,18 +235,18 @@ export default async function FeedbackItemPage({
 
           {/* Row 3: Comments */}
           <div className="pr-4 h-full max-h-[200px]">
-            <Comments feedbackItemId={feedbackItem.id} />
+            <Comments feedbackItemId={feedbackItem.id} initialComments={comments} currentUserId={user?.id} />
           </div>
           
           {/* Row 3: Top Advocates */}
           {topSubmitters && topSubmitters.length > 0 && (
             <div className="p-4 bg-slate-50/90 rounded-lg border-l-4 border-teal-400 min-w-[30vh] w-fit max-w-[30vh] h-full max-h-[200px] flex flex-col">
               <h4 className="text-slate-800 font-semibold text-sm mb-3">Top Vercelian Advocates:</h4>
-              <div className="flex flex-wrap gap-2 flex-1 overflow-y-auto">
+              <div className="flex flex-wrap gap-x-1 gap-y-1 overflow-y-auto items-start">
                 {topSubmitters.map((submitter, index) => (
                   <div
                     key={`${submitter.submitter_name}-${index}`}
-                    className="flex items-center gap-1 px-2 py-1 bg-white rounded-full border border-gray-200 shadow-sm"
+                    className="flex items-center gap-1 px-2 py-1 bg-white rounded-full border border-gray-200 shadow-sm h-7 leading-none"
                   >
                     {submitter.submitter_avatar ? (
                       <img 
