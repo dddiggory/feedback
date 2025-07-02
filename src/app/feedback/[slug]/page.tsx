@@ -5,6 +5,7 @@ import { Layout } from '@/components/layout/Layout'
 // import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
 
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
+import { Comments } from '@/components/feedback/Comments'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -143,114 +144,123 @@ export default async function FeedbackItemPage({
         </div>
       )}
 
+
       <div className="container mx-auto pb-8 pt-1">
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap gap-2 h-[2.5rem] overflow-hidden">
-              {feedbackItem.product_area_names?.map((area: string, index: number) => (
-                <Link
-                  key={area}
-                  href={`/areas/${feedbackItem.product_area_slugs?.[index]}`}
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity h-[2.5rem]`}
-                >
-                  {area}
-                </Link>
-              ))}
-            </div>
-            
-            <h1 className={`font-bold text-slate-100 text-shadow-lg max-w-[70vw] pr-2 ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
-            <div>
-              <p className="text-slate-950 min-h-[150px] max-h-[150px] overflow-y-scroll mr-12 p-4 wrap-normal bg-slate-100/80 rounded-lg">{feedbackItem.description}</p>
-              
-              {/* Top Submitters Section */}
-              {topSubmitters && topSubmitters.length > 0 && (
-                <div className="mt-4 mr-12 p-4 bg-slate-50/90 rounded-lg border-l-4 border-teal-400">
-                  <h4 className="text-slate-800 font-semibold text-sm mb-3">Top Vercelian Advocates:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {topSubmitters.map((submitter, index) => (
-                      <div
-                        key={`${submitter.submitter_name}-${index}`}
-                        className="flex items-center gap-2 px-3 py-2 bg-white rounded-full border border-gray-200 shadow-sm"
-                      >
-                        {submitter.submitter_avatar ? (
-                          <img 
-                            src={submitter.submitter_avatar} 
-                            alt={`${submitter.submitter_name}'s avatar`}
-                            className="w-6 h-6 rounded-full"
-                          />
-                        ) : (
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
-                            {getInitials(submitter.submitter_name)}
-                          </div>
-                        )}
-                        <span className="text-sm text-gray-700">{submitter.submitter_name}</span>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                          {submitter.entry_count}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+        {/* Grid Layout - 3 explicit rows */}
+        <div className="grid grid-cols-[1fr_auto] gap-x-1 gap-y-4 mb-3">
+          {/* Row 1: Product Areas */}
+          <div className="flex flex-wrap gap-2 h-[2.5rem] overflow-hidden">
+            {feedbackItem.product_area_names?.map((area: string, index: number) => (
+              <Link
+                key={area}
+                href={`/areas/${feedbackItem.product_area_slugs?.[index]}`}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRandomGradient()} text-gray-800 hover:opacity-80 transition-opacity h-[2.5rem]`}
+              >
+                {area}
+              </Link>
+            ))}
           </div>
-          <div className="flex flex-col gap-y-3 min-w-[30vh] w-fit">
-            <div>
-              <FeedbackPageLogFeedbackDialog
-                feedbackItemTitle={feedbackItem.title}
-                feedbackItemDescription={feedbackItem.description}
-                feedbackItemId={feedbackItem.id}
-                trigger={
-                  <button
-                    autoFocus
-                    type="button"
-                    className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:ring-4 focus-visible:ring-teal-400 focus-visible:ring-offset-4 focus-visible:outline-offset-2 focus-visible:shadow-lg focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer h-[3.5rem] whitespace-nowrap min-w-[30vh] w-fit"
-                  >
-                    <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                    </svg>
-                    Add Customer +1
-                  </button>
-                }
-              />
-            </div>
-            <div className="">
-              <div className="grid grid-cols-1 gap-y-2 py-5 rounded-md bg-teal-200/50 text-slate-800 min-w-[30vh] w-fit">
-                <div className="text-left col-span-1 ml-4">
-                  <div className="text-3xl font-bold">{feedbackItem.entry_count || 0}</div>
-                  <div>Customer Requests</div>
+          
+          {/* Row 1: Add Customer Button */}
+          <div className="min-w-[30vh] w-fit">
+            <FeedbackPageLogFeedbackDialog
+              feedbackItemTitle={feedbackItem.title}
+              feedbackItemDescription={feedbackItem.description}
+              feedbackItemId={feedbackItem.id}
+              trigger={
+                <button
+                  autoFocus
+                  type="button"
+                  className="inline-flex items-center gap-x-2.5 rounded-xl bg-gradient-to-r from-teal-200 to-teal-500 px-6 py-3.5 text-lg font-semibold text-slate-800 shadow-[0_4px_24px_0_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.16)] focus-visible:ring-4 focus-visible:ring-teal-400 focus-visible:ring-offset-4 focus-visible:outline-offset-2 focus-visible:shadow-lg focus-visible:outline-black transition-all duration-200 hover:scale-[1.03] cursor-pointer h-[3.5rem] whitespace-nowrap min-w-[30vh] w-fit"
+                >
+                  <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                  </svg>
+                  Add Customer +1
+                </button>
+              }
+            />
+          </div>
+
+          {/* Row 2: Title + Description */}
+          <div className="flex flex-col gap-4 pr-4 h-full">
+            <h1 className={`font-bold text-slate-100 text-shadow-lg ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
+            <p className="text-slate-950 overflow-y-auto p-4 wrap-normal bg-slate-100/80 rounded-lg flex-1">{feedbackItem.description}</p>
+          </div>
+          
+          {/* Row 2: Metrics */}
+          <div className="min-w-[30vh] w-fit">
+            <div className="grid grid-cols-1 gap-y-2 py-5 rounded-md bg-teal-200/50 text-slate-800 min-w-[30vh] w-fit h-full">
+              <div className="text-left col-span-1 ml-4">
+                <div className="text-3xl font-bold">{feedbackItem.entry_count || 0}</div>
+                <div>Customer Requests</div>
+              </div>
+              <div className="text-left col-span-1 ml-4">
+                <div className="text-3xl font-bold">
+                  {(() => {
+                    const value = feedbackItem.current_arr_sum || 0;
+                    if (value >= 1000000) {
+                      return `$${(value / 1000000).toFixed(2)}M`;
+                    } else if (value >= 1000) {
+                      return `$${Math.floor(value / 1000)}k`;
+                    }
+                    return `$${value}`;
+                  })()}
                 </div>
-                <div className="text-left col-span-1 ml-4">
-                  <div className="text-3xl font-bold">
-                    {(() => {
-                      const value = feedbackItem.current_arr_sum || 0;
-                      if (value >= 1000000) {
-                        return `$${(value / 1000000).toFixed(2)}M`;
-                      } else if (value >= 1000) {
-                        return `$${Math.floor(value / 1000)}k`;
-                      }
-                      return `$${value}`;
-                    })()}
-                  </div>
-                  <div>Current Customer Demand</div>
+                <div>Current Customer Demand</div>
+              </div>
+              <div className="text-left col-span-1 ml-4">
+                <div className="text-3xl font-bold">
+                  {(() => {
+                    const value = feedbackItem.open_opp_arr_sum || 0;
+                    if (value >= 1000000) {
+                      return `$${(value / 1000000).toFixed(2)}M`;
+                    } else if (value >= 1000) {
+                      return `$${Math.floor(value / 1000)}k`;
+                    }
+                    return `$${value}`;
+                  })()}
                 </div>
-                <div className="text-left col-span-1 ml-4">
-                  <div className="text-3xl font-bold">
-                    {(() => {
-                      const value = feedbackItem.open_opp_arr_sum || 0;
-                      if (value >= 1000000) {
-                        return `$${(value / 1000000).toFixed(2)}M`;
-                      } else if (value >= 1000) {
-                        return `$${Math.floor(value / 1000)}k`;
-                      }
-                      return `$${value}`;
-                    })()}
-                  </div>
-                  <div>Open Opportunity Impact</div>
-                </div>
+                <div>Open Opportunity Impact</div>
               </div>
             </div>
           </div>
+
+          {/* Row 3: Comments */}
+          <div className="pr-4 h-full max-h-[200px]">
+            <Comments feedbackItemId={feedbackItem.id} />
+          </div>
+          
+          {/* Row 3: Top Advocates */}
+          {topSubmitters && topSubmitters.length > 0 && (
+            <div className="p-4 bg-slate-50/90 rounded-lg border-l-4 border-teal-400 min-w-[30vh] w-fit max-w-[30vh] h-full max-h-[200px] flex flex-col">
+              <h4 className="text-slate-800 font-semibold text-sm mb-3">Top Vercelian Advocates:</h4>
+              <div className="flex flex-wrap gap-2 flex-1 overflow-y-auto">
+                {topSubmitters.map((submitter, index) => (
+                  <div
+                    key={`${submitter.submitter_name}-${index}`}
+                    className="flex items-center gap-1 px-2 py-1 bg-white rounded-full border border-gray-200 shadow-sm"
+                  >
+                    {submitter.submitter_avatar ? (
+                      <img 
+                        src={submitter.submitter_avatar} 
+                        alt={`${submitter.submitter_name}'s avatar`}
+                        className="w-4 h-4 rounded-full"
+                      />
+                    ) : (
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                        {getInitials(submitter.submitter_name)}
+                      </div>
+                    )}
+                    <span className="text-xs text-gray-700">{submitter.submitter_name}</span>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-1 py-0.5 rounded-full">
+                      {submitter.entry_count}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="pt-2 prose">
