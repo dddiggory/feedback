@@ -251,7 +251,7 @@ export default async function FeedbackItemPage({
                     {submitter.submitter_avatar ? (
                       <img 
                         src={submitter.submitter_avatar} 
-                        alt={`${submitter.submitter_name}'s avatar`}
+                        alt={`${submitter.submitter_name}&apos;s avatar`}
                         className="w-4 h-4 rounded-full"
                       />
                     ) : (

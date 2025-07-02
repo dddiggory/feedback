@@ -13,8 +13,7 @@ export function Comments({ feedbackItemId, initialComments = [], currentUserId }
   const [comment, setComment] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const submitComment = async () => {
     if (!comment.trim() || isPending) return
 
     startTransition(async () => {
@@ -26,6 +25,11 @@ export function Comments({ feedbackItemId, initialComments = [], currentUserId }
         console.error('Failed to create comment:', result.error)
       }
     })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await submitComment()
   }
 
   const handleDelete = async (commentId: string) => {
@@ -45,7 +49,7 @@ export function Comments({ feedbackItemId, initialComments = [], currentUserId }
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault()
       if (comment.trim() && !isPending) {
-        handleSubmit(e as any)
+        submitComment()
       }
     }
   }
