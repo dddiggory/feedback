@@ -91,12 +91,12 @@ export default function NewFeedbackPage() {
           </p>
 
           <p className="mt-5 p-4 bg-yellow-50 rounded-md text-sm">
-            <span className="font-bold">Please note!</span> This is the creation of a general 'container' or description of the request. You can add a customer-specific "entry" on the next step.
+            <span className="font-bold">Please note!</span> This is the creation of a general &lsquo;container&rsquo; or description of the request. You can add a customer-specific &ldquo;entry&rdquo; on the next step.
             <br />
             <br />
-            ✅ "Productized Bot Protection"
+            ✅ &ldquo;Productized Bot Protection&rdquo;
             <br />
-            ❌ "DoorDash needs Bot Protection" (You'll do this on the next step)
+            ❌ &ldquo;DoorDash needs Bot Protection&rdquo; (You&apos;ll do this on the next step)
           </p>
         </div>
 
