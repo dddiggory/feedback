@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { Layout } from '@/components/layout/Layout';
+import { FeedbackItemsTable } from '@/components/areas/FeedbackItemsTable';
 import Link from 'next/link';
 import { FolderIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
@@ -63,11 +64,6 @@ export default async function AreaPage({
     sum + (item.entry_count || 0), 0
   );
 
-  const feedbackByStatus = areaFeedbackItems.reduce((acc: Record<string, number>, item: FeedbackItem) => {
-    acc[item.status] = (acc[item.status] || 0) + 1;
-    return acc;
-  }, {});
-
   return (
     <Layout>
       <div className="space-y-8">
@@ -78,8 +74,8 @@ export default async function AreaPage({
               <FolderIcon className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{productArea.name}</h1>
-              <p className="mt-1 text-gray-600">
+              <h1 className="text-3xl font-bold text-white">{productArea.name}</h1>
+              <p className="mt-1 text-white">
                 {areaFeedbackItems.length} feedback items
               </p>
             </div>
@@ -95,7 +91,7 @@ export default async function AreaPage({
         {/* Description */}
         {productArea.description && (
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-2">Description</h2>
+            {/* <h2 className="text-lg font-medium text-gray-900 mb-2">Description</h2> */}
             <p className="text-gray-600">{productArea.description}</p>
           </div>
         )}
@@ -191,98 +187,11 @@ export default async function AreaPage({
           </div>
         </div>
 
-        {/* Feedback by Status */}
-        {Object.keys(feedbackByStatus).length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Feedback by Status</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {Object.entries(feedbackByStatus).map(([status, count]) => (
-                <div key={status} className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{count}</div>
-                  <div className="text-sm text-gray-500 capitalize">{status}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Feedback Items */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-6">Feedback Items</h2>
-            {areaFeedbackItems.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-300">
-                  <thead>
-                    <tr>
-                      <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
-                        Title
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Description
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Status
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Entries
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Revenue Impact
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Created
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {areaFeedbackItems.map((item: FeedbackItem) => (
-                      <tr key={item.id} className="hover:bg-gray-50">
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                          <Link
-                            href={`/feedback/${item.slug}`}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            {item.title}
-                          </Link>
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
-                          <div className="max-w-xs truncate">
-                            {item.description}
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {item.entry_count}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            maximumFractionDigits: 0
-                          }).format((item.current_arr_sum || 0) + (item.open_opp_arr_sum || 0))}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {new Date(item.created_at).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <ChartBarIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No feedback items</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  This product area doesn&apos;t have any feedback items yet.
-                </p>
-              </div>
-            )}
+            <FeedbackItemsTable data={areaFeedbackItems} />
           </div>
         </div>
       </div>

@@ -148,6 +148,9 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         console.error('Error deleting entry:', error)
         alert('Failed to delete entry. Please try again.')
       } else {
+        // Refresh the page to show the updated feedback list
+        router.refresh()
+        
         // Navigate back after successful deletion
         if (isIntercepted) {
           router.back()
