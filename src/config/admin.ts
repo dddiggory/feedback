@@ -17,7 +17,7 @@ const ADMIN_EMAILS = [
  */
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase() as any);
+  return (ADMIN_EMAILS as readonly string[]).includes(email.toLowerCase());
 }
 
 /**

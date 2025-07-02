@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { isAdminUser } from '@/config/admin'
 
 export interface Comment {
   id: string
@@ -10,6 +11,7 @@ export interface Comment {
   body: string
   created_at: string
   updated_at: string
+  pinned: string | null
   commenter_name: string | null
   commenter_avatar: string | null
   commenter_email: string | null
@@ -104,6 +106,97 @@ export async function deleteComment(
   }
 }
 
+export async function pinComment(
+  commentId: string,
+  feedbackItemId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient()
+    
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return { success: false, error: 'Authentication required' }
+    }
+
+    // Check if user is admin
+    if (!isAdminUser(user)) {
+      return { success: false, error: 'Admin permissions required' }
+    }
+    
+    // First, unpin any existing pinned comment for this feedback item
+    const { error: unpinError } = await supabase
+      .from('comments')
+      .update({ pinned: null })
+      .eq('feedback_item_id', feedbackItemId)
+      .not('pinned', 'is', null)
+
+    if (unpinError) {
+      console.error('Error unpinning existing comment:', unpinError)
+      return { success: false, error: 'Failed to unpin existing comment' }
+    }
+
+    // Pin the selected comment
+    const { error: pinError } = await supabase
+      .from('comments')
+      .update({ pinned: new Date().toISOString() })
+      .eq('id', commentId)
+
+    if (pinError) {
+      console.error('Error pinning comment:', pinError)
+      return { success: false, error: 'Failed to pin comment' }
+    }
+
+    // Revalidate the page to show the updated comments
+    revalidatePath('/feedback/[slug]', 'page')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Error in pinComment:', error)
+    return { success: false, error: 'An unexpected error occurred' }
+  }
+}
+
+export async function unpinComment(
+  commentId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient()
+    
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return { success: false, error: 'Authentication required' }
+    }
+
+    // Check if user is admin
+    if (!isAdminUser(user)) {
+      return { success: false, error: 'Admin permissions required' }
+    }
+    
+    // Unpin the comment
+    const { error: unpinError } = await supabase
+      .from('comments')
+      .update({ pinned: null })
+      .eq('id', commentId)
+
+    if (unpinError) {
+      console.error('Error unpinning comment:', unpinError)
+      return { success: false, error: 'Failed to unpin comment' }
+    }
+
+    // Revalidate the page to show the updated comments
+    revalidatePath('/feedback/[slug]', 'page')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Error in unpinComment:', error)
+    return { success: false, error: 'An unexpected error occurred' }
+  }
+}
+
 export async function getComments(feedbackItemId: string): Promise<Comment[]> {
   try {
     const supabase = await createClient()
@@ -112,6 +205,7 @@ export async function getComments(feedbackItemId: string): Promise<Comment[]> {
       .from('comments')
       .select('*')
       .eq('feedback_item_id', feedbackItemId)
+      .order('pinned', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
 
     if (error) {
