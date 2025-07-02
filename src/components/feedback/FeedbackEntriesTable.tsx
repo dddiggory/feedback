@@ -14,10 +14,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal, Eye } from "lucide-react";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { useUser } from "@/components/layout/UserContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -84,6 +86,7 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
   const [rowSelection, setRowSelection] = React.useState({});
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useUser();
 
   const handleViewEntry = (entryKey: string) => {
     router.push(`${pathname}/entries/${entryKey}`);
@@ -180,6 +183,14 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
       cell: ({ row }) => {
         const description = row.getValue("entry_description") as string;
         const entryKey = row.original.entry_key;
+        const entry = row.original;
+        
+        // Check if current user is the submitter
+        const isCurrentUserSubmitter = user && (
+          (entry.created_by_user_id && entry.created_by_user_id === user.id) ||
+          (entry.submitter_email && entry.submitter_email === user.email)
+        );
+        
         return (
           <div className="flex items-center gap-2 max-w-[300px]">
             <div 
@@ -196,7 +207,11 @@ export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntries
                 className="cursor-pointer h-6 w-6 p-0 flex-shrink-0 hover:bg-sky-100 outline-slate-300 outline"
                 onClick={() => handleViewEntry(entryKey)}
               >
-                <Eye className="h-4 w-4 text-gray-500" />
+                {isCurrentUserSubmitter ? (
+                  <PencilSquareIcon className="h-4 w-4 text-gray-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-500" />
+                )}
               </Button>
             )}
           </div>

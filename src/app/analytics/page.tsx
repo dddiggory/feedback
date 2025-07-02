@@ -45,7 +45,7 @@ export default async function AnalyticsPage() {
         <div>
           <h1 className="text-3xl font-bold text-white">Analytics & Reporting</h1>
           <p className="mt-2 text-white">
-            High-level reporting on feedback items, measurable by raw count or revenue, and 
+            High-level reporting on feedback items, measurable by raw count or revenue. Try filtering by Product Area or grouping by New vs. Existing.<br />What other reports would you like to see, and why? Do you want SQL querying? Come ask in <Link href="https://vercel.slack.com/archives/C094FVBAVLH" target="_blank" className="text-green-400 font-bold hover:underline">#project-gtmfeedback-app</Link> on Slack.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export default async function AnalyticsPage() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hidden grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
@@ -78,7 +78,7 @@ export default async function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="hidden overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -102,7 +102,7 @@ export default async function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="hidden overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -122,7 +122,7 @@ export default async function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="hidden overflow-hidden rounded-lg bg-white shadow">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -144,7 +144,7 @@ export default async function AnalyticsPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="hidden grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Feedback by Status */}
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="p-6">
@@ -192,72 +192,7 @@ export default async function AnalyticsPage() {
             </div>
           </div>
         </div>
-
-        {/* Recent Activity */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Recent Feedback Items
-            </h3>
-            <div className="flow-root">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-300">
-                  <thead>
-                    <tr>
-                      <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
-                        Title
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Status
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Entries
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Revenue Impact
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Created
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {feedbackItems?.slice(0, 10).map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50">
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                          <Link
-                            href={`/feedback/${item.slug}`}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
-                          >
-                            {item.title}
-                          </Link>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {item.entry_count}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            maximumFractionDigits: 0
-                          }).format((item.current_arr_sum || 0) + (item.open_opp_arr_sum || 0))}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {new Date(item.created_at).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </Layout>
   );

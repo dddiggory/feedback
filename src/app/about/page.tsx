@@ -7,7 +7,7 @@ export default function AboutPage() {
       <div className="space-y-6 text-white mx-auto max-w-[75vw]">
         <div className="border-b pb-4">
           <h1 className="text-5xl font-semibold pb-5">About ▲Vercel/Feedback</h1>
-          <h3>Questions? Please visit <Link href="https://vercel.slack.com/archives/C094FVBAVLH" className="text-green-400 font-bold hover:underline">#project-gtmfeedback-app</Link> on Slack.</h3>
+          <h3>Questions? Please visit <Link href="https://vercel.slack.com/archives/C094FVBAVLH" target="_blank" className="text-green-400 font-bold hover:underline">#project-gtmfeedback-app</Link> on Slack.</h3>
         </div>
         
         <div className="prose prose-neutral dark:prose-invert bg-white text-black p-4 rounded-lg min-w-72 max-w-300">

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { isAdminUser } from '@/config/admin';
 
 interface User {
   id: string;
@@ -12,6 +13,7 @@ interface User {
 interface UserContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isAdmin: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -19,6 +21,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
+  
+  // Compute admin status based on current user
+  const isAdmin = isAdminUser(user);
 
   useEffect(() => {
     const getUser = async () => {
@@ -37,7 +42,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [supabase.auth]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isAdmin }}>
       {children}
     </UserContext.Provider>
   );

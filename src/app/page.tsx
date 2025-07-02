@@ -79,7 +79,7 @@ export default async function DashboardPage() {
           <div className="">
             <div className="bg-white shadow-sm rounded-lg overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <h2 className="text-2xl font-medium text-gray-800">Recent Feedback Entries</h2>
+                <h2 className="text-2xl font-medium text-gray-800">Activity Feed / Recent Feedback Logged</h2>
               </div>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 hidden">

@@ -67,7 +67,7 @@ export function Comments({ feedbackItemId, initialComments = [], currentUserId }
 
   return (
     <div className="pt-4 px-4 pb-1 bg-slate-50/90 rounded-lg border-l-4 border-blue-400 h-full flex flex-col">
-      <h4 className="text-slate-800 font-semibold text-sm mb-2">Commentary</h4>
+      {/* <h4 className="text-slate-800 font-semibold text-sm mb-2">Commentary</h4> */}
       
       <div className="flex-1 flex flex-col justify-between min-h-0">
         {/* Comments List */}

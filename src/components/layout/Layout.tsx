@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useUser } from './UserContext';
+import { AdminBadge } from '@/components/ui/admin-badge';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ interface LayoutProps {
 const navigation = [
   { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Browse', href: '/browse/all', icon: ChartBarIcon },
+  { name: 'Browse All', href: '/browse/all', icon: ChartBarIcon },
   { name: 'Product Areas', href: '/areas', icon: TableCellsIcon },
   { name: 'Accounts', href: '/accounts', icon: TableCellsIcon },
 ];
@@ -84,6 +85,7 @@ export function Layout({ children }: LayoutProps) {
                 </nav>
               </div>
               <div className="flex items-center gap-4">
+                <AdminBadge />
                 {user && avatarUrl && (
                   <div className="relative" ref={menuRef}>
                     <button

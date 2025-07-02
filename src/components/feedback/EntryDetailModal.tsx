@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
-import { Edit, Save, X } from "lucide-react"
+import { Edit, Save, X, Trash } from "lucide-react"
 import { useUser } from "@/components/layout/UserContext"
 import { createClient } from "@/lib/supabase/client"
 
@@ -126,6 +126,39 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   const handleCancel = () => {
     setEditedDescription(entry.entry_description)
     setIsEditing(false)
+  }
+
+  // Handle delete entry
+  const handleDelete = async () => {
+    if (!isOwner) return
+    
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this feedback entry? This action cannot be undone."
+    )
+    
+    if (!confirmed) return
+    
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .delete()
+        .eq('id', entry.id)
+
+      if (error) {
+        console.error('Error deleting entry:', error)
+        alert('Failed to delete entry. Please try again.')
+      } else {
+        // Navigate back after successful deletion
+        if (isIntercepted) {
+          router.back()
+        } else {
+          router.push(`/feedback/${feedbackItem.slug}`)
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting entry:', error)
+      alert('Failed to delete entry. Please try again.')
+    }
   }
 
   // Clean up the website URL for logo display
@@ -287,23 +320,43 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
                 </Button>
               </>
             ) : (
-              <div className="relative group">
-                <Button
-                  onClick={handleEditToggle}
-                  variant="outline"
-                  size="sm"
-                  disabled={!isOwner}
-                  className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-sky-200'}
-                >
-                                   <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-                {!isOwner && (
-                  <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
-                    Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can edit this feedback entry. Reach out to Field Engineering for exceptions.
-                    <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                  </div>
-                )}
+              <div className="flex items-center gap-2">
+                <div className="relative group">
+                  <Button
+                    onClick={handleEditToggle}
+                    variant="outline"
+                    size="sm"
+                    disabled={!isOwner}
+                    className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-sky-200'}
+                  >
+                    <Edit className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  {!isOwner && (
+                    <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can edit this feedback entry. Reach out to Field Engineering for exceptions.
+                      <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                    </div>
+                  )}
+                </div>
+                <div className="relative group">
+                  <Button
+                    onClick={handleDelete}
+                    variant="outline"
+                    size="sm"
+                    disabled={!isOwner}
+                    className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-red-200 text-red-600 border-red-300'}
+                  >
+                    <Trash className="w-4 h-4 mr-1" />
+                    Delete Entry
+                  </Button>
+                  {!isOwner && (
+                    <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can delete this feedback entry. Reach out to Field Engineering for exceptions.
+                      <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
