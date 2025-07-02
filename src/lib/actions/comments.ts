@@ -36,6 +36,12 @@ export async function createComment(
       .eq('id', user.id)
       .single()
 
+    // Get avatar from user_metadata (Google OAuth) or profile table
+    const avatarUrl = user.user_metadata?.avatar_url || 
+                     user.user_metadata?.picture || 
+                     profile?.avatar_url || 
+                     null
+
     // Insert comment
     const { error: insertError } = await supabase
       .from('comments')
@@ -43,8 +49,8 @@ export async function createComment(
         feedback_item_id: feedbackItemId,
         created_by_user_id: user.id,
         body: body.trim(),
-        commenter_name: profile?.full_name || user.email?.split('@')[0] || 'Anonymous',
-        commenter_avatar: profile?.avatar_url || null,
+        commenter_name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Anonymous',
+        commenter_avatar: avatarUrl,
         commenter_email: user.email
       })
 
