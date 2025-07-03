@@ -164,9 +164,13 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
   const pathname = usePathname();
   const { user } = useUser();
 
-  const handleViewEntry = (entryKey: string) => {
-    // Navigate to the entry detail - you may need to adjust this path
-    router.push(`/feedback/entries/${entryKey}`);
+  const handleViewEntry = (entryKey: string, feedbackItemSlug?: string) => {
+    if (feedbackItemSlug) {
+      router.push(`/feedback/${feedbackItemSlug}/entries/${entryKey}`);
+    } else {
+      // Fallback if no feedback item slug is available
+      router.push(`/feedback/entries/${entryKey}`);
+    }
   };
 
   // Function to generate random gradient for product area pills
@@ -234,6 +238,7 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
       cell: ({ row }) => {
         const description = row.getValue("entry_description") as string;
         const entryKey = row.original.entry_key;
+        const feedbackItemSlug = row.original.feedback_item_slug;
         const entry = row.original;
         
         const isCurrentUserSubmitter = user && (
@@ -246,7 +251,7 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
             <div 
               className="text-sm flex-1 cursor-pointer hover:text-gray-700 hover:underline" 
               title={description}
-              onClick={entryKey ? () => handleViewEntry(entryKey) : undefined}
+              onClick={entryKey ? () => handleViewEntry(entryKey, feedbackItemSlug) : undefined}
               style={{
                 display: '-webkit-box',
                 WebkitLineClamp: 4,
@@ -264,7 +269,7 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
                 variant="ghost"
                 size="sm"
                 className="cursor-pointer h-6 w-6 p-0 flex-shrink-0 hover:bg-sky-100 outline-slate-300 outline mt-0.5"
-                onClick={() => handleViewEntry(entryKey)}
+                onClick={() => handleViewEntry(entryKey, feedbackItemSlug)}
               >
                 {isCurrentUserSubmitter ? (
                   <PencilSquareIcon className="h-4 w-4 text-gray-500" />
