@@ -154,6 +154,7 @@ export function FeedbackSearchBox() {
       const { data, error } = await supabase
         .from('feedback_items_with_data')
         .select('id, title, description, slug')
+        .order('updated_at', { ascending: false })
 
       if (error) {
         console.error('Error fetching feedback items:', error)
