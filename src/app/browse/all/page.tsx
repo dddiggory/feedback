@@ -22,6 +22,9 @@ export default async function BrowseAllPage() {
     <Layout>
       <div className="container mx-auto py-8 text-white">
         <h1 className="text-3xl font-bold mb-6">All Feedback Items</h1>
+        <p className="bg-orange-300 p-4 rounded-md text-black">
+          This page was a quick placeholder and is being reworked before launch. Feel free to share ideas in the meantime but generally this will be a big, simple table that allows searching across both Feedback Items and customer-specific entries.
+        </p>
         <p className="mb-8">
           This is just a list of every current feedback item on a single page, for easy browsing for cmd+F enjoyers. You can click on any item to view its full details.
         </p>
