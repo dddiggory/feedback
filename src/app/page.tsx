@@ -244,12 +244,20 @@ export default async function DashboardPage() {
                       </td>
                       <td className="pl-1 pr-5 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          {entry.submitter_avatar && (
+                          {entry.submitter_avatar ? (
                             <img 
                               src={entry.submitter_avatar} 
                               alt={`${entry.submitter_name}'s avatar`}
                               className="w-6 h-6 rounded-full mr-2"
                             />
+                          ) : entry.submitter_name ? (
+                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                              {getInitials(entry.submitter_name)}
+                            </div>
+                          ) : (
+                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                              ?
+                            </div>
                           )}
                           <div className="flex flex-col">
                             <span className="text-xs text-gray-900">{entry.submitter_name}</span>
