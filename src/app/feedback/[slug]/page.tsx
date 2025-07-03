@@ -7,6 +7,7 @@ import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import { Comments } from '@/components/feedback/Comments'
 import { getComments, type Comment } from '@/lib/actions/comments'
+import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -190,10 +191,14 @@ export default async function FeedbackItemPage({
           </div>
 
           {/* Row 2: Title + Description */}
-          <div className="flex flex-col gap-4 pr-4 h-full">
-            <h1 className={`font-bold text-slate-100 text-shadow-lg ${feedbackItem.title.length > 50 ? 'text-4xl' : 'text-5xl'}`}>{feedbackItem.title}</h1>
-            <p className="text-slate-950 overflow-y-auto p-4 wrap-normal bg-slate-100/80 rounded-lg flex-1">{feedbackItem.description}</p>
-          </div>
+          <EditableFeedbackItem 
+            feedbackItem={{
+              id: feedbackItem.id,
+              title: feedbackItem.title,
+              description: feedbackItem.description,
+              slug: feedbackItem.slug
+            }}
+          />
           
           {/* Row 2: Metrics */}
           <div className="min-w-[30vh] w-fit">

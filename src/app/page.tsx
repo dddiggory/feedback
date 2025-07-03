@@ -192,27 +192,53 @@ export default async function DashboardPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-1 py-4 whitespace-nowrap max-w-[6rem]">
+                      <td className="px-1 py-4 max-w-[6rem]">
                         {Array.isArray(entry.product_area_names) && entry.product_area_names.length > 0 && (
                           <div className="flex flex-wrap gap-1 max-w-[6rem]">
-                            {entry.product_area_names.map((area: string, idx: number) => (
-                              entry.product_area_slugs && entry.product_area_slugs[idx] ? (
+                            {entry.product_area_names.map((area: string, idx: number) => {
+                              // Helper function to wrap text if it exceeds 16 characters
+                              const wrapText = (text: string) => {
+                                if (text.length <= 16) return text;
+                                
+                                const words = text.split(' ');
+                                const lines = [];
+                                let currentLine = '';
+                                
+                                for (const word of words) {
+                                  if (currentLine.length === 0) {
+                                    currentLine = word;
+                                  } else if ((currentLine + ' ' + word).length <= 16) {
+                                    currentLine += ' ' + word;
+                                  } else {
+                                    lines.push(currentLine);
+                                    currentLine = word;
+                                  }
+                                }
+                                if (currentLine) lines.push(currentLine);
+                                
+                                return lines.join('\n');
+                              };
+                              
+                              const wrappedText = wrapText(area);
+                              const needsWrapping = wrappedText.includes('\n');
+                              
+                              return entry.product_area_slugs && entry.product_area_slugs[idx] ? (
                                 <Link
                                   key={area + idx}
                                   href={`/areas/${entry.product_area_slugs[idx]}`}
-                                  className="inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200 hover:bg-emerald-200 transition-colors"
+                                  className={`${needsWrapping ? 'block' : 'inline-block'} px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200 hover:bg-emerald-200 transition-colors ${needsWrapping ? 'whitespace-pre-line' : ''}`}
                                 >
-                                  {area}
+                                  {wrappedText}
                                 </Link>
                               ) : (
                                 <span
                                   key={area + idx}
-                                  className="inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200"
+                                  className={`${needsWrapping ? 'block' : 'inline-block'} px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-medium border border-emerald-200 ${needsWrapping ? 'whitespace-pre-line' : ''}`}
                                 >
-                                  {area}
+                                  {wrappedText}
                                 </span>
-                              )
-                            ))}
+                              );
+                            })}
                           </div>
                         )}
                       </td>

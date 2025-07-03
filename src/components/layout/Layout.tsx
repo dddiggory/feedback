@@ -11,6 +11,7 @@ import { AdminBadge } from '@/components/ui/admin-badge';
 
 interface LayoutProps {
   children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 const navigation = [
@@ -21,7 +22,7 @@ const navigation = [
   { name: 'Accounts', href: '/accounts', icon: TableCellsIcon },
 ];
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children, fullWidth = false }: LayoutProps) {
   const pathname = usePathname();
   const { user } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -128,8 +129,8 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="w-4/5 mx-auto">
+        <main className={fullWidth ? "flex-1 overflow-y-auto px-1 py-6" : "flex-1 overflow-y-auto p-6"}>
+          <div className={fullWidth ? "w-full max-w-full min-w-0" : "w-4/5 mx-auto"}>
             {children}
           </div>
         </main>
