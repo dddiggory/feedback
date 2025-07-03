@@ -29,7 +29,7 @@ export default async function BrowseAllPage() {
       <div className="py-8 text-white w-full max-w-full min-w-0">
         <h1 className="px-12 text-3xl font-bold mb-6">Browse All Feedback</h1>
         <p className="px-12 mb-8 text-gray-200">
-          Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you're looking for.
+          Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you&apos;re looking for.
         </p>
         
         <AllFeedbackTabsView 
