@@ -28,6 +28,7 @@ import { useOpportunitiesByAccount } from '@/hooks/use-opportunities-by-account'
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
 import { Opportunity } from '@/lib/services/opportunity'
+import { createEntryWithWebhook } from '@/lib/actions/webhook'
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
@@ -85,23 +86,22 @@ export function FeedbackPageLogFeedbackDialog({
     const selectedOpportunity: Opportunity | undefined = opportunities.find(opp => opp.SFDC_OPPORTUNITY_ID === selectedOpportunityId)
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('entries')
-        .upsert({
-          feedback_item_id: feedbackItemId,
-          account_name: selectedAccount?.ACCOUNT_NAME ?? '',
-          severity: severity,
-          entry_description: description,
-          external_links: links,
-          open_opp_arr: selectedOpportunity?.NEW_AND_EXPANSION_ANNUAL_RECURRING_REVENUE ?? null,
-          current_arr: selectedAccount?.ANNUAL_RECURRING_REVENUE ?? null,
-          sfdc_account: selectedAccount?.ACCOUNT_LINK ?? null,
-          company_website: selectedAccount?.WEBSITE ?? null,
-          created_by_user_id: user?.id
-        })
+      // Use the server action instead of direct Supabase call
+      const result = await createEntryWithWebhook({
+        feedbackItemId,
+        accountName: selectedAccount?.ACCOUNT_NAME ?? '',
+        severity,
+        description,
+        links,
+        currentArr: selectedAccount?.ANNUAL_RECURRING_REVENUE ?? null,
+        openOppArr: selectedOpportunity?.NEW_AND_EXPANSION_ANNUAL_RECURRING_REVENUE ?? null,
+        sfdcAccount: selectedAccount?.ACCOUNT_LINK ?? null,
+        companyWebsite: selectedAccount?.WEBSITE ?? null,
+      })
 
-      if (error) throw error
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create entry')
+      }
 
       // Reset form
       setAccountName("")
@@ -119,6 +119,7 @@ export function FeedbackPageLogFeedbackDialog({
       }, 500)
     } catch (error) {
       console.error('Error submitting feedback:', error)
+      // You could add user-facing error handling here if needed
     } finally {
       setIsSubmitting(false)
     }
