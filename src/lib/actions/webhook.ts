@@ -119,8 +119,8 @@ export async function createEntryWithWebhook(
       feedback_item_title: feedbackItem.title,
       entry_description: data.description,
       account_name: data.accountName,
-      current_arr: data.currentArr || 0,
-      open_opp_arr: data.openOppArr || 0,
+      current_arr: data.currentArr ?? 0,
+      open_opp_arr: data.openOppArr ?? 0,
       submitter_name: submitterName,
       product_area_slugs: feedbackItem.product_area_slugs || [],
       feedback_item_url: `https://gtmfeedback.vercel.app/feedback/${feedbackItem.slug}`,
@@ -144,7 +144,20 @@ export async function createEntryWithWebhook(
       )
 
       if (!webhookResponse.ok) {
-        console.error('Webhook failed:', webhookResponse.status, webhookResponse.statusText)
+        // Get the response body for more detailed error information
+        let errorBody = '';
+        try {
+          errorBody = await webhookResponse.text();
+        } catch (bodyError) {
+          errorBody = 'Could not read response body';
+        }
+        
+        console.error('Webhook failed:', {
+          status: webhookResponse.status,
+          statusText: webhookResponse.statusText,
+          responseBody: errorBody,
+          requestPayload: webhookPayload
+        });
         // Log but don't fail the entry creation
       } else {
         console.log('Webhook sent successfully')
