@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'

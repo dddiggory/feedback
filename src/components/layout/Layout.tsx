@@ -2,6 +2,7 @@
 
 import { ChartBarIcon, PlusCircleIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
@@ -93,9 +94,11 @@ export function Layout({ children, fullWidth = false }: LayoutProps) {
                       className="focus:outline-none cursor-pointer"
                       aria-label="User menu"
                     >
-                      <img
+                      <Image
                         src={avatarUrl}
                         alt="User avatar"
+                        width={50}
+                        height={50}
                         className="w-10 h-10 rounded-full border-2 border-green-500 shadow-sm object-cover transition-all duration-150"
                       />
                     </button>

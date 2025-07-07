@@ -21,8 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { createClient } from '@/lib/supabase/client'
-import { useUser } from '@/components/layout/UserContext'
 import { ImpactedOpportunityPills } from './ImpactedOpportunityPills'
 import { useOpportunitiesByAccount } from '@/hooks/use-opportunities-by-account'
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
@@ -43,7 +41,6 @@ export function FeedbackPageLogFeedbackDialog({
   feedbackItemDescription,
   feedbackItemId,
 }: FeedbackPageLogFeedbackDialogProps) {
-  const { user } = useUser()
   const [open, setOpen] = useState(false)
   const [severity, setSeverity] = useState("med")
   const [accountName, setAccountName] = useState("")
@@ -54,7 +51,7 @@ export function FeedbackPageLogFeedbackDialog({
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const { opportunities, selectedId: selectedOpportunityId, setSelectedId: setSelectedOpportunityId, loading: loadingOpportunities } = useOpportunitiesByAccount(accountName)
-  const { accounts, handleSearchChange } = useAccountSearch()
+  const { handleSearchChange } = useAccountSearch()
 
   // Prefetch initial accounts when dialog opens
   useEffect(() => {

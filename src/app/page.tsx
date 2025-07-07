@@ -1,28 +1,15 @@
+import Link from 'next/link';
+import Image from 'next/image';
+import { DocumentIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
-import Link from 'next/link';
-import Image from 'next/image';
-import { DocumentIcon, CalendarIcon } from '@heroicons/react/24/outline';
-
-// Utility function to format ARR values
-function formatARR(value: number): string {
-  if (value >= 1000000) {
-    return `$${(value / 1000000).toFixed(1)}M`;
-  } else if (value >= 1000) {
-    return `$${Math.round(value / 1000)}k`;
-  } else {
-    return `$${value.toLocaleString()}`;
-  }
-}
+import { getRandomColor } from "@/lib/colors";
+import { formatARR } from "@/lib/format";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-
-  const { data: feedbackItems } = await supabase
-    .from('product_feedback_items_with_entry_metrics')
-    .select('*');
 
   // Fetch recent feedback entries
   const { data: recentEntries } = await supabase
@@ -38,12 +25,6 @@ export default async function DashboardPage() {
     .order('total_entries', { ascending: false })
     .limit(10);
 
-  // Generate a random color for fallback avatars
-  function getRandomColor() {
-    const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-gray-500'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
   // Get initials from name for fallback avatar
   function getInitials(name: string) {
     return name
@@ -57,8 +38,8 @@ export default async function DashboardPage() {
   return (
     <Layout>
       <div className="mx-auto max-w-[80vw]">
-        
-      
+
+
 
         {/* Search Box */}
         <div className="mt-8 mb-6">
@@ -113,7 +94,7 @@ export default async function DashboardPage() {
                     <tr key={entry.id} className="hover:bg-gray-50">
                       <td className="pl-6 py-4 min-w-[10rem] max-w-[15rem] align-middle">
                         <div className="flex flex-col min-w-[10rem] max-w-[15rem]">
-                          <Link 
+                          <Link
                             href={`/feedback/${entry.feedback_item_slug}`}
                             className="text-blue-600 hover:text-blue-800 font-medium hover:underline line-clamp-2 min-w-[10rem] max-w-[15rem]"
                           >
@@ -124,7 +105,7 @@ export default async function DashboardPage() {
                               {(() => {
                                 // Clean up the website URL for logo.dev (same logic as FeedbackEntriesTable)
                                 const companyWebsite = entry.company_website;
-                                const cleanWebsite = companyWebsite 
+                                const cleanWebsite = companyWebsite
                                   ? companyWebsite
                                       .replace(/^https?:\/\//, '') // Remove protocol
                                       .replace(/^www\./, '')       // Remove www prefix
@@ -132,9 +113,9 @@ export default async function DashboardPage() {
                                       .split('/')[0]               // Remove path - keep only domain
                                       .toLowerCase()               // Ensure lowercase
                                   : null;
-                                
+
                                 // Generate logo URL if company website is available
-                                const logoUrl = cleanWebsite 
+                                const logoUrl = cleanWebsite
                                   ? `https://img.logo.dev/${cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=20&format=webp`
                                   : null;
 
@@ -194,7 +175,7 @@ export default async function DashboardPage() {
                           )}
                           {entry.entry_key && entry.feedback_item_slug && (
                             <div className="flex-shrink-0">
-                              <EntryViewButton 
+                              <EntryViewButton
                                 feedbackItemSlug={entry.feedback_item_slug}
                                 entryKey={entry.entry_key}
                               />
@@ -209,11 +190,11 @@ export default async function DashboardPage() {
                               // Helper function to wrap text if it exceeds 16 characters
                               const wrapText = (text: string) => {
                                 if (text.length <= 16) return text;
-                                
+
                                 const words = text.split(' ');
                                 const lines = [];
                                 let currentLine = '';
-                                
+
                                 for (const word of words) {
                                   if (currentLine.length === 0) {
                                     currentLine = word;
@@ -225,13 +206,13 @@ export default async function DashboardPage() {
                                   }
                                 }
                                 if (currentLine) lines.push(currentLine);
-                                
+
                                 return lines.join('\n');
                               };
-                              
+
                               const wrappedText = wrapText(area);
                               const needsWrapping = wrappedText.includes('\n');
-                              
+
                               return entry.product_area_slugs && entry.product_area_slugs[idx] ? (
                                 <Link
                                   key={area + idx}
@@ -255,9 +236,11 @@ export default async function DashboardPage() {
                       <td className="pl-1 pr-5 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {entry.submitter_avatar ? (
-                            <img 
-                              src={entry.submitter_avatar} 
+                            <Image
+                              src={entry.submitter_avatar}
                               alt={`${entry.submitter_name}'s avatar`}
+                              width={25}
+                              height={25}
                               className="w-6 h-6 rounded-full mr-2"
                             />
                           ) : entry.submitter_name ? (
@@ -312,9 +295,11 @@ export default async function DashboardPage() {
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                         <div className="flex items-center">
                           {submitter.submitter_avatar ? (
-                            <img 
-                              src={submitter.submitter_avatar} 
+                            <Image
+                              src={submitter.submitter_avatar}
                               alt={`${submitter.submitter_name || 'User'}'s avatar`}
+                              width={50}
+                              height={50}
                               className="w-6 h-6 rounded-full mr-2"
                             />
                           ) : submitter.submitter_name ? (

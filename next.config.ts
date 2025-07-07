@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        port: "",
+        pathname: "/**",
+        search: "",
+      },
+    ],
+  },
+
   experimental: {
     // Only enable features available in stable Next.js 15
     // ppr: true, // Uncomment when using canary Next.js
@@ -14,9 +26,6 @@ const nextConfig: NextConfig = {
     // Optimize bundling for faster navigation
     optimizePackageImports: ['lucide-react', '@heroicons/react'],
   },
-  
-  // Enable streaming by default (works in stable)
-  serverComponentsExternalPackages: [],
   
   // Optimize loading performance
   compiler: {

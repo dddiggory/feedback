@@ -75,12 +75,6 @@ export default async function AreasPage() {
     };
   }).sort((a: ProductAreaWithStats, b: ProductAreaWithStats) => b.feedbackCount - a.feedbackCount) || [];
 
-  // Calculate overall metrics (using open items only)
-  const totalFeedbackItems = productAreaStats.reduce((sum, area) => sum + area.feedbackCount, 0);
-  const totalRevenue = productAreaStats.reduce((sum: number, area: ProductAreaWithStats) => sum + area.totalRevenue, 0);
-  const totalEntries = productAreaStats.reduce((sum: number, area: ProductAreaWithStats) => sum + area.totalEntries, 0);
-  const avgRevenuePerArea = productAreaStats.length > 0 ? totalRevenue / productAreaStats.length : 0;
-
   return (
     <Layout>
       <div className="space-y-8">
@@ -94,7 +88,6 @@ export default async function AreasPage() {
 
         {/* Product Areas Table */}
         <ProductAreasTable data={productAreaStats} />
-        
       </div>
     </Layout>
   );

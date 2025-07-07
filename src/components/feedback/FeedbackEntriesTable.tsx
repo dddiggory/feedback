@@ -76,10 +76,9 @@ function formatCurrency(amount: number | null | undefined): string {
 
 interface FeedbackEntriesTableProps {
   data: FeedbackEntry[];
-  feedbackItemSlug: string;
 }
 
-export function FeedbackEntriesTable({ data, feedbackItemSlug }: FeedbackEntriesTableProps) {
+export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});

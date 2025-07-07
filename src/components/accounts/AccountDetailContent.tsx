@@ -21,7 +21,7 @@ import {
 import { ArrowUpDown, ChevronDown, Eye, ExternalLink } from 'lucide-react';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { format } from "date-fns";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/components/layout/UserContext";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getRandomGradient } from '@/lib/colors';
 
 interface FeedbackEntry {
   id: string;
@@ -152,7 +153,7 @@ const fetcher = async (slug: string) => {
   return { accountSummary, entries: filteredEntries };
 };
 
-function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: FeedbackEntry[], feedbackItemSlug?: string }) {
+function AccountFeedbackTable({ entries }: { entries: FeedbackEntry[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "created_at", desc: true }
   ]);
@@ -161,7 +162,6 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
   const router = useRouter();
-  const pathname = usePathname();
   const { user } = useUser();
 
   const handleViewEntry = (entryKey: string, feedbackItemSlug?: string) => {
@@ -171,21 +171,6 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
       // Fallback if no feedback item slug is available
       router.push(`/feedback/entries/${entryKey}`);
     }
-  };
-
-  // Function to generate random gradient for product area pills
-  const getRandomGradient = () => {
-    const gradients = [
-      'bg-gradient-to-r from-blue-100 to-blue-200',
-      'bg-gradient-to-r from-green-100 to-green-200',
-      'bg-gradient-to-r from-purple-100 to-purple-200',
-      'bg-gradient-to-r from-pink-100 to-pink-200',
-      'bg-gradient-to-r from-yellow-100 to-yellow-200',
-      'bg-gradient-to-r from-indigo-100 to-indigo-200',
-      'bg-gradient-to-r from-red-100 to-red-200',
-      'bg-gradient-to-r from-orange-100 to-orange-200',
-    ];
-    return gradients[Math.floor(Math.random() * gradients.length)];
   };
 
   const columns: ColumnDef<FeedbackEntry>[] = [
@@ -294,7 +279,7 @@ function AccountFeedbackTable({ entries, feedbackItemSlug }: { entries: Feedback
         
         return (
           <div className="flex flex-wrap gap-1 max-w-[200px]">
-            {areas.slice(0, 3).map((area: string, index: number) => (
+            {areas.slice(0, 3).map((area: string) => (
               <span
                 key={area}
                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRandomGradient()} text-gray-800`}
@@ -602,7 +587,6 @@ function AccountDetailData({ slug }: { slug: string }) {
     );
   }
 
-  // Generate logo URL
   const logoUrl = `https://img.logo.dev/${accountSummary.cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=96&format=webp`;
 
   return (
@@ -687,9 +671,7 @@ function AccountDetailData({ slug }: { slug: string }) {
         </div>
       </div>
 
-      {/* Feedback Entries Table */}
       <div>
-        {/* <h2 className="text-2xl font-bold text-white mb-4">Feedback Entries</h2> */}
         <AccountFeedbackTable entries={entries} />
       </div>
     </div>

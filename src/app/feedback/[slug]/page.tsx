@@ -1,32 +1,15 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
-import { FeedbackPageLogFeedbackDialog } from '@/components/feedback/FeedbackPageLogFeedbackDialog'
-import { Layout } from '@/components/layout/Layout'
-// import { FeedbackEntryTable } from '@/components/feedback/FeedbackEntryTable'
-
-import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
-import { Comments } from '@/components/feedback/Comments'
-import { getComments, type Comment } from '@/lib/actions/comments'
-import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-
-const GRADIENTS = [
-  'bg-gradient-to-r from-slate-50 to-emerald-200',
-  'bg-gradient-to-r from-slate-50 to-teal-200',
-  'bg-gradient-to-r from-slate-50 to-pink-200',
-  'bg-gradient-to-r from-slate-50 to-violet-200',
-] as const
-
-function getRandomGradient() {
-  return GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)]
-}
-
-// Helper functions for avatar fallbacks
-function getRandomColor() {
-  const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-gray-500'];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { FeedbackPageLogFeedbackDialog } from '@/components/feedback/FeedbackPageLogFeedbackDialog'
+import { Layout } from '@/components/layout/Layout'
+import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
+import { Comments } from '@/components/feedback/Comments'
+import { getComments } from '@/lib/actions/comments'
+import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
+import { getRandomColor, getRandomGradient } from "@/lib/colors";
 
 function getInitials(name: string) {
   return name
@@ -254,9 +237,11 @@ export default async function FeedbackItemPage({
                     className="flex items-center gap-1 px-2 py-1 bg-white rounded-full border border-gray-200 shadow-sm h-7 leading-none"
                   >
                     {submitter.submitter_avatar ? (
-                      <img 
+                      <Image
                         src={submitter.submitter_avatar} 
                         alt={`${submitter.submitter_name}&apos;s avatar`}
+                        width={16}
+                        height={16}
                         className="w-4 h-4 rounded-full"
                       />
                     ) : (
@@ -277,11 +262,7 @@ export default async function FeedbackItemPage({
         
         <div className="pt-2 prose">
             <h3 className="text-white text-shadow-lg text-2xl font-medium">Customer Feedback Entries</h3>
-            <FeedbackEntriesTable data={entries || []} feedbackItemSlug={slug} />
-            {/* <div className="mt-6 ">
-              <h4 className="text-white text-xl font-medium mb-4">Current Table (will be replaced)</h4>
-              <FeedbackEntryTable data={entries || []} />
-            </div> */}
+            <FeedbackEntriesTable data={entries || []} />
         </div>
       </div>
     </Layout>

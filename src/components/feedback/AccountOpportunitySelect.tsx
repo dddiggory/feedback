@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Select, { components, GroupBase, OptionProps, FilterOptionOption, SingleValueProps, NoticeProps } from 'react-select'
-import { Label } from "@/components/ui/label"
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
 import { formatARR } from '@/lib/format'

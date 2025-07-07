@@ -19,8 +19,6 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 
-type TopItemsBarChartProps = object;
-
 interface ProductAreaOption {
   label: string;
   value: string;
@@ -34,9 +32,11 @@ interface ChartDataItem {
   combined_arr_impact_label?: string;
   current_arr_sum?: number;
   open_opp_arr_sum?: number;
+
   // Customer type entry counts
   current_customer_entry_count?: number;
   new_opportunity_entry_count?: number;
+
   // Severity grouping fields
   low_count?: number;
   med_count?: number;

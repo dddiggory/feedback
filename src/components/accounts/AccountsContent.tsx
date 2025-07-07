@@ -1,8 +1,6 @@
 'use client'
 
-import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/client';
-import { BuildingOfficeIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { ArrowUpDown, ChevronDown } from 'lucide-react';
 import useSWR from 'swr';
 import { Suspense } from 'react';

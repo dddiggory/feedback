@@ -148,7 +148,7 @@ export async function createEntryWithWebhook(
         let errorBody = '';
         try {
           errorBody = await webhookResponse.text();
-        } catch (bodyError) {
+        } catch {
           errorBody = 'Could not read response body';
         }
         

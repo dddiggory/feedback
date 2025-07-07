@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { Account } from '@/lib/services/account-opportunity'
+import { useState, useEffect, useCallback } from 'react'
 import { useDebouncedCallback } from './use-debounced-callback'
 import useSWR from 'swr'
 
@@ -20,7 +19,6 @@ export function useAccountSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [lastSearchedTerm, setLastSearchedTerm] = useState('')
-  const abortControllerRef = useRef<AbortController | null>(null)
 
   // Debounced search term
   const debouncedSetSearchTerm = useDebouncedCallback(

@@ -38,7 +38,7 @@ export function useOpportunitiesByAccount(accountId: string) {
           setError(data.message || 'Failed to fetch opportunities')
         }
       })
-      .catch(err => {
+      .catch(() => {
         setError('Failed to fetch opportunities')
       })
       .finally(() => setLoading(false))

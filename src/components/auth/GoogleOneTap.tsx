@@ -247,7 +247,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
       if (window.google?.accounts?.id?.cancel) {
         try {
           window.google.accounts.id.cancel()
-        } catch (error) {
+        } catch {
           // Ignore cleanup errors
         }
       }

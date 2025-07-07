@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import Image from 'next/image'
 import { createComment, deleteComment, pinComment, unpinComment, type Comment } from '@/lib/actions/comments'
 import { useAdmin } from '@/hooks/use-admin'
 import { Pin, PinOff } from 'lucide-react'
@@ -116,9 +117,11 @@ export function Comments({ feedbackItemId, initialComments = [], currentUserId }
                   
                   {/* Avatar */}
                   {comment.commenter_avatar ? (
-                    <img 
+                    <Image
                       src={comment.commenter_avatar} 
                       alt={`${comment.commenter_name}'s avatar`}
+                      width={50}
+                      height={50}
                       className="w-6 h-6 rounded-full flex-shrink-0"
                     />
                   ) : (

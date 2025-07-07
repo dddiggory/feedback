@@ -1,5 +1,4 @@
 import { Layout } from '@/components/layout/Layout'
-import { BuildingOfficeIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 
 export default function Loading() {
   return (
