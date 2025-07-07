@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Select, { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
 import { createClient } from '@/lib/supabase/client'
+import { highlightText } from '@/lib/highlight'
 
 interface ProductAreaRow {
   id: string;
@@ -17,16 +18,7 @@ interface ProductArea {
   description: string
 }
 
-const highlightText = (text: string, searchStr: string) => {
-  if (!searchStr) return text;
-  
-  const parts = text.split(new RegExp(`(${searchStr})`, 'gi'));
-  return parts.map((part, i) => 
-    part.toLowerCase() === searchStr.toLowerCase() ? 
-      <span key={i} className="bg-yellow-200">{part}</span> : 
-      part
-  );
-};
+
 
 const Option = (props: OptionProps<ProductArea, true, GroupBase<ProductArea>>) => {
   const { data, selectProps } = props;

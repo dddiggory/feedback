@@ -7,6 +7,7 @@ import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import { getRandomColor } from "@/lib/colors";
 import { formatARR } from "@/lib/format";
+import { getInitials } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -25,15 +26,7 @@ export default async function DashboardPage() {
     .order('total_entries', { ascending: false })
     .limit(10);
 
-  // Get initials from name for fallback avatar
-  function getInitials(name: string) {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
+
 
   return (
     <Layout>

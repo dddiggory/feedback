@@ -8,6 +8,7 @@ import { DataTableSortList } from "../data-table/data-table-sort-list";
 import { useDataTable } from "@/hooks/use-data-table";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { formatARR } from "@/lib/format";
 
 export interface FeedbackEntry {
   id: string;
@@ -28,17 +29,7 @@ export interface FeedbackEntry {
 }
 
 // Helper function to format currency in the desired format
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 // Define the column definitions
 export const columns: ColumnDef<FeedbackEntry>[] = [
@@ -83,7 +74,7 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const amount = row.getValue("current_arr") as number;
-      return formatCurrency(amount);
+      return formatARR(amount);
     },
   },
   {
@@ -93,7 +84,7 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const amount = row.getValue("open_opp_arr") as number;
-      return formatCurrency(amount);
+      return formatARR(amount);
     },
   },
   {
@@ -103,7 +94,7 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const amount = row.original.total_arr;
-      return formatCurrency(amount);
+      return formatARR(amount);
     },
   },
   {

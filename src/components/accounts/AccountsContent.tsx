@@ -36,6 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatARR } from "@/lib/format";
 
 interface DatabaseEntry {
   id: string;
@@ -58,17 +59,7 @@ interface AggregatedAccount {
 }
 
 // Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 const fetcher = async () => {
   const supabase = createClient();
@@ -199,7 +190,7 @@ function AccountsTable({ accounts }: { accounts: AggregatedAccount[] }) {
       },
       cell: ({ row }) => {
         const amount = row.getValue("currentARR") as number;
-        return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium">{formatARR(amount)}</div>;
       },
     },
     {
@@ -218,7 +209,7 @@ function AccountsTable({ accounts }: { accounts: AggregatedAccount[] }) {
       },
       cell: ({ row }) => {
         const amount = row.getValue("openOppARR") as number;
-        return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium">{formatARR(amount)}</div>;
       },
     },
     {
@@ -239,7 +230,7 @@ function AccountsTable({ accounts }: { accounts: AggregatedAccount[] }) {
       cell: ({ row }) => {
         const account = row.original;
         const totalARR = account.currentARR + account.openOppARR;
-        return <div className="text-right font-medium">{formatCurrency(totalARR)}</div>;
+        return <div className="text-right font-medium">{formatARR(totalARR)}</div>;
       },
     },
     {

@@ -4,15 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import { getRandomColor } from '@/lib/colors'
+import { getInitials } from '@/lib/utils'
 
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+
 
 export default async function UserProfilePage({
   params,

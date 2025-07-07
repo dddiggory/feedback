@@ -10,15 +10,9 @@ import { Comments } from '@/components/feedback/Comments'
 import { getComments } from '@/lib/actions/comments'
 import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
 import { getRandomColor, getRandomGradient } from "@/lib/colors";
+import { getInitials } from "@/lib/utils";
 
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
+
 
 interface TopSubmitter {
   submitter_name: string;

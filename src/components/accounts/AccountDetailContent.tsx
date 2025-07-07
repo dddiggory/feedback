@@ -41,6 +41,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getRandomGradient } from '@/lib/colors';
+import { getSeverityStyle } from '@/lib/utils';
+import { formatARR } from '@/lib/format';
 
 interface FeedbackEntry {
   id: string;
@@ -78,18 +80,7 @@ interface AccountSummary {
   lastActivity: string;
 }
 
-// Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 // Helper function to reconstruct account name from slug
 function reconstructAccountNameFromSlug(slug: string): string {
@@ -315,20 +306,7 @@ function AccountFeedbackTable({ entries }: { entries: FeedbackEntry[] }) {
       cell: ({ row }) => {
         const severity = row.getValue("severity") as string;
         
-        const getSeverityStyle = (sev: string) => {
-          const normalized = sev.toLowerCase();
-          switch (normalized) {
-            case 'low':
-              return 'bg-green-100 text-green-800 border-green-200';
-            case 'medium':
-            case 'med':
-              return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'high':
-              return 'bg-orange-100 text-orange-800 border-orange-200';
-            default:
-              return 'bg-gray-100 text-gray-800 border-gray-200';
-          }
-        };
+
 
         return (
           <div className="flex justify-center">
@@ -636,15 +614,15 @@ function AccountDetailData({ slug }: { slug: string }) {
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Current ARR</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(accountSummary.currentARR)}</p>
+                <p className="text-2xl font-bold text-gray-900">{formatARR(accountSummary.currentARR)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Open Opp ARR</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(accountSummary.openOppARR)}</p>
+                <p className="text-2xl font-bold text-gray-900">{formatARR(accountSummary.openOppARR)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Total ARR Exposure</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(accountSummary.totalARR)}</p>
+                <p className="text-2xl font-bold text-gray-900">{formatARR(accountSummary.totalARR)}</p>
               </div>
             </div>
             

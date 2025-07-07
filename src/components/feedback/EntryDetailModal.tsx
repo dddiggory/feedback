@@ -18,6 +18,8 @@ import Link from "next/link"
 import { Edit, Save, X, Trash } from "lucide-react"
 import { useUser } from "@/components/layout/UserContext"
 import { createClient } from "@/lib/supabase/client"
+import { getSeverityStyle } from "@/lib/utils"
+import { formatARR } from "@/lib/format"
 
 interface FeedbackEntry {
   id: string;
@@ -52,18 +54,7 @@ interface EntryDetailModalProps {
   isIntercepted?: boolean;
 }
 
-// Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }: EntryDetailModalProps) {
   const [open, setOpen] = useState(true)
@@ -179,21 +170,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
     ? `https://img.logo.dev/${cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=32&format=webp`
     : null;
 
-  // Get severity styling
-  const getSeverityStyle = (sev: string) => {
-    const normalized = sev.toLowerCase();
-    switch (normalized) {
-      case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'medium':
-      case 'med':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+
 
   // Extract content into reusable function
   const renderContent = () => (
@@ -278,19 +255,19 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         <div className="bg-white rounded-lg p-4 border">
           <Label className="text-sm text-gray-500">Current ARR</Label>
           <div className="text-2xl font-bold text-gray-900">
-            {formatCurrency(entry.current_arr)}
+            {formatARR(entry.current_arr)}
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 border">
           <Label className="text-sm text-gray-500">Open Opp ARR</Label>
           <div className="text-2xl font-bold text-gray-900">
-            {formatCurrency(entry.open_opp_arr)}
+            {formatARR(entry.open_opp_arr)}
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 border">
           <Label className="text-sm text-gray-500">Impacted ARR</Label>
           <div className="text-2xl font-bold text-gray-900">
-            {formatCurrency(entry.total_arr)}
+            {formatARR(entry.total_arr)}
           </div>
         </div>
       </div>

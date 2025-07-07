@@ -1,19 +1,11 @@
 import Image from 'next/image'
+import Link from "next/link";
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import { getRandomColor } from '@/lib/colors'
-import Link from "next/link";
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+import { getInitials } from '@/lib/utils'
 
 export default async function UserProfilePage() {
   const supabase = await createClient()

@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatARR } from "@/lib/format";
 
 interface ProductAreaWithStats {
   id: string;
@@ -46,17 +47,7 @@ interface ProductAreaWithStats {
 }
 
 // Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 interface ProductAreasTableProps {
   data: ProductAreaWithStats[];
@@ -206,7 +197,7 @@ export function ProductAreasTable({ data }: ProductAreasTableProps) {
       },
       cell: ({ row }) => {
         const amount = row.getValue("totalRevenue") as number;
-        return <div className="text-right font-medium">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium">{formatARR(amount)}</div>;
       },
     },
   ];

@@ -5,6 +5,7 @@ import Select, { components, GroupBase, OptionProps, FilterOptionOption, SingleV
 import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
 import { formatARR } from '@/lib/format'
+import { highlightText } from '@/lib/highlight'
 
 interface AccountOption {
   value: string // SFDC_ACCOUNT_ID
@@ -31,15 +32,7 @@ const Option = (props: OptionProps<AccountOption, false, GroupBase<AccountOption
   const searchStr = selectProps.inputValue;
   const { account } = data;
   
-  const highlightText = (text: string, searchStr: string) => {
-    if (!searchStr) return text;
-    const parts = text.split(new RegExp(`(${searchStr})`, 'gi'));
-    return parts.map((part, i) =>
-      part.toLowerCase() === searchStr.toLowerCase() ?
-        <span key={i} className="bg-yellow-200 font-semibold">{part}</span> :
-        part
-    );
-  };
+
 
   // Format the updated date for display
   const formatUpdatedDate = (dateString: string) => {

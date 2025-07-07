@@ -37,6 +37,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getSeverityStyle } from "@/lib/utils";
+import { formatARR } from "@/lib/format";
 
 interface BrowseAllCustomerEntry {
   id: string;
@@ -60,18 +62,7 @@ interface BrowseAllCustomerEntry {
   external_links?: string | null;
 }
 
-// Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
+
 
 interface BrowseAllCustomerEntriesTableProps {
   data: BrowseAllCustomerEntry[];
@@ -264,21 +255,7 @@ export function BrowseAllCustomerEntriesTable({ data }: BrowseAllCustomerEntries
       cell: ({ row }) => {
         const severity = row.getValue("severity") as string;
         
-        // Define pill styling based on severity
-        const getSeverityStyle = (sev: string) => {
-          const normalized = sev.toLowerCase();
-          switch (normalized) {
-            case 'low':
-              return 'bg-green-100 text-green-800 border-green-200';
-            case 'medium':
-            case 'med':
-              return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'high':
-              return 'bg-orange-100 text-orange-800 border-orange-200';
-            default:
-              return 'bg-gray-100 text-gray-800 border-gray-200';
-          }
-        };
+
 
         return (
           <div className="flex justify-center">
@@ -305,7 +282,7 @@ export function BrowseAllCustomerEntriesTable({ data }: BrowseAllCustomerEntries
       },
       cell: ({ row }) => {
         const amount = row.original.total_arr;
-        return <div className="text-right font-medium text-gray-900">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium text-gray-900">{formatARR(amount)}</div>;
       },
     },
     {
@@ -324,7 +301,7 @@ export function BrowseAllCustomerEntriesTable({ data }: BrowseAllCustomerEntries
       },
       cell: ({ row }) => {
         const amount = row.getValue("current_arr") as number;
-        return <div className="text-right font-medium text-gray-900">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium text-gray-900">{formatARR(amount)}</div>;
       },
     },
     {
@@ -343,7 +320,7 @@ export function BrowseAllCustomerEntriesTable({ data }: BrowseAllCustomerEntries
       },
       cell: ({ row }) => {
         const amount = row.getValue("open_opp_arr") as number;
-        return <div className="text-right font-medium text-gray-900">{formatCurrency(amount)}</div>;
+        return <div className="text-right font-medium text-gray-900">{formatARR(amount)}</div>;
       },
     },
     {

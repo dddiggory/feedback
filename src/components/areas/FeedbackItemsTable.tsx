@@ -31,6 +31,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getStatusStyle } from "@/lib/utils";
+import { formatARR } from "@/lib/format";
 
 interface FeedbackItem {
   id: string;
@@ -46,35 +48,9 @@ interface FeedbackItem {
   [key: string]: unknown;
 }
 
-// Helper function to format currency
-function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null || !isFinite(amount)) {
-    return "$0";
-  }
-  if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${Math.floor(amount / 1000)}k`;
-  }
-  return `$${amount}`;
-}
 
-// Helper function to get status styling
-function getStatusStyle(status: string) {
-  const normalized = status.toLowerCase();
-  switch (normalized) {
-    case 'open':
-      return 'bg-blue-50 text-blue-700 ring-blue-600/20';
-    case 'shipped':
-      return 'bg-green-50 text-green-700 ring-green-600/20';
-    case 'closed':
-      return 'bg-gray-50 text-gray-700 ring-gray-600/20';
-    case 'in_progress':
-      return 'bg-yellow-50 text-yellow-700 ring-yellow-600/20';
-    default:
-      return 'bg-gray-50 text-gray-700 ring-gray-600/20';
-  }
-}
+
+
 
 interface FeedbackItemsTableProps {
   data: FeedbackItem[];
@@ -219,7 +195,7 @@ export function FeedbackItemsTable({ data }: FeedbackItemsTableProps) {
       cell: ({ row }) => {
         const item = row.original;
         const totalRevenue = (item.current_arr_sum || 0) + (item.open_opp_arr_sum || 0);
-        return <div className="text-right font-medium">{formatCurrency(totalRevenue)}</div>;
+        return <div className="text-right font-medium">{formatARR(totalRevenue)}</div>;
       },
     },
     {

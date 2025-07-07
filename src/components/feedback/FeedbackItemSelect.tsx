@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Select, { components, GroupBase, OptionProps, FilterOptionOption } from 'react-select'
 import { Label } from "@/components/ui/label"
 import { createClient } from '@/lib/supabase/client'
+import { highlightText } from '@/lib/highlight'
 
 interface FeedbackItemRow {
   id: string;
@@ -17,15 +18,7 @@ interface FeedbackItem {
   description: string
 }
 
-const highlightText = (text: string, searchStr: string) => {
-  if (!searchStr) return text;
-  const parts = text.split(new RegExp(`(${searchStr})`, 'gi'));
-  return parts.map((part, i) =>
-    part.toLowerCase() === searchStr.toLowerCase() ?
-      <span key={i} className="bg-yellow-200">{part}</span> :
-      part
-  );
-};
+
 
 const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
   const { data, selectProps } = props;
