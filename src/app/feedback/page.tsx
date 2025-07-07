@@ -2,7 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { AllFeedbackTabsView } from '@/components/feedback/AllFeedbackTabsView';
 
-export default async function BrowseAllPage() {
+export default async function FeedbackPage() {
   const supabase = await createClient();
   
   // Fetch feedback items

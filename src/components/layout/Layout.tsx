@@ -1,23 +1,22 @@
 'use client'
 
-import { LogOut } from "lucide-react";
-import { ChartBarIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, PlusCircleIcon, ChatBubbleBottomCenterIcon, TableCellsIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
-import { useEffect, useRef, useState } from 'react';
-import { useUser } from './UserContext';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { AdminBadge } from '@/components/ui/admin-badge';
+import { useUser } from './UserContext';
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   fullWidth?: boolean;
 }
 
 const navigation = [
-  { name: 'Submit Feedback', href: '/', icon: ChatBubbleBottomCenterIcon },
+  { name: 'Submit Feedback', href: '/', icon: PlusCircleIcon },
+  { name: 'All Feedback', href: '/feedback', icon: ChatBubbleBottomCenterIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Browse All', href: '/browse/all', icon: ChartBarIcon },
   { name: 'Product Areas', href: '/areas', icon: TableCellsIcon },
   { name: 'Accounts', href: '/accounts', icon: TableCellsIcon },
 ];
