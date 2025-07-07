@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout/Layout'
 import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable'
 import { getRandomColor } from '@/lib/colors'
+import Link from "next/link";
 
 function getInitials(name: string) {
   return name
@@ -107,7 +108,7 @@ export default async function UserProfilePage() {
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
             <h2 className="text-2xl font-medium text-gray-800">My Feedback Submissions</h2>
             <p className="text-gray-600 mt-1">
-              All feedback entries you've submitted
+              All feedback entries you&apos;ve submitted
             </p>
           </div>
           
@@ -116,11 +117,11 @@ export default async function UserProfilePage() {
               <FeedbackEntriesTable data={userEntries} />
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <p>You haven't submitted any feedback yet.</p>
+                <p>You haven&apos;t submitted any feedback yet.</p>
                 <p className="mt-2">
-                  <a href="/" className="text-blue-600 hover:text-blue-800 underline">
+                  <Link href="/" className="text-blue-600 hover:text-blue-800 underline">
                     Start by submitting your first feedback
-                  </a>
+                  </Link>
                 </p>
               </div>
             )}
