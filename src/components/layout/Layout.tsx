@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { AdminBadge } from '@/components/ui/admin-badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser } from './UserContext';
 
 interface LayoutProps {
@@ -57,8 +58,8 @@ export function Layout({ children, fullWidth = false }: LayoutProps) {
 
   return (
     <div className="flex h-screen bg-background">
-      {/* <Sidebar /> */}
       <div className="flex flex-1 flex-col">
+        {/* Header */}
         <header className="bg-black shadow">
           <div className="px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
@@ -131,11 +132,13 @@ export function Layout({ children, fullWidth = false }: LayoutProps) {
             </div>
           </div>
         </header>
-        <main className={fullWidth ? "flex-1 overflow-y-auto px-1 py-6" : "flex-1 overflow-y-auto p-6"}>
+
+        {/* Content */}
+        <ScrollArea className={fullWidth ? "flex-1 overflow-y-auto px-1 py-6" : "flex-1 overflow-y-auto p-6"}>
           <div className={fullWidth ? "w-full max-w-full min-w-0" : "w-4/5 mx-auto"}>
             {children}
           </div>
-        </main>
+        </ScrollArea>
       </div>
     </div>
   );
