@@ -344,7 +344,7 @@ function AccountFeedbackTable({ entries }: { entries: FeedbackEntry[] }) {
       header: "Submitter",
       cell: ({ row }) => {
         const name = row.original.submitter_name || row.original.submitter_email || row.original.created_by_user_id;
-        const email = row.original.submitter_email;
+        const id = row.original.created_by_user_id;
         const avatar = row.original.submitter_avatar;
         
         // Generate avatar URL or fallback
@@ -376,9 +376,9 @@ function AccountFeedbackTable({ entries }: { entries: FeedbackEntry[] }) {
         return (
           <div className="flex items-center gap-2">
             {avatarElement}
-            {email ? (
+            {id ? (
               <a
-                href={`/user/${encodeURIComponent(email)}`}
+                href={`/user/${id}`}
                 className="text-blue-600 hover:text-blue-800 underline truncate max-w-[150px]"
                 title={name}
               >

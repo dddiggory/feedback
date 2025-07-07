@@ -111,11 +111,11 @@ export function Layout({ children, fullWidth = false }: LayoutProps) {
                         </div>
                         <div className="py-1">
                           <Link
-                            href={`/user/${encodeURIComponent(user.email)}`}
+                            href="/user"
                             className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
                             onClick={() => setMenuOpen(false)}
                           >
-                            My Submissions (coming soon)
+                            My Profile
                           </Link>
                           <button
                             onClick={handleSignOut}

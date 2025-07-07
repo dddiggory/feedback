@@ -321,10 +321,10 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
       header: "Submitter",
       cell: ({ row }) => {
         const name = row.original.submitter_name || row.original.submitter_email || row.original.created_by_user_id;
-        const email = row.original.submitter_email;
-        return email ? (
+        const userId = row.original.created_by_user_id;
+        return userId ? (
           <a
-            href={`/user/${encodeURIComponent(email)}`}
+            href={`/user/${userId}`}
             className="text-blue-600 hover:text-blue-800 underline"
           >
             {name}

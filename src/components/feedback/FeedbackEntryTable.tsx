@@ -113,10 +113,10 @@ export const columns: ColumnDef<FeedbackEntry>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       const name = row.original.submitter_name || row.original.submitter_email || row.original.created_by_user_id;
-      const email = row.original.submitter_email;
-      return email ? (
+      const userId = row.original.created_by_user_id;
+      return userId ? (
         <a
-          href={`/user/${encodeURIComponent(email)}`}
+          href={`/user/${userId}`}
           className="text-blue-500 underline hover:text-blue-900"
         >
           {name}

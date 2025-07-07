@@ -253,7 +253,16 @@ export default async function DashboardPage() {
                             </div>
                           )}
                           <div className="flex flex-col">
-                            <span className="text-xs text-gray-900">{entry.submitter_name}</span>
+                            {entry.created_by_user_id ? (
+                              <Link
+                                href={`/user/${entry.created_by_user_id}`}
+                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                              >
+                                {entry.submitter_name}
+                              </Link>
+                            ) : (
+                              <span className="text-xs text-gray-900">{entry.submitter_name}</span>
+                            )}
                             <span className="text-xs text-gray-500">
                               {new Date(entry.created_at).toLocaleDateString('en-US', {
                                 year: 'numeric',

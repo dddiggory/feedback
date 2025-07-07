@@ -23,6 +23,7 @@ function getInitials(name: string) {
 interface TopSubmitter {
   submitter_name: string;
   submitter_avatar?: string;
+  id: string;
   entry_count: number;
 }
 
@@ -85,9 +86,10 @@ export default async function FeedbackItemPage({
   // Fetch top 6 submitters by count for this feedback item
   const { data: topSubmitters } = await supabase
     .from('entries_with_data')
-    .select('submitter_name, submitter_avatar')
+    .select('submitter_name, submitter_avatar, created_by_user_id')
     .eq('feedback_item_id', feedbackItem.id)
     .not('submitter_name', 'is', null)
+    .not('created_by_user_id', 'is', null)
     .then(async (result) => {
       if (!result.data) return { data: [] }
       
@@ -95,12 +97,18 @@ export default async function FeedbackItemPage({
       const submitterCounts: Record<string, TopSubmitter> = {}
       result.data.forEach(entry => {
         const name = entry.submitter_name
+
+        if (entry.created_by_user_id == null) {
+          return
+        }
+        
         if (submitterCounts[name]) {
           submitterCounts[name].entry_count++
         } else {
           submitterCounts[name] = {
             submitter_name: name,
             submitter_avatar: entry.submitter_avatar,
+            id: entry.created_by_user_id,
             entry_count: 1
           }
         }
@@ -249,7 +257,12 @@ export default async function FeedbackItemPage({
                         {getInitials(submitter.submitter_name)}
                       </div>
                     )}
-                    <span className="text-xs text-gray-700">{submitter.submitter_name}</span>
+                    <Link
+                      href={`/user/${submitter.id}`}
+                      className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {submitter.submitter_name}
+                    </Link>
                     <span className="text-xs text-gray-500 bg-gray-100 px-1 py-0.5 rounded-full">
                       {submitter.entry_count}
                     </span>
