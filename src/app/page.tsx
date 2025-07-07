@@ -4,7 +4,7 @@ import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DocumentIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 // Utility function to format ARR values
 function formatARR(value: number): string {
@@ -58,6 +58,8 @@ export default async function DashboardPage() {
     <Layout>
       <div className="mx-auto max-w-[80vw]">
         
+      
+
         {/* Search Box */}
         <div className="mt-8 mb-6">
           <div className="animated-gradient-bg">
@@ -67,11 +69,19 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="text-white text-center text-md cursor-pointer hover:underline">
-          <Link href="/about" className="flex items-center justify-center gap-2">
+        <div className="text-white text-center text-md cursor-pointer max-w-[55vw] mx-auto grid grid-cols-12">
+          <Link href="/about" className="flex items-center justify-center gap-2 hover:underline col-span-6">
             <DocumentIcon className="w-4 h-4" />
             Readme: What is this? What is it for? What is it NOT for?
           </Link>
+          <Link href="https://www.notion.so/vercel/Launch-Calendar-4b4542b694974f269bb81b3ccc99e009" target="_blank" className="flex items-center justify-center gap-2 hover:underline col-span-3">
+            <CalendarIcon className="w-4 h-4" />
+            Launch Calendar
+          </Link>
+          <p className="cursor-not-allowed flex items-center justify-center gap-2 hover:underline col-span-3">
+            <CalendarIcon className="w-4 h-4" />
+            EPD Anti-Roadmap (soon!)
+          </p>
         </div>
 
         <div className="grid grid-cols-[1fr_0.45fr] gap-8 py-8">
