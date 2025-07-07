@@ -29,7 +29,7 @@ export default function NotFound() {
               <div className="flex-1">
                 <div className="text-gray-700 leading-relaxed">
                   <p className="mb-4">
-                    There's nothing here. You may have followed a link to an item that was deleted.
+                    There&apos;s nothing here. You may have followed a link to an item that was deleted.
                   </p>
                   <p>
                     Check with{' '}
