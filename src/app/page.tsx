@@ -69,7 +69,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="text-white text-center text-md cursor-pointer max-w-[55vw] mx-auto grid grid-cols-12">
+        <div className="text-white text-xs 2xl:text-base text-center text-md cursor-pointer max-w-[55vw] mx-auto grid grid-cols-12">
           <Link href="/about" className="flex items-center justify-center gap-2 hover:underline col-span-6">
             <DocumentIcon className="w-4 h-4" />
             Readme: What is this? What is it for? What is it NOT for?
