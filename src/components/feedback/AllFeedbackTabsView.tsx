@@ -49,7 +49,7 @@ export function AllFeedbackTabsView({ feedbackItems, customerEntries }: AllFeedb
   return (
     <div className="w-full max-w-full min-w-0">
       <Tabs defaultValue="feedback-items" className="w-full min-w-0">
-        <TabsList className="grid w-full grid-cols-2 bg-gray-200 p-1 rounded-lg mb-6">
+        <TabsList className="w-full gap-2 bg-gray-200 h-12 p-1 rounded-lg mb-2">
           <TabsTrigger 
             value="feedback-items" 
             className="text-sm font-medium cursor-pointer data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-800 transition-all duration-200"

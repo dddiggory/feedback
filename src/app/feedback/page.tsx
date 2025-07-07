@@ -24,19 +24,21 @@ export default async function FeedbackPage() {
     console.log('First customer entry:', customerEntries[0]);
   }
 
-  return (
-    <Layout fullWidth={true}>
-      <div className="py-8 text-white w-full max-w-full min-w-0">
-        <h1 className="px-12 text-3xl font-bold mb-6">Browse All Feedback</h1>
-        <p className="px-12 mb-8 text-gray-200">
-          Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you&apos;re looking for.
-        </p>
-        
-        <AllFeedbackTabsView 
-          feedbackItems={feedbackItems || []} 
-          customerEntries={customerEntries || []} 
-        />
-      </div>
-    </Layout>
-  );
+    return (
+      <Layout>
+        <div className="space-y-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-white">Browse All Feedback</h1>
+              <p className="mt-2 text-white">
+                Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you&apos;re looking for.
+              </p>
+            </div>
+
+            <AllFeedbackTabsView
+              feedbackItems={feedbackItems || []}
+              customerEntries={customerEntries || []}
+            />
+        </div>
+      </Layout>
+    );
 } 
