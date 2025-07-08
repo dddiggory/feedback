@@ -196,7 +196,7 @@ export function FeedbackPageLogFeedbackDialog({
               </div>
               <Textarea
                 id="description"
-                placeholder="Briefly describe customer situation here"
+                placeholder="Briefly describe customer situation here. This flows into product area #firehose channels and gets ingested into analyses, so please write something short but meaningful. Please DON'T just put 'see description above' or similar."
                 className="min-h-[100px] max-h-[150px] bg-white resize-none overflow-y-auto"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
