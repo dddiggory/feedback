@@ -191,12 +191,12 @@ export function FeedbackPageLogFeedbackDialog({
                 <Label htmlFor="description">Customer Pain Description<span className="text-red-500">*</span>
                 </Label>
                 <p className="text-sm text-gray-500">
-                  What specific pain / problem is the customer experiencing? What will this help the customer achieve?
+                  What specific pain / problem is the customer experiencing? What will this help the customer achieve? This flows into product area #firehose channels and gets ingested into analyses, so please write something short but meaningful. Please DON'T just put 'see description above' or similar.
                 </p>
               </div>
               <Textarea
                 id="description"
-                placeholder="Briefly describe customer situation here. This flows into product area #firehose channels and gets ingested into analyses, so please write something short but meaningful. Please DON'T just put 'see description above' or similar."
+                placeholder="Briefly describe customer situation here. No 'see above' entries please!"
                 className="min-h-[100px] max-h-[150px] bg-white resize-none overflow-y-auto"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
