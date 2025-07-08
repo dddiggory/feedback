@@ -145,18 +145,18 @@ export function FeedbackPageLogFeedbackDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] lg:max-w-3xl bg-stone-100">
-        <form ref={formRef} onSubmit={handleSubmit}>
-          <DialogHeader>
-            <div className="text-xs text-gray-500">Add Customer +1</div>
-            <DialogTitle className="text-2xl text-blue-800 font-bold">
-              {feedbackItemTitle}
-            </DialogTitle>
-            <DialogDescription className="outline-dotted rounded-sm p-1 text-sm text-gray-600 mt-2 max-h-[100px] overflow-y-scroll">
-              {feedbackItemDescription}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
+      <DialogContent className="sm:max-w-[425px] lg:max-w-3xl bg-stone-100 max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0 pb-4">
+          <div className="text-xs text-gray-500">Add Customer +1</div>
+          <DialogTitle className="text-2xl text-blue-800 font-bold">
+            {feedbackItemTitle}
+          </DialogTitle>
+          <DialogDescription className="outline-dotted rounded-sm p-1 text-sm text-gray-600 mt-2 max-h-[100px] overflow-y-scroll">
+            {feedbackItemDescription}
+          </DialogDescription>
+        </DialogHeader>
+        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 px-1 space-y-4">
             <div className="grid grid-cols-6 gap-4">
               <div className="col-span-4">
                 <Label className="pb-2"htmlFor="account">Customer / Account<span className="text-red-500">*</span></Label>
@@ -197,7 +197,7 @@ export function FeedbackPageLogFeedbackDialog({
               <Textarea
                 id="description"
                 placeholder="Briefly describe customer situation here"
-                className="min-h-[100px] bg-white"
+                className="min-h-[100px] max-h-[150px] bg-white resize-none overflow-y-auto"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 ref={descriptionRef}
@@ -213,13 +213,13 @@ export function FeedbackPageLogFeedbackDialog({
               <Textarea
                 id="links"
                 placeholder="https://..."
-                className="min-h-[60px] bg-white"
+                className="min-h-[60px] max-h-[100px] bg-white resize-none overflow-y-auto"
                 value={links}
                 onChange={(e) => setLinks(e.target.value)}
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0 mt-4 px-1">
             <Button 
               className="cursor-pointer" 
               type="submit" 
