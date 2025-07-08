@@ -149,21 +149,29 @@ export default async function DashboardPage() {
                           {entry.entry_key && entry.feedback_item_slug ? (
                             <Link
                               href={`/feedback/${entry.feedback_item_slug}/entries/${entry.entry_key}`}
-                              className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1 cursor-pointer hover:text-gray-900 hover:underline"
+                              className="block max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1 cursor-pointer hover:text-gray-900 hover:underline overflow-hidden"
+                              style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 4,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}
                               title={entry.entry_description}
                             >
-                              {entry.entry_description && entry.entry_description.length > 225
-                                ? entry.entry_description.slice(0, 225) + '…'
-                                : entry.entry_description}
+                              {entry.entry_description}
                             </Link>
                           ) : (
                             <span
-                              className="block line-clamp-3 max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1"
+                              className="block max-w-[16rem] xl:max-w-[26rem] 2xl:max-w-[34rem] text-xs text-gray-700 break-words flex-1 overflow-hidden"
+                              style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 4,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}
                               title={entry.entry_description}
                             >
-                              {entry.entry_description && entry.entry_description.length > 225
-                                ? entry.entry_description.slice(0, 225) + '…'
-                                : entry.entry_description}
+                              {entry.entry_description}
                             </span>
                           )}
                           {entry.entry_key && entry.feedback_item_slug && (
