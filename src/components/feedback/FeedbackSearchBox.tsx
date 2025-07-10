@@ -122,7 +122,7 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
 };
 
 const createMenuList = (onCreateNew?: () => void) => {
-  return (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
+  const CustomMenuList = (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
     return (
       <div>
         <components.MenuList {...props} />
@@ -138,6 +138,9 @@ const createMenuList = (onCreateNew?: () => void) => {
       </div>
     );
   };
+  
+  CustomMenuList.displayName = 'CustomMenuList';
+  return CustomMenuList;
 };
 
 const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>>(

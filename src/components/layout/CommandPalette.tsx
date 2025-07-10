@@ -15,7 +15,7 @@ export function CommandPalette() {
     setIsOpen(false)
   }, [])
 
-  const handleSelect = useCallback((option: any) => {
+  const handleSelect = useCallback((option: { slug?: string } | null) => {
     if (option?.slug) {
       // Close the modal when an option is selected
       setIsOpen(false)
