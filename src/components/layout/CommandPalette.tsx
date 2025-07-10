@@ -1,14 +1,27 @@
 "use client"
 
 import { useState, useEffect, useCallback } from 'react'
+import { usePathname } from 'next/navigation'
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox'
+import { getHomePageSearchBoxRef } from '@/components/feedback/HomePageSearchBox'
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
   const handleOpen = useCallback(() => {
+    // If we're on the home page, try to focus the existing search box
+    if (pathname === '/') {
+      const homePageSearchBox = getHomePageSearchBoxRef()
+      if (homePageSearchBox) {
+        homePageSearchBox.focus()
+        return
+      }
+    }
+    
+    // Otherwise, show the modal
     setIsOpen(true)
-  }, [])
+  }, [pathname])
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
@@ -55,6 +68,12 @@ export function CommandPalette() {
     <div 
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-16"
       onClick={handleOverlayClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          handleClose()
+        }
+      }}
+      tabIndex={-1}
     >
       <div className="w-[70vw] max-w-6xl">
         <div className="animated-gradient-bg">

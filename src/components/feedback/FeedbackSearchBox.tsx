@@ -1,12 +1,11 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, forwardRef, useImperativeHandle, useRef, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
-import { createClient } from '@/lib/supabase/client'
-import { components, GroupBase, OptionProps, FilterOptionOption, MenuListProps, Props as SelectProps } from 'react-select'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { JSX } from 'react'
+import { useRouter } from 'next/navigation'
+import { components, type GroupBase, type OptionProps, type FilterOptionOption, type MenuListProps, type Props as SelectProps } from 'react-select'
+import { createClient } from '@/lib/supabase/client'
 
 interface FeedbackItemRow {
   id: string;
@@ -62,7 +61,7 @@ const highlightText = (text: string, searchStr: string) => {
   if (merged.length === 0) return text;
 
   // Map normalized indices back to original text indices
-  const parts: (string | JSX.Element)[] = [];
+  const parts: (string | ReactNode)[] = [];
   let origIdx = 0, normIdx = 0, lastEnd = 0, matchIdx = 0;
   while (origIdx < text.length && matchIdx < merged.length) {
     const [matchStart, matchEnd] = merged[matchIdx];
@@ -127,13 +126,14 @@ const createMenuList = (onCreateNew?: () => void) => {
       <div>
         <components.MenuList {...props} />
         <Link href="/feedback/new">
-          <div
-            className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md"
+          <button
+            type="button"
+            className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md w-full"
             style={{ borderTop: '1px solid #fbbf24' }}
             onClick={() => onCreateNew?.()}
           >
             ＋ None of these existing items are what I had in mind; Create a brand new feedback item instead.
-          </div>
+          </button>
         </Link>
       </div>
     );
@@ -154,11 +154,28 @@ interface FeedbackSearchBoxProps {
   placeholder?: string
 }
 
-export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: FeedbackSearchBoxProps = {}) {
-  const router = useRouter()
-  const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
-  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export interface FeedbackSearchBoxRef {
+  focus: () => void
+}
+
+export const FeedbackSearchBox = forwardRef<FeedbackSearchBoxRef, FeedbackSearchBoxProps>(
+  ({ onSelect, onCreateNew, placeholder }, ref) => {
+    const router = useRouter()
+    const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
+    const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const wrapperRef = useRef<HTMLDivElement>(null)
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        if (wrapperRef.current) {
+          const input = wrapperRef.current.querySelector('input')
+          if (input) {
+            input.focus()
+          }
+        }
+      }
+    }), [])
 
   useEffect(() => {
     const fetchFeedbackItems = async () => {
@@ -201,7 +218,7 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
   ) => {
     const words = normalizeText(inputValue).split(' ').filter(Boolean);
     const label = normalizeText(option.label || '');
-    const description = normalizeText((option.data && option.data.description) || '');
+    const description = normalizeText(option.data?.description || '');
     // Return true if every word is found in either label or description
     return words.every(
       word => label.includes(word) || description.includes(word)
@@ -211,7 +228,7 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
   const MenuList = createMenuList(onCreateNew);
 
   return (
-    <div className="w-full rounded-xl bg-green-200 overflow-hidden">
+    <div className="w-full rounded-xl bg-green-200 overflow-hidden" ref={wrapperRef}>
       <Select
         value={selectedOption}
         onChange={handleChange}
@@ -316,4 +333,6 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
       />
     </div>
   )
-} 
+})
+
+FeedbackSearchBox.displayName = 'FeedbackSearchBox'

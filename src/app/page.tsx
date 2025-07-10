@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { DocumentIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
-import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
+import { HomePageSearchBox } from '@/components/feedback/HomePageSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import { KeyboardShortcutHint } from '@/components/ui/keyboard-shortcut-hint';
 import { getRandomColor } from "@/lib/colors";
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
         <div className="mt-8 mb-6">
           <div className="animated-gradient-bg">
             <div className="p-4">
-              <FeedbackSearchBox />
+              <HomePageSearchBox />
             </div>
           </div>
           <KeyboardShortcutHint />
