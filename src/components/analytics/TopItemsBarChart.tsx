@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 
 interface ProductAreaOption {
   label: string;
@@ -381,6 +382,13 @@ export function TopItemsBarChart() {
                 <SelectItem value="severity" className="cursor-pointer">Severity Level</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              disabled
+              className="min-w-[180px] cursor-not-allowed opacity-50"
+            >
+              Time Range (coming soon)
+            </Button>
           </div>
         </div>
         <TabsContent value="count">

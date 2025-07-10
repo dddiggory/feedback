@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server';
 import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, ClockIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { TopItemsBarChart } from '@/components/analytics/TopItemsBarChart';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
@@ -53,6 +56,87 @@ export default async function AnalyticsPage() {
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-6">
             <TopItemsBarChart />
+          </div>
+        </div>
+
+        {/* Feedback Over Time Chart - Coming Soon */}
+        <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="p-6">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Feedback Over Time</h3>
+              <h4 className="text-sm text-gray-500 mb-4">
+                Track feedback volume and revenue impact trends over time.
+              </h4>
+              <Tabs defaultValue="count" className="w-full">
+                <div className="flex items-center justify-between mb-4 gap-4">
+                  <TabsList className="bg-muted p-1 rounded-lg">
+                    <TabsTrigger
+                      value="count"
+                      className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow data-[state=inactive]:text-muted-foreground data-[state=inactive]:opacity-70 font-semibold px-6 py-2 rounded-md transition"
+                    >
+                      By Request Count
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="revenue"
+                      className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow data-[state=inactive]:text-muted-foreground data-[state=inactive]:opacity-70 font-semibold px-6 py-2 rounded-md transition"
+                    >
+                      By Revenue Impact
+                    </TabsTrigger>
+                  </TabsList>
+                  <div className="flex items-center gap-3">
+                    <Select disabled>
+                      <SelectTrigger className="min-w-[200px] cursor-not-allowed">
+                        <SelectValue placeholder={<span className="text-gray-400">All Product Areas</span>} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all" className="cursor-not-allowed">All Product Areas</SelectItem>
+                        <SelectItem value="placeholder1" className="cursor-not-allowed">Sample Product Area 1</SelectItem>
+                        <SelectItem value="placeholder2" className="cursor-not-allowed">Sample Product Area 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select disabled>
+                      <SelectTrigger className="min-w-[180px] cursor-not-allowed">
+                        <SelectValue placeholder="Group By..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none" className="cursor-not-allowed">GroupBy: None</SelectItem>
+                        <SelectItem value="customer-type" className="cursor-not-allowed">New/Existing</SelectItem>
+                        <SelectItem value="severity" className="cursor-not-allowed">Severity Level</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      disabled
+                      className="min-w-[180px] cursor-not-allowed opacity-50"
+                    >
+                      Time Range (coming soon)
+                    </Button>
+                  </div>
+                </div>
+                <TabsContent value="count">
+                  <div className="relative h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    {/* Coming Soon Overlay for Count Tab */}
+                    <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-gray-600 mb-2">Coming Soon</h3>
+                        <p className="text-gray-500">Feedback trends over time</p>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="revenue">
+                  <div className="relative h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    {/* Coming Soon Overlay for Revenue Tab */}
+                    <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-gray-600 mb-2">Coming Soon</h3>
+                        <p className="text-gray-500">Feedback trends over time</p>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
 
