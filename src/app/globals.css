@@ -124,6 +124,33 @@ body {
   @apply bg-primary text-primary-foreground;
 }
 
+/* Global React Select Menu Styles (for portaled menus) */
+.react-select__menu {
+  @apply bg-white border border-input rounded-md shadow-lg;
+  max-height: 400px !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.react-select__menu-list {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  pointer-events: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.react-select__option {
+  @apply px-3 py-2 cursor-pointer;
+}
+
+.react-select__option--is-focused {
+  @apply bg-accent text-accent-foreground;
+}
+
+.react-select__option--is-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
 @keyframes shimmer-gradient {
   0% {
     background-position: 0% 50%;

@@ -16,7 +16,7 @@ interface LayoutProps {
 }
 
 const navigation = [
-  { name: 'Submit Feedback', href: '/', icon: PlusCircleIcon },
+  { name: 'View/Add Feedback (⌘ K)', href: '/', icon: PlusCircleIcon },
   { name: 'All Feedback', href: '/feedback', icon: ChatBubbleBottomCenterIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
   { name: 'Product Areas', href: '/areas', icon: TableCellsIcon },

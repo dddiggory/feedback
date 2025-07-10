@@ -227,6 +227,9 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
         autoFocus
         menuPortalTarget={typeof window !== 'undefined' ? document.body : undefined}
         menuPosition="fixed"
+        menuShouldScrollIntoView={false}
+        maxMenuHeight={400}
+        menuShouldBlockScroll={false}
         styles={{
           control: (base) => ({
             ...base,
@@ -262,10 +265,16 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
             ...base,
             width: '100%',
             maxWidth: '100%',
+            maxHeight: '400px',
             backgroundColor: 'white',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             borderRadius: '12px',
             overflow: 'hidden'
+          }),
+          menuList: (base) => ({
+            ...base,
+            maxHeight: '300px',
+            overflowY: 'auto'
           }),
           option: (base, state) => ({
             ...base,
@@ -278,7 +287,7 @@ export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: Feedba
           }),
           menuPortal: (base) => ({
             ...base,
-            zIndex: 9999
+            zIndex: 50000
           }),
           singleValue: (base) => ({
             ...base,

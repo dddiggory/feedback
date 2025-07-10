@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false)
@@ -27,6 +26,12 @@ export function CommandPalette() {
     setIsOpen(false)
   }, [])
 
+  const handleOverlayClick = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setIsOpen(false)
+    }
+  }, [])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for cmd+k (Mac) or ctrl+k (Windows/Linux)
@@ -44,25 +49,24 @@ export function CommandPalette() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, handleOpen, handleClose])
 
+  if (!isOpen) return null
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent 
-        className="w-[70vw] max-w-6xl sm:max-w-6xl md:max-w-6xl lg:max-w-6xl xl:max-w-6xl p-0 bg-transparent border-none shadow-none"
-        showCloseButton={false}
-      >
-        <DialogTitle className="sr-only">Search Feedback Items</DialogTitle>
-        <div className="w-full">
-          <div className="animated-gradient-bg">
-            <div className="p-4">
-              <FeedbackSearchBox 
-                onSelect={handleSelect}
-                onCreateNew={handleCreateNew}
-                placeholder="Search feedback items... (Press Esc to close)"
-              />
-            </div>
+    <div 
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-16"
+      onClick={handleOverlayClick}
+    >
+      <div className="w-[70vw] max-w-6xl">
+        <div className="animated-gradient-bg">
+          <div className="p-4">
+            <FeedbackSearchBox 
+              onSelect={handleSelect}
+              onCreateNew={handleCreateNew}
+              placeholder="Search feedback items... (Press Esc to close)"
+            />
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 } 
