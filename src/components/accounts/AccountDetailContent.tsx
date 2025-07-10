@@ -635,7 +635,7 @@ function AccountDetailData({ slug }: { slug: string }) {
                 <div>
                   <p className="text-sm text-gray-500">Salesforce Account</p>
                   <a
-                    href={`https://your-salesforce-domain.lightning.force.com/lightning/r/Account/${accountSummary.sfdcAccount}/view`}
+                    href={`${accountSummary.sfdcAccount}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-lg font-medium text-blue-600 hover:text-blue-800 underline"
