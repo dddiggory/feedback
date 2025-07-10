@@ -126,16 +126,27 @@ const fetcher = async (slug: string) => {
     return { accountSummary: null, entries: [] };
   }
 
+  // Extract and clean the company website using the same logic as page.tsx
+  const companyWebsite = filteredEntries.find(entry => entry.company_website)?.company_website;
+  const cleanWebsite = companyWebsite
+    ? companyWebsite
+        .replace(/^https?:\/\//, '') // Remove protocol
+        .replace(/^www\./, '')       // Remove www prefix
+        .replace(/\/$/, '')          // Remove trailing slash
+        .split('/')[0]               // Remove path - keep only domain
+        .toLowerCase()               // Ensure lowercase
+    : null;
+
   // Create account summary
   const accountSummary: AccountSummary = {
     name: filteredEntries[0].account_name || reconstructAccountNameFromSlug(slug),
-    cleanWebsite: slug,
+    cleanWebsite: cleanWebsite || slug, // Use cleaned website or fall back to slug
     currentARR: filteredEntries.reduce((sum, entry) => sum + (entry.current_arr || 0), 0),
     openOppARR: filteredEntries.reduce((sum, entry) => sum + (entry.open_opp_arr || 0), 0),
     totalARR: 0, // Will be calculated
     entryCount: filteredEntries.length,
     sfdcAccount: filteredEntries.find(entry => entry.sfdc_account)?.sfdc_account || null,
-    companyWebsite: filteredEntries.find(entry => entry.company_website)?.company_website || null,
+    companyWebsite: companyWebsite || null,
     lastActivity: filteredEntries[0].created_at, // Already sorted by created_at desc
   };
 
@@ -325,35 +336,36 @@ function AccountFeedbackTable({ entries }: { entries: FeedbackEntry[] }) {
         const id = row.original.created_by_user_id;
         const avatar = row.original.submitter_avatar;
         
-        // Generate avatar URL or fallback
-        const avatarElement = avatar ? (
-          <Image
-            src={avatar}
-            alt={`${name} avatar`}
-            width={24}
-            height={24}
-            className="rounded-full object-cover"
-            unoptimized
-            onError={(e) => {
-              // Fallback to initials if avatar fails to load
-              const target = e.target as HTMLElement;
-              const container = target.closest('div');
-              if (container) {
-                container.innerHTML = `<div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center"><span class="text-xs font-medium text-gray-600">${(name || 'U').charAt(0).toUpperCase()}</span></div>`;
-              }
-            }}
-          />
-        ) : (
-          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-xs font-medium text-gray-600">
-              {(name || 'U').charAt(0).toUpperCase()}
-            </span>
-          </div>
-        );
+        // Avatar component with proper error handling
+        const AvatarComponent = () => {
+          const [imageError, setImageError] = React.useState(false);
+          
+          if (!avatar || imageError) {
+            return (
+              <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-xs font-medium text-gray-600">
+                  {(name || 'U').charAt(0).toUpperCase()}
+                </span>
+              </div>
+            );
+          }
+          
+          return (
+            <Image
+              src={avatar}
+              alt={`${name} avatar`}
+              width={24}
+              height={24}
+              className="rounded-full object-cover"
+              unoptimized
+              onError={() => setImageError(true)}
+            />
+          );
+        };
 
         return (
           <div className="flex items-center gap-2">
-            {avatarElement}
+            <AvatarComponent />
             {id ? (
               <a
                 href={`/user/${id}`}
@@ -565,7 +577,10 @@ function AccountDetailData({ slug }: { slug: string }) {
     );
   }
 
-  const logoUrl = `https://img.logo.dev/${accountSummary.cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=96&format=webp`;
+  // Generate logo URL if company website is available (same logic as page.tsx)
+  const logoUrl = accountSummary.cleanWebsite
+    ? `https://img.logo.dev/${accountSummary.cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=96&format=webp`
+    : null;
 
   return (
     <div className="space-y-8">
@@ -574,21 +589,29 @@ function AccountDetailData({ slug }: { slug: string }) {
         <div className="flex items-start gap-6">
           <div className="flex-shrink-0">
             <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
-              <Image
-                src={logoUrl}
-                alt={`${accountSummary.name} logo`}
-                width={96}
-                height={96}
-                className="object-contain"
-                unoptimized
-                onError={(e) => {
-                  const target = e.target as HTMLElement;
-                  const container = target.closest('div');
-                  if (container) {
-                    container.innerHTML = `<div class="w-24 h-24 rounded-2xl bg-gray-200 flex items-center justify-center shadow-lg"><span class="text-gray-500 text-2xl font-bold">${accountSummary.name.charAt(0).toUpperCase()}</span></div>`;
-                  }
-                }}
-              />
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={`${accountSummary.name} logo`}
+                  width={96}
+                  height={96}
+                  className="object-contain"
+                  unoptimized
+                  onError={(e) => {
+                    const target = e.target as HTMLElement;
+                    const container = target.closest('div');
+                    if (container) {
+                      container.innerHTML = `<div class="w-24 h-24 rounded-2xl bg-gray-200 flex items-center justify-center shadow-lg"><span class="text-gray-500 text-2xl font-bold">${accountSummary.name.charAt(0).toUpperCase()}</span></div>`;
+                    }
+                  }}
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-2xl bg-gray-200 flex items-center justify-center shadow-lg">
+                  <span className="text-gray-500 text-2xl font-bold">
+                    {accountSummary.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           
