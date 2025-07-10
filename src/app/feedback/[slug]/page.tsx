@@ -269,7 +269,9 @@ export default async function FeedbackItemPage({
         
         <div className="pt-2 prose">
             <h3 className="text-white text-shadow-lg text-2xl font-medium">Customer Feedback Entries</h3>
-            <FeedbackEntriesTable data={entries || []} />
+          <div className="w-full space-y-4 bg-white rounded-xl p-6">
+              <FeedbackEntriesTable data={entries || []} />
+            </div>
         </div>
       </div>
     </Layout>

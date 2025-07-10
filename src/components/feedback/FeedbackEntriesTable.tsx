@@ -381,7 +381,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
   });
 
   return (
-    <div className="w-full space-y-4 bg-white rounded-xl p-6">
+    <div className="w-full space-y-4 bg-white">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Input
