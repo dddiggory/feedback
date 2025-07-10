@@ -5,6 +5,7 @@ import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
 import { FeedbackSearchBox } from '@/components/feedback/FeedbackSearchBox';
 import { EntryViewButton } from '@/components/feedback/EntryViewButton';
+import { KeyboardShortcutHint } from '@/components/ui/keyboard-shortcut-hint';
 import { getRandomColor } from "@/lib/colors";
 import { formatARR } from "@/lib/format";
 import { getInitials } from "@/lib/utils";
@@ -41,6 +42,7 @@ export default async function DashboardPage() {
               <FeedbackSearchBox />
             </div>
           </div>
+          <KeyboardShortcutHint />
         </div>
 
         <div className="text-white text-xs 2xl:text-base text-center text-md cursor-pointer max-w-[55vw] mx-auto grid grid-cols-12">

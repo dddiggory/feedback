@@ -4,6 +4,7 @@ import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AuthGate } from "@/components/auth/AuthGate";
 import { UserProvider } from "@/components/layout/UserContext";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 import { SWRConfig } from 'swr'
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -52,6 +53,7 @@ export default function RootLayout({
             <UserProvider>
               <AuthGate>
                 {children}
+                <CommandPalette />
               </AuthGate>
             </UserProvider>
           </SWRConfig>

@@ -121,20 +121,23 @@ const Option = (props: OptionProps<FeedbackItem, false, GroupBase<FeedbackItem>>
   );
 };
 
-const MenuList = (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
-  return (
-    <div>
-      <components.MenuList {...props} />
-      <Link href="/feedback/new">
-        <div
-          className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md"
-          style={{ borderTop: '1px solid #fbbf24' }}
-        >
-          ＋ None of these existing items are what I had in mind; Create a brand new feedback item instead.
-        </div>
-      </Link>
-    </div>
-  );
+const createMenuList = (onCreateNew?: () => void) => {
+  return (props: MenuListProps<FeedbackItem, false, GroupBase<FeedbackItem>>) => {
+    return (
+      <div>
+        <components.MenuList {...props} />
+        <Link href="/feedback/new">
+          <div
+            className="px-4 py-3 text-left text-sm font-semibold text-black bg-orange-200 hover:bg-orange-400 cursor-pointer select-none rounded-b-md"
+            style={{ borderTop: '1px solid #fbbf24' }}
+            onClick={() => onCreateNew?.()}
+          >
+            ＋ None of these existing items are what I had in mind; Create a brand new feedback item instead.
+          </div>
+        </Link>
+      </div>
+    );
+  };
 };
 
 const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>>(
@@ -142,7 +145,13 @@ const Select = dynamic<SelectProps<FeedbackItem, false, GroupBase<FeedbackItem>>
   { ssr: false }
 )
 
-export function FeedbackSearchBox() {
+interface FeedbackSearchBoxProps {
+  onSelect?: (option: FeedbackItem | null) => void
+  onCreateNew?: () => void
+  placeholder?: string
+}
+
+export function FeedbackSearchBox({ onSelect, onCreateNew, placeholder }: FeedbackSearchBoxProps = {}) {
   const router = useRouter()
   const [selectedOption, setSelectedOption] = useState<FeedbackItem | null>(null)
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([])
@@ -179,6 +188,8 @@ export function FeedbackSearchBox() {
     if (option?.slug) {
       router.push(`/feedback/${option.slug}`)
     }
+    // Call the onSelect callback if provided
+    onSelect?.(option)
   }
 
   const filterOption = (
@@ -194,6 +205,8 @@ export function FeedbackSearchBox() {
     );
   }
 
+  const MenuList = createMenuList(onCreateNew);
+
   return (
     <div className="w-full rounded-xl bg-green-200 overflow-hidden">
       <Select
@@ -204,7 +217,7 @@ export function FeedbackSearchBox() {
         components={{ Option, MenuList }}
         className="react-select-container"
         classNamePrefix="react-select"
-        placeholder="Start typing to add or view customer feedback..."
+        placeholder={placeholder || "Start typing to add or view customer feedback..."}
         isClearable
         isSearchable
         isLoading={isLoading}
