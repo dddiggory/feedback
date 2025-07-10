@@ -191,7 +191,7 @@ export function FeedbackPageLogFeedbackDialog({
                 <Label htmlFor="description">Customer Pain Description<span className="text-red-500">*</span>
                 </Label>
                 <p className="text-sm text-gray-500">
-                  What specific pain / problem is the customer experiencing? What will this help the customer achieve? This flows into product area #firehose channels and gets ingested into analyses, so please write something short but meaningful. Please DON'T just put 'see description above' or similar.
+                  What specific pain / problem is the customer experiencing? What will this help the customer achieve? This flows into product area #firehose channels and gets ingested into analyses, so please write something short but meaningful. Please DON&apos;T just put &lsquo;see description above&rsquo; or similar.
                 </p>
               </div>
               <Textarea
