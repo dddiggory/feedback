@@ -1,61 +1,51 @@
 import { Layout } from '@/components/layout/Layout'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Loading() {
   return (
     <Layout>
-      <div className="space-y-8 animate-pulse">
+      <div className="space-y-8">
         {/* Header */}
         <div>
-          <div className="h-8 bg-gray-200 rounded w-64 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-96"></div>
+          <Skeleton className="h-8 w-64 bg-gray-300/60 mb-2" />
+          <Skeleton className="h-6 w-96 bg-gray-300/40" />
         </div>
 
-        {/* Summary Stats Skeleton */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-lg bg-white shadow">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="h-8 w-8 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <div className="h-4 bg-gray-200 rounded mb-2 w-20"></div>
-                    <div className="h-6 bg-gray-200 rounded w-16"></div>
-                  </div>
+        {/* Accounts Table Skeleton */}
+        <div className="w-full space-y-4 bg-white rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-10 w-64 bg-gray-300" />
+            <Skeleton className="h-10 w-24 bg-gray-300" />
+          </div>
+          
+          <div className="rounded-md border">
+            <div className="p-4">
+              <div className="space-y-3">
+                <div className="grid grid-cols-6 gap-4">
+                  <Skeleton className="h-4 bg-gray-300" />
+                  <Skeleton className="h-4 bg-gray-300" />
+                  <Skeleton className="h-4 bg-gray-300" />
+                  <Skeleton className="h-4 bg-gray-300" />
+                  <Skeleton className="h-4 bg-gray-300" />
+                  <Skeleton className="h-4 bg-gray-300" />
                 </div>
+                {Array.from({ length: 8 }, (_, i) => `row-${i}`).map((key) => (
+                  <div key={key} className="grid grid-cols-6 gap-4">
+                    <Skeleton className="h-4 bg-gray-300" />
+                    <Skeleton className="h-4 bg-gray-300" />
+                    <Skeleton className="h-4 bg-gray-300" />
+                    <Skeleton className="h-4 bg-gray-300" />
+                    <Skeleton className="h-4 bg-gray-300" />
+                    <Skeleton className="h-4 bg-gray-300" />
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Top Accounts Skeleton */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6">
-            <div className="h-6 bg-gray-200 rounded w-64 mb-6"></div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-lg border border-gray-200 bg-white p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-12 w-12 bg-gray-200 rounded-lg"></div>
-                    <div className="flex-1 min-w-0">
-                      <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-24"></div>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div>
-                      <div className="h-3 bg-gray-200 rounded w-16 mb-1"></div>
-                      <div className="h-5 bg-gray-200 rounded w-20"></div>
-                    </div>
-                    <div>
-                      <div className="h-3 bg-gray-200 rounded w-20 mb-1"></div>
-                      <div className="h-5 bg-gray-200 rounded w-16"></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          </div>
+          
+          <div className="flex items-center justify-end space-x-2">
+            <Skeleton className="h-8 w-16 bg-gray-300" />
+            <Skeleton className="h-8 w-16 bg-gray-300" />
           </div>
         </div>
       </div>
