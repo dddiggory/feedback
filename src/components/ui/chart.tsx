@@ -110,7 +110,6 @@ function ChartTooltipContent({
   payload,
   className = "bg-white",
   indicator = "dot",
-  hideLabel = false,
   hideIndicator = false,
   label,
   labelFormatter,
@@ -118,13 +117,11 @@ function ChartTooltipContent({
   formatter,
   color,
   nameKey,
-  labelKey,
 }: {
   active?: boolean;
   payload?: any[];
   className?: string;
   indicator?: "line" | "dot" | "dashed";
-  hideLabel?: boolean;
   hideIndicator?: boolean;
   label?: string;
   labelFormatter?: (...args: any[]) => any;
@@ -132,31 +129,18 @@ function ChartTooltipContent({
   formatter?: (...args: any[]) => any;
   color?: string;
   nameKey?: string;
-  labelKey?: string;
 }) {
   const { config } = useChart()
 
-  const safePayload = Array.isArray(payload) ? payload : [];
+  const safePayload = React.useMemo(() => Array.isArray(payload) ? payload : [], [payload]);
   const tooltipLabel = React.useMemo(() => {
-    if (hideLabel || safePayload.length === 0) {
+    if (!active || !label) {
       return null
     }
 
-    const [item] = safePayload
-    const key = `${labelKey || item?.dataKey || item?.name || "value"}`
-    const itemConfig = getPayloadConfigFromPayload(config, item, key)
-    const value =
-      !labelKey && typeof label === "string"
-        ? config[label as keyof typeof config]?.label || label
-        : itemConfig?.label
-
-    if (labelFormatter) {
-      return (
-        <div className={cn("font-medium", labelClassName)}>
-          {labelFormatter(value, payload)}
-        </div>
-      )
-    }
+    const value = labelFormatter
+      ? labelFormatter(label, safePayload)
+      : label
 
     if (!value) {
       return null
@@ -164,13 +148,11 @@ function ChartTooltipContent({
 
     return <div className={cn("font-medium", labelClassName)}>{value}</div>
   }, [
+    active,
     label,
     labelFormatter,
-    payload,
-    hideLabel,
     labelClassName,
-    config,
-    labelKey,
+    safePayload,
   ])
 
   if (!active || safePayload.length === 0) {

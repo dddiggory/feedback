@@ -12,33 +12,26 @@ export default async function FeedbackPage() {
     .order('updated_at', { ascending: false });
 
   // Fetch customer entries
-  const { data: customerEntries, error: entriesError } = await supabase
+  const { data: customerEntries } = await supabase
     .from('entries_with_data')
     .select('*')
     .order('created_at', { ascending: false });
 
-  // Debug logging
-  console.log('Customer entries count:', customerEntries?.length || 0);
-  console.log('Customer entries error:', entriesError);
-  if (customerEntries && customerEntries.length > 0) {
-    console.log('First customer entry:', customerEntries[0]);
-  }
+  return (
+    <Layout>
+      <div className="space-y-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white">Browse All Feedback</h1>
+            <p className="mt-2 text-white">
+              Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you&apos;re looking for.
+            </p>
+          </div>
 
-    return (
-      <Layout>
-        <div className="space-y-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white">Browse All Feedback</h1>
-              <p className="mt-2 text-white">
-                Interactive tables for exploring both product feedback items and specific customer entries. Use the search filters to find exactly what you&apos;re looking for.
-              </p>
-            </div>
-
-            <AllFeedbackTabsView
-              feedbackItems={feedbackItems || []}
-              customerEntries={customerEntries || []}
-            />
-        </div>
-      </Layout>
-    );
+          <AllFeedbackTabsView
+            feedbackItems={feedbackItems || []}
+            customerEntries={customerEntries || []}
+          />
+      </div>
+    </Layout>
+  );
 } 

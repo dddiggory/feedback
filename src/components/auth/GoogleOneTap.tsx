@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useImperativeHandle, forwardRef, useEffect, useRef } from 'react'
+import React, { useImperativeHandle, forwardRef, useEffect, useRef, useCallback } from 'react'
 import Script from 'next/script'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -82,7 +82,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     return [nonce, hashedNonce]
   }
 
-  const handleGoogleSignIn = async (credential: string, nonce: string) => {
+  const handleGoogleSignIn = useCallback(async (credential: string, nonce: string) => {
     if (!mountedRef.current) return
     
     try {
@@ -98,9 +98,9 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     } catch (error) {
       console.error('Error logging in with Google', error)
     }
-  }
+  }, [supabase.auth, router])
 
-  const initializeFallbackButton = async () => {
+  const initializeFallbackButton = useCallback(async () => {
     if (!fallbackButtonRef.current || !window.google?.accounts?.id) return
     
     // Clear any existing content
@@ -142,7 +142,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
         }
       })
     }
-  }
+  }, [supabase.auth])
 
   useImperativeHandle(ref, () => ({
     prompt: () => {
@@ -155,7 +155,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
         });
       }
     }
-  }), [])
+  }), [initializeFallbackButton])
 
   useEffect(() => {
     mountedRef.current = true
@@ -237,7 +237,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     return () => {
       cancelled = true
     }
-  }, []) // Remove dependencies to prevent re-initialization
+  }, [handleGoogleSignIn, initializeFallbackButton, router, supabase.auth])
 
   // Cleanup on unmount
   useEffect(() => {
