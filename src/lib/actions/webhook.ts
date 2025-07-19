@@ -160,7 +160,7 @@ export async function createEntryWithWebhook(
         });
         // Log but don't fail the entry creation
       } else {
-        console.log('Webhook sent successfully')
+        // Log removed for production
       }
     } catch (webhookError) {
       console.error('Webhook error:', webhookError)

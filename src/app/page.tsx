@@ -8,7 +8,7 @@ import { EntryViewButton } from '@/components/feedback/EntryViewButton';
 import { KeyboardShortcutHint } from '@/components/ui/keyboard-shortcut-hint';
 import { getRandomColor } from "@/lib/colors";
 import { formatARR } from "@/lib/format";
-import { getInitials } from "@/lib/utils";
+import { getInitials, wrapText, generateLogoUrl } from "@/lib/text-utils";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -98,21 +98,7 @@ export default async function DashboardPage() {
                           {entry.account_name ? (
                             <div className="flex items-center gap-2 mt-1">
                               {(() => {
-                                // Clean up the website URL for logo.dev (same logic as FeedbackEntriesTable)
-                                const companyWebsite = entry.company_website;
-                                const cleanWebsite = companyWebsite
-                                  ? companyWebsite
-                                      .replace(/^https?:\/\//, '') // Remove protocol
-                                      .replace(/^www\./, '')       // Remove www prefix
-                                      .replace(/\/$/, '')          // Remove trailing slash
-                                      .split('/')[0]               // Remove path - keep only domain
-                                      .toLowerCase()               // Ensure lowercase
-                                  : null;
-
-                                // Generate logo URL if company website is available
-                                const logoUrl = cleanWebsite
-                                  ? `https://img.logo.dev/${cleanWebsite}?token=pk_Lt5wNE7NT2qBNmqdZnx0og&size=20&format=webp`
-                                  : null;
+                                const logoUrl = generateLogoUrl(entry.company_website);
 
                                 return logoUrl ? (
                                   <div className="flex-shrink-0 w-5 h-5 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
@@ -190,30 +176,7 @@ export default async function DashboardPage() {
                         {Array.isArray(entry.product_area_names) && entry.product_area_names.length > 0 && (
                           <div className="flex flex-wrap gap-1 max-w-[6rem]">
                             {entry.product_area_names.map((area: string, idx: number) => {
-                              // Helper function to wrap text if it exceeds 16 characters
-                              const wrapText = (text: string) => {
-                                if (text.length <= 16) return text;
-
-                                const words = text.split(' ');
-                                const lines = [];
-                                let currentLine = '';
-
-                                for (const word of words) {
-                                  if (currentLine.length === 0) {
-                                    currentLine = word;
-                                  } else if ((currentLine + ' ' + word).length <= 16) {
-                                    currentLine += ' ' + word;
-                                  } else {
-                                    lines.push(currentLine);
-                                    currentLine = word;
-                                  }
-                                }
-                                if (currentLine) lines.push(currentLine);
-
-                                return lines.join('\n');
-                              };
-
-                              const wrappedText = wrapText(area);
+                              const wrappedText = wrapText(area, 16);
                               const needsWrapping = wrappedText.includes('\n');
 
                               return entry.product_area_slugs && entry.product_area_slugs[idx] ? (

@@ -21,8 +21,13 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    // Enable moderate type checking improvements
     "noImplicitAny": false,
-    "strictNullChecks": false
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

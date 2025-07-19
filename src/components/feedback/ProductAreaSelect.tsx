@@ -12,7 +12,7 @@ interface ProductAreaRow {
   description: string;
 }
 
-interface ProductArea {
+export interface ProductArea {
   value: string
   label: string
   description: string

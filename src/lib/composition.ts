@@ -72,6 +72,8 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
         }
       };
     }
+    
+    return undefined;
   };
 }
 

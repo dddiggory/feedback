@@ -266,7 +266,7 @@ export default async function AnalyticsPage() {
                     <div className="flex items-center">
                       <div 
                         className="bg-blue-500 h-2 rounded mr-3"
-                        style={{ width: `${(count / topProductAreas[0][1]) * 100}px` }}
+                        style={{ width: `${topProductAreas[0]?.[1] ? (count / topProductAreas[0][1]) * 100 : 0}px` }}
                       ></div>
                       <span className="text-sm text-gray-500">{count}</span>
                     </div>

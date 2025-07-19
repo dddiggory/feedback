@@ -136,7 +136,7 @@ function ChartTooltipContent({
 }) {
   const { config } = useChart()
 
-  const safePayload = Array.isArray(payload) ? payload : [];
+  const safePayload = React.useMemo(() => Array.isArray(payload) ? payload : [], [payload]);
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || safePayload.length === 0) {
       return null
@@ -171,6 +171,7 @@ function ChartTooltipContent({
     labelClassName,
     config,
     labelKey,
+    safePayload,
   ])
 
   if (!active || safePayload.length === 0) {

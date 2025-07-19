@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "preinstall": "npx only-allow pnpm"
+    "type-check": "tsc --noEmit",
+    "build:analyze": "ANALYZE=true npm run build",
+    "clean": "rm -rf .next out",
+    "preinstall": "npx only-allow pnpm",
+    "check-all": "npm run lint && npm run type-check",
+    "prepare": "npm run check-all"
   },
   "dependencies": {
     "@dnd-kit/accessibility": "^3.1.1",

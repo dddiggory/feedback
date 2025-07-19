@@ -118,7 +118,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
 
         // Debug logging
         if (companyWebsite) {
-          console.log(`[${accountName}] Original website: "${companyWebsite}" -> Cleaned: "${cleanWebsite}" -> Logo URL: "${logoUrl}"`);
+          // Debug log removed for production
         }
 
         return (
@@ -133,7 +133,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
                   className="object-contain"
                   unoptimized
                   onError={(e) => {
-                    console.log(`[${accountName}] Logo failed to load: ${logoUrl}`);
+                    // Debug log removed for production
                     // Hide the image container if logo fails to load
                     const target = e.target as HTMLElement;
                     const container = target.closest('div');
@@ -142,7 +142,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
                     }
                   }}
                   onLoad={() => {
-                    console.log(`[${accountName}] Logo loaded successfully: ${logoUrl}`);
+                    // Debug log removed for production
                   }}
                 />
               </div>

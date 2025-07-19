@@ -82,7 +82,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     return [nonce, hashedNonce]
   }
 
-  const handleGoogleSignIn = async (credential: string, nonce: string) => {
+  const handleGoogleSignIn = React.useCallback(async (credential: string, nonce: string) => {
     if (!mountedRef.current) return
     
     try {
@@ -98,9 +98,9 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     } catch (error) {
       console.error('Error logging in with Google', error)
     }
-  }
+  }, [router, supabase.auth])
 
-  const initializeFallbackButton = async () => {
+  const initializeFallbackButton = React.useCallback(async () => {
     if (!fallbackButtonRef.current || !window.google?.accounts?.id) return
     
     // Clear any existing content
@@ -142,20 +142,20 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
         }
       })
     }
-  }
+  }, [supabase.auth])
 
   useImperativeHandle(ref, () => ({
     prompt: () => {
       if (window.google?.accounts?.id && initializedRef.current) {
         window.google.accounts.id.prompt((notification: PromptNotification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            console.log('FedCM not available, showing fallback button')
+            // Debug log removed for production
             initializeFallbackButton()
           }
         });
       }
     }
-  }), [])
+  }), [initializeFallbackButton])
 
   useEffect(() => {
     mountedRef.current = true
@@ -237,7 +237,7 @@ const GoogleOneTapComponent = forwardRef((_props, ref) => {
     return () => {
       cancelled = true
     }
-  }, []) // Remove dependencies to prevent re-initialization
+  }, [handleGoogleSignIn, initializeFallbackButton, router, supabase.auth])
 
   // Cleanup on unmount
   useEffect(() => {

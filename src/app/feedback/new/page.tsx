@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Layout } from '@/components/layout/Layout'
-import { ProductAreaSelect } from '@/components/feedback/ProductAreaSelect'
+import { ProductAreaSelect, type ProductArea } from '@/components/feedback/ProductAreaSelect'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function NewFeedbackPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [selectedProductAreas, setSelectedProductAreas] = useState([])
+  const [selectedProductAreas, setSelectedProductAreas] = useState<ProductArea[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
@@ -67,7 +67,7 @@ export default function NewFeedbackPage() {
           feedback_item_id: item.id,
           product_area_id: area.value, // area.value is the product_area_id (uuid)
         }))
-        console.log('Join table payload:', joinRows)
+        // Log removed for production
         const { error: joinError } = await supabase.from('items_to_areas').insert(joinRows)
         if (joinError) throw joinError
       }

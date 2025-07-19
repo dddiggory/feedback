@@ -151,7 +151,7 @@ export function FeedbackEntryTable({
   });
 
   // Debug: log the current filter value for 'account_name'
-  console.log('Account Name filter value:', table.getColumn("account_name")?.getFilterValue());
+  // Debug log removed for production
 
   return (
     <div className="space-y-4 bg-white rounded-xl p-4">

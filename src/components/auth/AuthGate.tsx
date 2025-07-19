@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
 import GoogleOneTapComponent from './GoogleOneTap'
 
 interface AuthGateProps {

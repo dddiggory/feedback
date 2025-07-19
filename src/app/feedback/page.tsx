@@ -12,17 +12,12 @@ export default async function FeedbackPage() {
     .order('updated_at', { ascending: false });
 
   // Fetch customer entries
-  const { data: customerEntries, error: entriesError } = await supabase
+  const { data: customerEntries } = await supabase
     .from('entries_with_data')
     .select('*')
     .order('created_at', { ascending: false });
 
-  // Debug logging
-  console.log('Customer entries count:', customerEntries?.length || 0);
-  console.log('Customer entries error:', entriesError);
-  if (customerEntries && customerEntries.length > 0) {
-    console.log('First customer entry:', customerEntries[0]);
-  }
+  // Debug logs removed for production
 
     return (
       <Layout>

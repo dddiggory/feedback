@@ -1,6 +1,5 @@
 import { Layout } from '@/components/layout/Layout'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ChevronDown } from 'lucide-react'
 
 export default function Loading() {
   return (
