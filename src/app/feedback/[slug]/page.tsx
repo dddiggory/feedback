@@ -31,7 +31,7 @@ export async function generateMetadata({
   
   const { data: feedbackItem } = await supabase
     .from('feedback_items_with_data')
-    .select('title')
+    .select('title, description, entry_count, current_arr_sum')
     .eq('slug', slug)
     .single()
 
@@ -41,8 +41,25 @@ export async function generateMetadata({
     }
   }
 
+  const title = `▲ ${feedbackItem.title}`
+  const description = feedbackItem.description 
+    ? `${feedbackItem.description.slice(0, 160)}${feedbackItem.description.length > 160 ? '...' : ''}`
+    : `${feedbackItem.entry_count || 0} customer requests • Product feedback from Vercel customers`
+
   return {
-    title: `▲ ${feedbackItem.title}`
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      siteName: "Vercel Feedback",
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
   }
 }
 

@@ -22,6 +22,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "▲ vercel/Feedback",
   description: "the home for gtm & product idea sharing and accountability",
+  openGraph: {
+    title: "▲ vercel/Feedback",
+    description: "the home for gtm & product idea sharing and accountability",
+    type: 'website',
+    siteName: "Vercel Feedback",
+  },
+  twitter: {
+    card: 'summary',
+    title: "▲ vercel/Feedback",
+    description: "the home for gtm & product idea sharing and accountability",
+  },
 };
 
 export default function RootLayout({
