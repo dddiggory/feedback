@@ -53,6 +53,16 @@ export async function createEntryWithWebhook(
                          user.email?.split('@')[0] || 
                          'Anonymous'
 
+    // Clean up company website before storing in database
+    const cleanWebsite = data.companyWebsite 
+      ? data.companyWebsite
+          .replace(/^https?:\/\//, '') // Remove protocol
+          .replace(/^www\./, '')       // Remove www prefix
+          .replace(/\/$/, '')          // Remove trailing slash
+          .split('/')[0]               // Remove path - keep only domain
+          .toLowerCase()               // Ensure lowercase
+      : null;
+
     // Insert the entry (let database generate entry_key)
     const { data: entry, error: insertError } = await supabase
       .from('entries')
@@ -65,7 +75,7 @@ export async function createEntryWithWebhook(
         open_opp_arr: data.openOppArr,
         current_arr: data.currentArr,
         sfdc_account: data.sfdcAccount,
-        company_website: data.companyWebsite,
+        company_website: cleanWebsite,
         created_by_user_id: user.id
       })
       .select()
@@ -104,17 +114,7 @@ export async function createEntryWithWebhook(
       return { success: true }
     }
 
-    // Clean up company website for account URL
-    const cleanWebsite = data.companyWebsite 
-      ? data.companyWebsite
-          .replace(/^https?:\/\//, '') // Remove protocol
-          .replace(/^www\./, '')       // Remove www prefix
-          .replace(/\/$/, '')          // Remove trailing slash
-          .split('/')[0]               // Remove path - keep only domain
-          .toLowerCase()               // Ensure lowercase
-      : null;
-
-    // Prepare webhook payload
+    // Prepare webhook payload (using already cleaned website)
     const webhookPayload: GTMFeedbackPayload = {
       feedback_item_title: feedbackItem.title,
       entry_description: data.description,
