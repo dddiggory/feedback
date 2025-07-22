@@ -236,7 +236,7 @@ export default async function DashboardPage() {
                           </div>
                         )}
                       </td>
-                      <td className="pl-1 pr-5 py-4 whitespace-nowrap">
+                      <td className="pl-1 pr-5 py-4 min-w-[8rem] max-w-[12rem]">
                         <div className="flex items-center">
                           {entry.submitter_avatar ? (
                             <Image
@@ -244,29 +244,29 @@ export default async function DashboardPage() {
                               alt={`${entry.submitter_name}'s avatar`}
                               width={25}
                               height={25}
-                              className="w-6 h-6 rounded-full mr-2"
+                              className="w-6 h-6 rounded-full mr-2 flex-shrink-0"
                             />
                           ) : entry.submitter_name ? (
-                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 ${getRandomColor()}`}>
                               {getInitials(entry.submitter_name)}
                             </div>
                           ) : (
-                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 ${getRandomColor()}`}>
                               ?
                             </div>
                           )}
-                          <div className="flex flex-col">
+                          <div className="flex flex-col min-w-0">
                             {entry.created_by_user_id ? (
                               <Link
                                 href={`/user/${entry.created_by_user_id}`}
-                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline break-words"
                               >
                                 {entry.submitter_name}
                               </Link>
                             ) : (
-                              <span className="text-xs text-gray-900">{entry.submitter_name}</span>
+                              <span className="text-xs text-gray-900 break-words">{entry.submitter_name}</span>
                             )}
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 whitespace-nowrap">
                               {new Date(entry.created_at).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short',
