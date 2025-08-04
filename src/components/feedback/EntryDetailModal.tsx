@@ -10,6 +10,13 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
@@ -60,6 +67,13 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   const [open, setOpen] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [editedDescription, setEditedDescription] = useState(entry.entry_description)
+  // Normalize severity value (convert "med" to "medium")
+  const normalizeSeverity = (severity: string) => {
+    const normalized = severity.toLowerCase();
+    return normalized === 'med' ? 'medium' : normalized;
+  }
+  
+  const [editedSeverity, setEditedSeverity] = useState(normalizeSeverity(entry.severity))
   const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
   const { user } = useUser()
@@ -81,8 +95,9 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
     if (!isOwner) return
     setIsEditing(!isEditing)
     if (!isEditing) {
-      // Reset to original description when entering edit mode
+      // Reset to original values when entering edit mode
       setEditedDescription(entry.entry_description)
+      setEditedSeverity(normalizeSeverity(entry.severity))
     }
   }
 
@@ -94,7 +109,10 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
     try {
       const { error } = await supabase
         .from('entries')
-        .update({ entry_description: editedDescription })
+        .update({ 
+          entry_description: editedDescription,
+          severity: editedSeverity 
+        })
         .eq('id', entry.id)
 
       if (error) {
@@ -103,6 +121,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
       } else {
         // Update local state
         entry.entry_description = editedDescription
+        entry.severity = editedSeverity
         setIsEditing(false)
       }
     } catch (error) {
@@ -116,6 +135,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   // Handle cancel edit
   const handleCancel = () => {
     setEditedDescription(entry.entry_description)
+    setEditedSeverity(normalizeSeverity(entry.severity))
     setIsEditing(false)
   }
 
@@ -242,9 +262,26 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
           <div className="ml-auto">
             <Label className="text-sm text-gray-500">Severity</Label>
             <div className="flex justify-end mt-1">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getSeverityStyle(entry.severity)}`}>
-                {entry.severity.charAt(0).toUpperCase() + entry.severity.slice(1).toLowerCase()}
-              </span>
+              {isEditing ? (
+                <Select 
+                  value={editedSeverity} 
+                  onValueChange={setEditedSeverity}
+                  disabled={isSaving}
+                >
+                  <SelectTrigger className="w-fit min-w-[100px]">
+                    <SelectValue placeholder="Select severity" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getSeverityStyle(entry.severity)}`}>
+                  {entry.severity.charAt(0).toUpperCase() + entry.severity.slice(1).toLowerCase()}
+                </span>
+              )}
             </div>
           </div>
         </div>
