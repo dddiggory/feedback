@@ -92,7 +92,7 @@ export default function NewFeedbackPage() {
               access: 'public',
               handleUploadUrl: '/api/images/upload',
               // send scope so server route can build the pathname
-              clientPayload: { scope: 'feedback_item', parentId: item.id, filename: file.name },
+              clientPayload: JSON.stringify({ scope: 'feedback_item', parentId: item.id, filename: file.name }),
             })
             results.push(res)
             console.log('Uploaded to Blob:', res.url)
