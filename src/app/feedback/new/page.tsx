@@ -9,7 +9,12 @@ import { Layout } from '@/components/layout/Layout'
 import { ProductAreaSelect } from '@/components/feedback/ProductAreaSelect'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { upload, type PutBlobResult } from '@vercel/blob/client'
+import { upload } from '@vercel/blob/client'
+
+// Minimal shape used from the upload response
+type BlobUploadResult = {
+  url: string
+}
 
 export default function NewFeedbackPage() {
   const [title, setTitle] = useState('')
@@ -17,7 +22,7 @@ export default function NewFeedbackPage() {
   const [selectedProductAreas, setSelectedProductAreas] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
-  const [uploaded, setUploaded] = useState<PutBlobResult[]>([])
+  const [uploaded, setUploaded] = useState<BlobUploadResult[]>([])
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
@@ -81,7 +86,7 @@ export default function NewFeedbackPage() {
       if (item && pendingFiles.length > 0) {
         try {
           setUploading(true)
-          const results: PutBlobResult[] = []
+          const results: BlobUploadResult[] = []
           for (const file of pendingFiles) {
             const res = await upload(file.name, file, {
               access: 'public',
