@@ -11,6 +11,7 @@ import { getComments } from '@/lib/actions/comments'
 import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ImageLightbox } from './ImageLightbox'
+import { ImagesManagerModal } from './ImagesManagerModal'
 import { getRandomColor, getRandomGradient } from "@/lib/colors";
 import { getInitials } from "@/lib/utils";
 
@@ -306,6 +307,8 @@ export default async function FeedbackItemPage({
             </div>
           )}
         </div>
+        {/* Client-side modal for managing images */}
+        <ImagesManagerModal feedbackItemId={feedbackItem.id} initialImages={[]} />
         
         <div className="pt-2 prose">
             <h3 className="text-white text-shadow-lg text-2xl font-medium">Customer Feedback Entries</h3>

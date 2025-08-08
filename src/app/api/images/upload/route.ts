@@ -2,6 +2,21 @@ import { NextResponse } from 'next/server'
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client'
 import { createClient } from '@/lib/supabase/server'
 
+type UploadClientPayload = {
+  scope: 'feedback_item' | 'entry'
+  parentId: string
+  filename?: string
+}
+
+function isUploadClientPayload(value: unknown): value is UploadClientPayload {
+  if (typeof value !== 'object' || value === null) return false
+  const obj = value as Record<string, unknown>
+  const hasValidScope = obj.scope === 'feedback_item' || obj.scope === 'entry'
+  const hasValidParentId = typeof obj.parentId === 'string'
+  const hasValidFilename = obj.filename === undefined || typeof obj.filename === 'string'
+  return hasValidScope && hasValidParentId && hasValidFilename
+}
+
 // Client upload token endpoint
 // - Authenticates user via Supabase
 // - Restricts content types
@@ -24,30 +39,25 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
+      onBeforeGenerateToken: async (_pathname, clientPayload) => {
         // Optional: inspect clientPayload to apply additional authorization
         // e.g., ensure scope is valid and the IDs look correct UUIDs
         const allowedContentTypes = ['image/jpeg', 'image/png', 'image/webp']
-        // Enforce directory prefixes by scope
-        let prefix = ''
-        if (clientPayload && typeof clientPayload === 'object') {
-          const { scope, parentId } = clientPayload as any
-          if (scope === 'feedback_item' && typeof parentId === 'string') {
-            prefix = `feedback_items/${parentId}/`
+        // Generate a pathname on the server to ensure correct subdirectory usage
+        let pathname = 'misc/'
+        if (isUploadClientPayload(clientPayload)) {
+          const { scope, parentId, filename } = clientPayload
+          if (scope === 'feedback_item') {
+            pathname = `feedback_items/${parentId}/${filename || 'image'}`
+          } else if (scope === 'entry') {
+            pathname = `feedback_entries/${parentId}/${filename || 'image'}`
           }
-          if (scope === 'entry' && typeof parentId === 'string') {
-            prefix = `feedback_entries/${parentId}/`
-          }
-        }
-
-        // If a prefix is set, ensure the requested pathname starts with it
-        if (prefix && !pathname.startsWith(prefix)) {
-          throw new Error('Invalid upload path')
         }
 
         return {
           allowedContentTypes,
           addRandomSuffix: true,
+          pathname,
           tokenPayload: JSON.stringify({
             userId: user.id,
             clientPayload: clientPayload ?? null,

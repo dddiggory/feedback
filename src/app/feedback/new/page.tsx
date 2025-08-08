@@ -83,12 +83,11 @@ export default function NewFeedbackPage() {
           setUploading(true)
           const results: PutBlobResult[] = []
           for (const file of pendingFiles) {
-            const pathname = `feedback_items/${item.id}/${file.name}`
-            const res = await upload(pathname, file, {
+            const res = await upload(file.name, file, {
               access: 'public',
               handleUploadUrl: '/api/images/upload',
-              // send scope so server route can validate path prefix
-              clientPayload: { scope: 'feedback_item', parentId: item.id },
+              // send scope so server route can build the pathname
+              clientPayload: { scope: 'feedback_item', parentId: item.id, filename: file.name },
             })
             results.push(res)
             console.log('Uploaded to Blob:', res.url)
@@ -99,7 +98,12 @@ export default function NewFeedbackPage() {
               body: JSON.stringify({
                 scope: 'feedback_item',
                 parentId: item.id,
-                blob: { url: res.url, size: (res as any).size ?? file.size, contentType: (res as any).contentType ?? file.type },
+                blob: {
+                  url: res.url,
+                  // The Vercel Blob response does not include size/contentType; fall back to the File values
+                  size: file.size,
+                  contentType: file.type,
+                },
               }),
             })
             if (!attachResp.ok) {

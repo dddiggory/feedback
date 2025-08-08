@@ -118,7 +118,7 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
             <Button
               type="button"
               variant="secondary"
-              className="bg-teal-600/90 hover:bg-teal-700 text-white"
+              className="bg-teal-600/90 hover:bg-teal-700 text-white cursor-pointer"
               onClick={() => {
                 // Open modal via custom event; the page container will render it
                 const evt = new CustomEvent('open-images-modal', { detail: { feedbackItemId: feedbackItem.id } })
@@ -138,9 +138,10 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
         
         <div className="flex gap-2">
           <Button
+            type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white cursor-pointer"
           >
             {isSaving ? (
               <>
@@ -159,7 +160,7 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
             onClick={handleCancel}
             disabled={isSaving}
             variant="outline"
-            className="text-slate-800 border-slate-400 hover:bg-slate-100"
+            className="text-slate-800 border-slate-400 hover:bg-slate-100 cursor-pointer"
           >
             <XMarkIcon className="h-4 w-4" />
             Cancel
@@ -189,27 +190,27 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
         )}
       </div>
       
-      <div className="relative">
-        <p className="text-slate-950 overflow-y-auto p-4 wrap-normal bg-slate-100/80 rounded-lg flex-1 pr-4"
-           style={{ paddingBottom: images.length ? 96 : undefined }}>
+      <div className="relative flex-1 min-h-[160px]">
+        <p className="text-slate-950 overflow-y-auto h-full p-4 wrap-normal bg-slate-100/80 rounded-lg pr-4"
+           style={{ paddingBottom: images.length ? 52 : undefined }}>
           {feedbackItem.description}
         </p>
         {images.length > 0 && (
-          <div className="absolute bottom-2 left-2 right-2 bg-white/80 border border-slate-200 rounded-md px-2 py-2 shadow-sm overflow-x-auto">
-            <div className="flex gap-2">
+          <div className="absolute bottom-1 left-1 right-1 bg-white/80 border border-slate-200 rounded-md px-2 py-1.5 shadow-sm overflow-x-auto">
+            <div className="flex items-center gap-2">
               {images.slice(0, 10).map((img) => (
                 <div key={img.id} className="relative group">
                   <img
                     src={img.url}
                     alt={img.caption || 'Image'}
-                    className="h-16 w-16 object-cover rounded-md border border-slate-200 cursor-zoom-in"
+                    className="h-9 w-auto max-w-[72px] object-contain rounded border border-slate-200 cursor-zoom-in bg-white"
                     onClick={() => {
                       const evt = new CustomEvent('open-image-lightbox', { detail: { url: img.url, caption: img.caption } })
                       window.dispatchEvent(evt)
                     }}
                   />
                   <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    <img src={img.url} alt="preview" className="h-40 w-40 object-cover rounded-md shadow-lg border" />
+                    <img src={img.url} alt="preview" className="h-28 w-28 object-cover rounded-md shadow-lg border" />
                   </div>
                 </div>
               ))}
