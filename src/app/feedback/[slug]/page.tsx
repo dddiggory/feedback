@@ -9,6 +9,8 @@ import { FeedbackEntriesTable } from '@/components/feedback/FeedbackEntriesTable
 import { Comments } from '@/components/feedback/Comments'
 import { getComments } from '@/lib/actions/comments'
 import { EditableFeedbackItem } from '@/components/feedback/EditableFeedbackItem'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ImageLightbox } from './ImageLightbox'
 import { getRandomColor, getRandomGradient } from "@/lib/colors";
 import { getInitials } from "@/lib/utils";
 
@@ -135,6 +137,8 @@ export default async function FeedbackItemPage({
 
   return (
     <Layout>
+      {/* Client lightbox portal */}
+      <ImageLightbox />
       {/* Shipped Status Banner */}
       {feedbackItem.status === 'shipped' && (
         <div className="rounded-md bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 mb-6 shadow-lg">
@@ -193,14 +197,33 @@ export default async function FeedbackItemPage({
           </div>
 
           {/* Row 2: Title + Description */}
-          <EditableFeedbackItem 
-            feedbackItem={{
-              id: feedbackItem.id,
-              title: feedbackItem.title,
-              description: feedbackItem.description,
-              slug: feedbackItem.slug
-            }}
-          />
+          {(() => {
+            // Fetch images for this item
+            // Note: We prefer doing this near render to keep the page cohesive
+            return null
+          })()}
+
+          {await (async () => {
+            const { data: images } = await supabase
+              .from('images')
+              .select('*')
+              .eq('feedback_item_id', feedbackItem.id)
+              .is('deleted_at', null)
+              .order('order_index', { ascending: true })
+              .order('created_at', { ascending: true })
+
+            return (
+              <EditableFeedbackItem 
+                feedbackItem={{
+                  id: feedbackItem.id,
+                  title: feedbackItem.title,
+                  description: feedbackItem.description,
+                  slug: feedbackItem.slug
+                }}
+                images={images || []}
+              />
+            )
+          })()}
           
           {/* Row 2: Metrics */}
           <div className="min-w-[30vh] w-fit">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,12 +9,17 @@ import { Layout } from '@/components/layout/Layout'
 import { ProductAreaSelect } from '@/components/feedback/ProductAreaSelect'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { upload, type PutBlobResult } from '@vercel/blob/client'
 
 export default function NewFeedbackPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [selectedProductAreas, setSelectedProductAreas] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
+  const [uploaded, setUploaded] = useState<PutBlobResult[]>([])
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   // Add keyboard shortcut for cmd+enter to submit form
@@ -72,6 +77,44 @@ export default function NewFeedbackPage() {
         if (joinError) throw joinError
       }
 
+      // If images were selected, upload then attach to the created feedback item
+      if (item && pendingFiles.length > 0) {
+        try {
+          setUploading(true)
+          const results: PutBlobResult[] = []
+          for (const file of pendingFiles) {
+            const pathname = `feedback_items/${item.id}/${file.name}`
+            const res = await upload(pathname, file, {
+              access: 'public',
+              handleUploadUrl: '/api/images/upload',
+              // send scope so server route can validate path prefix
+              clientPayload: { scope: 'feedback_item', parentId: item.id },
+            })
+            results.push(res)
+            console.log('Uploaded to Blob:', res.url)
+            // Attach in DB
+            const attachResp = await fetch('/api/images/attach', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                scope: 'feedback_item',
+                parentId: item.id,
+                blob: { url: res.url, size: (res as any).size ?? file.size, contentType: (res as any).contentType ?? file.type },
+              }),
+            })
+            if (!attachResp.ok) {
+              const t = await attachResp.text()
+              console.error('Attach failed:', attachResp.status, t)
+            }
+          }
+          setUploaded(results)
+        } catch (err) {
+          console.error('Image upload/attach error:', err)
+        } finally {
+          setUploading(false)
+        }
+      }
+
       // Redirect to the new feedback item
       router.push(`/feedback/${slug}`)
     } catch (error) {
@@ -79,6 +122,33 @@ export default function NewFeedbackPage() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const MAX_IMAGES = 10
+  const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp']
+
+  const addFiles = useCallback((files: FileList | null) => {
+    if (!files) return
+    const existing = pendingFiles.length
+    const added: File[] = []
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i]
+      if (!ACCEPTED.includes(f.type)) continue
+      if (existing + added.length >= MAX_IMAGES) break
+      added.push(f)
+    }
+    if (added.length) setPendingFiles(prev => [...prev, ...added])
+  }, [pendingFiles.length])
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    addFiles(e.dataTransfer.files)
+  }
+
+  const onClickPicker = () => fileInputRef.current?.click()
+
+  const removePending = (idx: number) => {
+    setPendingFiles(prev => prev.filter((_, i) => i !== idx))
   }
 
   return (
@@ -134,11 +204,43 @@ export default function NewFeedbackPage() {
             />
           </div>
 
-          
+          {/* Image uploader */}
+          <div className="space-y-2">
+            <Label>Images (optional)</Label>
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={onDrop}
+              onClick={onClickPicker}
+              className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer bg-white/60 hover:bg-white"
+            >
+              <p className="text-slate-700">Drag and drop images here, or click to browse</p>
+              <p className="text-slate-500 text-sm mt-1">Up to {MAX_IMAGES} images. JPEG, PNG, WEBP.</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={ACCEPTED.join(',')}
+                multiple
+                onChange={(e) => addFiles(e.target.files)}
+                className="hidden"
+              />
+            </div>
+
+            {pendingFiles.length > 0 && (
+              <div className="mt-2 grid grid-cols-1 gap-2">
+                {pendingFiles.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between rounded-md bg-white/70 px-3 py-2">
+                    <div className="truncate text-sm text-slate-700">{f.name}</div>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => removePending(i)}>Remove</Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {uploading && <div className="text-sm text-slate-600">Uploading images…</div>}
+          </div>
 
           <Button 
             type="submit" 
-            disabled={isSubmitting || !title.trim() || !description.trim()}
+            disabled={isSubmitting || uploading || !title.trim() || !description.trim()}
             className="w-full"
           >
             {isSubmitting ? 'Creating...' : 'Create Feedback Item (⌘+Enter)'}
