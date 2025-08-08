@@ -18,7 +18,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/components/layout/UserContext";
 
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,7 @@ interface FeedbackEntry {
   company_website?: string | null;
   entry_key?: string;
   external_links?: string | null;
+  feedback_item_slug?: string;
 }
 
 
@@ -75,11 +76,15 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const router = useRouter();
-  const pathname = usePathname();
   const { user } = useUser();
 
-  const handleViewEntry = (entryKey: string) => {
-    router.push(`${pathname}/entries/${entryKey}`);
+  const handleViewEntry = (entryKey: string, feedbackItemSlug?: string) => {
+    if (feedbackItemSlug) {
+      router.push(`/feedback/${feedbackItemSlug}/entries/${entryKey}`);
+    } else {
+      // Fallback if no feedback item slug is available
+      console.warn('No feedback item slug available for entry:', entryKey);
+    }
   };
 
   const columns: ColumnDef<FeedbackEntry>[] = [
@@ -173,6 +178,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
       cell: ({ row }) => {
         const description = row.getValue("entry_description") as string;
         const entryKey = row.original.entry_key;
+        const feedbackItemSlug = row.original.feedback_item_slug;
         const entry = row.original;
         
         // Check if current user is the submitter
@@ -186,7 +192,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
             <div 
               className="text-sm truncate flex-1 cursor-pointer hover:text-gray-700 hover:underline" 
               title={description}
-              onClick={entryKey ? () => handleViewEntry(entryKey) : undefined}
+              onClick={entryKey ? () => handleViewEntry(entryKey, feedbackItemSlug) : undefined}
             >
               {description}
             </div>
@@ -195,7 +201,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
                 variant="ghost"
                 size="sm"
                 className="cursor-pointer h-6 w-6 p-0 flex-shrink-0 hover:bg-sky-100 outline-slate-300 outline"
-                onClick={() => handleViewEntry(entryKey)}
+                onClick={() => handleViewEntry(entryKey, feedbackItemSlug)}
               >
                 {isCurrentUserSubmitter ? (
                   <PencilSquareIcon className="h-4 w-4 text-gray-500" />
