@@ -69,7 +69,11 @@ export function ImagesManagerModal({ feedbackItemId, initialImages }: Props) {
         const res = await upload(file.name, file, {
           access: 'public',
           handleUploadUrl: '/api/images/upload',
-          clientPayload: { scope: 'feedback_item', parentId: feedbackItemId, filename: file.name },
+          clientPayload: JSON.stringify({
+            scope: 'feedback_item',
+            parentId: feedbackItemId,
+            filename: file.name,
+          }),
         })
         await fetch('/api/images/attach', {
           method: 'POST',
@@ -77,7 +81,11 @@ export function ImagesManagerModal({ feedbackItemId, initialImages }: Props) {
           body: JSON.stringify({
             scope: 'feedback_item',
             parentId: feedbackItemId,
-            blob: { url: res.url, size: (res as any).size ?? file.size, contentType: (res as any).contentType ?? file.type },
+            blob: {
+              url: res.url,
+              size: file.size,
+              contentType: file.type,
+            },
           }),
         })
       }
