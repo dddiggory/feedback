@@ -19,6 +19,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { CalendarRange } from 'lucide-react'
 
 interface ProductAreaOption {
   label: string;
@@ -133,6 +134,20 @@ export function TopItemsBarChart() {
     fetchProductAreas()
   }, [])
 
+  // Helper function to apply product area filtering
+  function applyProductAreaFilter(query: any, productAreaFilter?: string) {
+    if (!productAreaFilter || productAreaFilter === 'all') {
+      return query
+    }
+    if (productAreaFilter === 'all-infra-non-v0') {
+      // Filter out items that contain 'v0' in their product_area_slugs
+      // Use PostgreSQL array syntax for the not contains operation
+      return query.not('product_area_slugs', 'cs', '{"v0"}')
+    }
+    // Regular single product area filter
+    return query.contains('product_area_slugs', [productAreaFilter])
+  }
+
   // Helper function to fetch severity data
   async function fetchSeverityData(supabase: any, productAreaFilter?: string) {
     // First get the top 10 feedback items by entry count or revenue
@@ -148,10 +163,9 @@ export function TopItemsBarChart() {
       .order('combined_arr_impact', { ascending: false })
       .limit(10)
 
-    if (productAreaFilter && productAreaFilter !== 'all') {
-      topItemsQuery = topItemsQuery.contains('product_area_slugs', [productAreaFilter])
-      topRevenueQuery = topRevenueQuery.contains('product_area_slugs', [productAreaFilter])
-    }
+    // Apply product area filtering
+    topItemsQuery = applyProductAreaFilter(topItemsQuery, productAreaFilter)
+    topRevenueQuery = applyProductAreaFilter(topRevenueQuery, productAreaFilter)
 
     const [{ data: topEntryItems }, { data: topRevenueItems }] = await Promise.all([
       topItemsQuery,
@@ -209,9 +223,8 @@ export function TopItemsBarChart() {
       .order('entry_count', { ascending: false })
       .limit(10)
 
-    if (productAreaFilter && productAreaFilter !== 'all') {
-      topItemsQuery = topItemsQuery.contains('product_area_slugs', [productAreaFilter])
-    }
+    // Apply product area filtering
+    topItemsQuery = applyProductAreaFilter(topItemsQuery, productAreaFilter)
 
     const { data: topEntryItems } = await topItemsQuery
 
@@ -269,9 +282,8 @@ export function TopItemsBarChart() {
           .select('*')
           .order('combined_arr_impact', { ascending: false })
           .limit(10)
-        if (selectedProductArea && selectedProductArea !== 'all') {
-          revenueQuery = revenueQuery.contains('product_area_slugs', [selectedProductArea])
-        }
+        // Apply product area filtering
+        revenueQuery = applyProductAreaFilter(revenueQuery, selectedProductArea)
         const { data: revenueData } = await revenueQuery
         setTopByRevenueImpact(
           (revenueData || []).map((item: ChartDataItem) => ({
@@ -298,10 +310,9 @@ export function TopItemsBarChart() {
           .select('*')
           .order('combined_arr_impact', { ascending: false })
           .limit(10)
-        if (selectedProductArea && selectedProductArea !== 'all') {
-          entryQuery = entryQuery.contains('product_area_slugs', [selectedProductArea])
-          revenueQuery = revenueQuery.contains('product_area_slugs', [selectedProductArea])
-        }
+        // Apply product area filtering
+        entryQuery = applyProductAreaFilter(entryQuery, selectedProductArea)
+        revenueQuery = applyProductAreaFilter(revenueQuery, selectedProductArea)
         const { data: entryData } = await entryQuery
         setTopByEntryCount(
           (entryData || []).map((item: ChartDataItem) => ({
@@ -362,6 +373,7 @@ export function TopItemsBarChart() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="cursor-pointer">All Product Areas</SelectItem>
+                <SelectItem value="all-infra-non-v0" className="cursor-pointer">All Infra (non-v0)</SelectItem>
                 {productAreas.map((area) => (
                   <SelectItem key={area.value} value={area.value} className="cursor-pointer">
                     {area.label}
@@ -385,9 +397,9 @@ export function TopItemsBarChart() {
             <Button
               variant="outline"
               disabled
-              className="min-w-[180px] cursor-not-allowed opacity-50"
+              className="min-w-[50px] cursor-not-allowed opacity-50"
             >
-              Time Range (coming soon)
+              <CalendarRange className="w-1 h-1 cursor-not-allowed" />
             </Button>
           </div>
         </div>

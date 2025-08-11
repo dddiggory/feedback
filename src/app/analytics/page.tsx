@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { createClient } from '@/lib/supabase/server';
-import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { TopItemsBarChart } from '@/components/analytics/TopItemsBarChart';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
