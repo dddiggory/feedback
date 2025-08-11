@@ -24,6 +24,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Edit, Save, X, Trash } from "lucide-react"
 import { useUser } from "@/components/layout/UserContext"
+import { useAdmin } from "@/hooks/use-admin"
 import { createClient } from "@/lib/supabase/client"
 import { getSeverityStyle } from "@/lib/utils"
 import { formatARR } from "@/lib/format"
@@ -77,10 +78,12 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
   const { user } = useUser()
+  const { isAdmin } = useAdmin()
   const supabase = createClient()
 
-  // Check if current user is the submitter
+  // Check if current user is the submitter or an admin
   const isOwner = user?.id === entry.created_by_user_id
+  const canEdit = isOwner || isAdmin
 
   // Close modal handler
   const handleClose = () => {
@@ -92,7 +95,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
 
   // Handle edit mode toggle
   const handleEditToggle = () => {
-    if (!isOwner) return
+    if (!canEdit) return
     setIsEditing(!isEditing)
     if (!isEditing) {
       // Reset to original values when entering edit mode
@@ -103,7 +106,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
 
   // Handle save changes
   const handleSave = async () => {
-    if (!isOwner || isSaving) return
+    if (!canEdit || isSaving) return
     
     setIsSaving(true)
     try {
@@ -141,7 +144,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
 
   // Handle delete entry
   const handleDelete = async () => {
-    if (!isOwner) return
+    if (!canEdit) return
     
     const confirmed = window.confirm(
       "Are you sure you want to delete this feedback entry? This action cannot be undone."
@@ -343,15 +346,15 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
                     onClick={handleEditToggle}
                     variant="outline"
                     size="sm"
-                    disabled={!isOwner}
-                    className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-sky-200'}
+                    disabled={!canEdit}
+                    className={!canEdit ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-sky-200'}
                   >
                     <Edit className="w-4 h-4 mr-1" />
                     Edit
                   </Button>
-                  {!isOwner && (
+                  {!canEdit && (
                     <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
-                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can edit this feedback entry. Reach out to Field Engineering for exceptions.
+                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) or admins can edit this feedback entry. Reach out to Field Engineering for exceptions.
                       <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
                     </div>
                   )}
@@ -361,15 +364,15 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
                     onClick={handleDelete}
                     variant="outline"
                     size="sm"
-                    disabled={!isOwner}
-                    className={!isOwner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-red-200 text-red-600 border-red-300'}
+                    disabled={!canEdit}
+                    className={!canEdit ? 'cursor-not-allowed opacity-50' : 'cursor-pointer bg-white hover:bg-red-200 text-red-600 border-red-300'}
                   >
                     <Trash className="w-4 h-4 mr-1" />
                     Delete Entry
                   </Button>
-                  {!isOwner && (
+                  {!canEdit && (
                     <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
-                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) can delete this feedback entry. Reach out to Field Engineering for exceptions.
+                      Only the original submitter ({entry.submitter_name || entry.submitter_email || 'Unknown'}) or admins can delete this feedback entry. Reach out to Field Engineering for exceptions.
                       <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
                     </div>
                   )}
