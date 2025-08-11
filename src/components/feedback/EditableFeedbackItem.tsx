@@ -128,19 +128,17 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
                   </div>
                 </div>
               ))}
-              {isAdmin && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="ml-auto bg-teal-600/90 hover:bg-teal-700 text-white cursor-pointer"
-                  onClick={() => {
-                    const evt = new CustomEvent('open-images-modal', { detail: { feedbackItemId: feedbackItem.id } })
-                    window.dispatchEvent(evt)
-                  }}
-                >
-                  Add / Edit Explanatory Images
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="secondary"
+                className="ml-auto bg-teal-600/90 hover:bg-teal-700 text-white cursor-pointer"
+                onClick={() => {
+                  const evt = new CustomEvent('open-images-modal', { detail: { feedbackItemId: feedbackItem.id } })
+                  window.dispatchEvent(evt)
+                }}
+              >
+                Add / Edit Explanatory Images
+              </Button>
             </div>
           </div>
         </div>
@@ -189,22 +187,22 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
           {feedbackItem.title}
         </h1>
         
-        {isAdmin && (
-          <Button
-            onClick={handleEdit}
-            variant="ghost"
-            size="sm"
-            className="ml-2 h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-md"
-            title="Edit title and description"
-          >
-            <PencilSquareIcon className="h-4 w-4" />
-          </Button>
-        )}
+
+        <Button
+          onClick={handleEdit}
+          variant="ghost"
+          size="sm"
+          className="cursor-pointer ml-2 h-8 w-fit p-0 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-md"
+          title="Edit title and description"
+        >
+          <PencilSquareIcon className="h-4 w-4" /> Edit Item Description
+        </Button>
+
       </div>
       
       <div className="relative flex-1 min-h-[160px]">
         <p className="text-slate-950 overflow-y-auto h-full p-4 wrap-normal bg-slate-100/80 rounded-lg pr-4"
-           style={{ paddingBottom: images.length ? 52 : undefined }}>
+           style={{ paddingBottom: images.length > 0 ? 52 : undefined }}>
           {feedbackItem.description}
         </p>
         {images.length > 0 && (
