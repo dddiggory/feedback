@@ -399,7 +399,7 @@ export function TopItemsBarChart() {
               disabled
               className="min-w-[50px] cursor-not-allowed opacity-50"
             >
-              <CalendarRange className="w-1 h-1 cursor-not-allowed" />
+              <CalendarRange className="w-1 h-1 cursor-not-allowed" /> (coming soon)
             </Button>
           </div>
         </div>

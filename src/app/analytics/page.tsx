@@ -6,6 +6,7 @@ import { TopItemsBarChart } from '@/components/analytics/TopItemsBarChart';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { CalendarRange } from 'lucide-react';
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
@@ -106,10 +107,10 @@ export default async function AnalyticsPage() {
                     </Select>
                     <Button
                       variant="outline"
-                      disabled
+                      
                       className="min-w-[180px] cursor-not-allowed opacity-50"
                     >
-                      Time Range (coming soon)
+                      <CalendarRange className="w-1 h-1 cursor-not-allowed" /> (coming soon)
                     </Button>
                   </div>
                 </div>
