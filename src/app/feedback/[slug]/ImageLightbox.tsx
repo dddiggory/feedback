@@ -21,11 +21,11 @@ export function ImageLightbox() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-5xl bg-slate-900">
+      <DialogContent className="max-w-[95vw] sm:max-w-[95vw] md:max-w-[95vw] lg:max-w-[95vw] xl:max-w-[95vw] bg-slate-900 p-2 sm:p-3">
         <DialogTitle className="sr-only">Image preview</DialogTitle>
         {url && (
           <div className="flex flex-col items-center gap-3">
-            <img src={url} alt={caption || 'Image'} className="max-h-[75vh] w-auto rounded-md" />
+            <img src={url} alt={caption || 'Image'} className="max-h-[90vh] max-w-[92vw] h-auto w-auto object-contain rounded-md" />
             {caption && <div className="text-white/80 text-sm">{caption}</div>}
           </div>
         )}

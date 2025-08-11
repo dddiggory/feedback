@@ -215,7 +215,7 @@ export default function NewFeedbackPage() {
 
           {/* Image uploader */}
           <div className="space-y-2">
-            <Label>Images (optional)</Label>
+            <Label>Explanatory Screenshots & Images (optional)</Label>
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={onDrop}

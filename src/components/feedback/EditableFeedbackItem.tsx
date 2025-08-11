@@ -104,38 +104,51 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
             autoFocus
           />
         </div>
-        
-        <Textarea
-          value={editedDescription}
-          onChange={(e) => setEditedDescription(e.target.value)}
-          className="text-slate-950 bg-slate-100/80 border-slate-300 flex-1 min-h-[120px] resize-none"
-          placeholder="Enter feedback item description..."
-        />
 
-        {/* Edit images button */}
-        {isAdmin && (
-          <div>
-            <Button
-              type="button"
-              variant="secondary"
-              className="bg-teal-600/90 hover:bg-teal-700 text-white cursor-pointer"
-              onClick={() => {
-                // Open modal via custom event; the page container will render it
-                const evt = new CustomEvent('open-images-modal', { detail: { feedbackItemId: feedbackItem.id } })
-                window.dispatchEvent(evt)
-              }}
-            >
-              Add / Edit Explanatory Images
-            </Button>
+        {/* Description with persistent image strip */}
+        <div className="relative flex-1 min-h-[160px]">
+          <Textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            className="text-slate-950 bg-slate-100/80 border-slate-300 h-full resize-none pr-4"
+            placeholder="Enter feedback item description..."
+            style={{ paddingBottom: 60 }}
+          />
+          <div className="absolute bottom-1 left-1 right-1 bg-white/80 border border-slate-200 rounded-md px-2 py-1.5 shadow-sm overflow-x-auto">
+            <div className="flex items-center gap-2">
+              {images.slice(0, 10).map((img) => (
+                <div key={img.id} className="relative group">
+                  <img
+                    src={img.url}
+                    alt={img.caption || 'Image'}
+                    className="h-9 w-auto max-w-[72px] object-contain rounded border border-slate-200 bg-white"
+                  />
+                  <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <img src={img.url} alt="preview" className="h-28 w-28 object-cover rounded-md shadow-lg border" />
+                  </div>
+                </div>
+              ))}
+              {isAdmin && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="ml-auto bg-teal-600/90 hover:bg-teal-700 text-white cursor-pointer"
+                  onClick={() => {
+                    const evt = new CustomEvent('open-images-modal', { detail: { feedbackItemId: feedbackItem.id } })
+                    window.dispatchEvent(evt)
+                  }}
+                >
+                  Add / Edit Explanatory Images
+                </Button>
+              )}
+            </div>
           </div>
-        )}
-        
+        </div>
+
         {error && (
-          <div className="text-red-500 text-sm bg-red-50 p-2 rounded">
-            {error}
-          </div>
+          <div className="text-red-500 text-sm bg-red-50 p-2 rounded">{error}</div>
         )}
-        
+
         <div className="flex gap-2">
           <Button
             type="button"
@@ -155,7 +168,6 @@ export function EditableFeedbackItem({ feedbackItem, images = [] }: EditableFeed
               </>
             )}
           </Button>
-          
           <Button
             onClick={handleCancel}
             disabled={isSaving}
