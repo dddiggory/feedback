@@ -6,7 +6,7 @@ export interface Account {
   SFDC_ACCOUNT_ID: string
   ACCOUNT_NAME: string
   ACCOUNT_TYPE: string
-  ACCOUNT_REGION?: string
+  REGION_NAME?: string
   ANNUAL_RECURRING_REVENUE?: number
   IS_ACTIVE_ENTERPRISE_CUSTOMER?: boolean
   UPDATED_AT?: string
@@ -22,7 +22,7 @@ export async function searchAccounts(searchTerm: string): Promise<Account[]> {
         SFDC_ACCOUNT_ID,
         ACCOUNT_NAME,
         ACCOUNT_TYPE,
-        ACCOUNT_REGION,
+        REGION_NAME,
         ANNUAL_RECURRING_REVENUE,
         IS_ACTIVE_ENTERPRISE_CUSTOMER,
         UPDATED_AT,
@@ -32,7 +32,7 @@ export async function searchAccounts(searchTerm: string): Promise<Account[]> {
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
       WHERE ACCOUNT_NAME ILIKE ?
       AND (
-        (ACCOUNT_REGION IS NOT NULL AND ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
+        (REGION_NAME IS NOT NULL AND REGION_NAME NOT ILIKE '%Not Enough Info%')
         OR WEBSITE IS NOT NULL
         OR SUMBLE_ORG_ID IS NOT NULL
       )
@@ -57,7 +57,7 @@ export async function getInitialAccounts(): Promise<Account[]> {
         SFDC_ACCOUNT_ID,
         ACCOUNT_NAME,
         ACCOUNT_TYPE,
-        ACCOUNT_REGION,
+        REGION_NAME,
         ANNUAL_RECURRING_REVENUE,
         IS_ACTIVE_ENTERPRISE_CUSTOMER,
         UPDATED_AT,
@@ -65,7 +65,7 @@ export async function getInitialAccounts(): Promise<Account[]> {
         SUMBLE_ORG_ID,
         WEBSITE
       FROM DWH_PROD.ANALYTICS.ACCOUNTS
-      WHERE (ACCOUNT_REGION IS NOT NULL AND ACCOUNT_REGION NOT ILIKE '%Not Enough Info%')
+      WHERE (REGION_NAME IS NOT NULL AND REGION_NAME NOT ILIKE '%Not Enough Info%')
         AND UPDATED_AT >= DATEADD(year, -1, CURRENT_DATE())
       ORDER BY ANNUAL_RECURRING_REVENUE DESC NULLS LAST, UPDATED_AT DESC
       LIMIT 20
