@@ -46,6 +46,7 @@ import { formatARR } from "@/lib/format";
 interface FeedbackEntry {
   id: string;
   feedback_item_id: string;
+  feedback_item_slug?: string;
   account_name: string;
   entry_description: string;
   severity: string;
@@ -78,8 +79,13 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
   const pathname = usePathname();
   const { user } = useUser();
 
-  const handleViewEntry = (entryKey: string) => {
-    router.push(`${pathname}/entries/${entryKey}`);
+  const handleViewEntry = (entryKey: string, feedbackItemSlug?: string) => {
+    if (feedbackItemSlug) {
+      router.push(`/feedback/${feedbackItemSlug}/entries/${entryKey}`);
+    } else {
+      // Fallback to old behavior if feedbackItemSlug is not available
+      router.push(`${pathname}/entries/${entryKey}`);
+    }
   };
 
   const columns: ColumnDef<FeedbackEntry>[] = [
@@ -173,6 +179,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
       cell: ({ row }) => {
         const description = row.getValue("entry_description") as string;
         const entryKey = row.original.entry_key;
+        const feedbackItemSlug = row.original.feedback_item_slug;
         const entry = row.original;
         
         // Check if current user is the submitter
@@ -186,7 +193,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
             <div 
               className="text-sm truncate flex-1 cursor-pointer hover:text-gray-700 hover:underline" 
               title={description}
-              onClick={entryKey ? () => handleViewEntry(entryKey) : undefined}
+              onClick={entryKey ? () => handleViewEntry(entryKey, feedbackItemSlug) : undefined}
             >
               {description}
             </div>
@@ -195,7 +202,7 @@ export function FeedbackEntriesTable({ data }: FeedbackEntriesTableProps) {
                 variant="ghost"
                 size="sm"
                 className="cursor-pointer h-6 w-6 p-0 flex-shrink-0 hover:bg-sky-100 outline-slate-300 outline"
-                onClick={() => handleViewEntry(entryKey)}
+                onClick={() => handleViewEntry(entryKey, feedbackItemSlug)}
               >
                 {isCurrentUserSubmitter ? (
                   <PencilSquareIcon className="h-4 w-4 text-gray-500" />
