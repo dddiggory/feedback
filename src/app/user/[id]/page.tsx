@@ -8,27 +8,38 @@ import { getInitials } from '@/lib/utils'
 
 
 
+// Helper function to determine if a string is an email
+function isEmail(str: string): boolean {
+  return str.includes('@') && str.includes('.')
+}
+
 export default async function UserProfilePage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const supabase = await createClient()
-  const { id } = await params
+  const { id: rawId } = await params
+  
+  // Decode the URL parameter in case it's an email with encoded characters
+  const id = decodeURIComponent(rawId)
   
   // Get current user to check if viewing own profile
   const { data: { user: currentUser } } = await supabase.auth.getUser()
   
-  // If the ID matches the current user, redirect to /user
-  if (currentUser && currentUser.id === id) {
+  // If the ID matches the current user ID or email, redirect to /user
+  if (currentUser && (currentUser.id === id || currentUser.email === id)) {
     redirect('/user')
   }
   
-  // Look up entries by user ID to derive user info
+  // Determine if the parameter is an email or user ID
+  const isEmailLookup = isEmail(id)
+  
+  // Look up entries by user ID or email to derive user info
   const { data: entriesData } = await supabase
     .from('entries_with_data')
     .select('*')
-    .eq('created_by_user_id', id)
+    .eq(isEmailLookup ? 'submitter_email' : 'created_by_user_id', id)
     .order('created_at', { ascending: false })
   
   if (!entriesData || entriesData.length === 0) {

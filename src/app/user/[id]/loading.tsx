@@ -45,7 +45,7 @@ export default function UserProfileByIdLoading() {
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
             <h2 className="text-2xl font-medium text-gray-800">Feedback Submissions</h2>
             <p className="text-gray-600 mt-1">
-              All feedback entries submitted by
+              All feedback entries submitted by this user
             </p>
           </div>
           
