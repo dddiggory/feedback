@@ -1,5 +1,5 @@
 # CODEOWNERS file
 
 
-# Global rule: dddiggory by default
-* @dddiggory 
+# Global rule: any one of these three people can approve
+* @dddiggory @willsather @mcabs3 
