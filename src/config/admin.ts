@@ -9,6 +9,7 @@
 const ADMIN_EMAILS = [
   // Add admin emails here
   'diggory.rycroft@vercel.com',
+  'dan.campbell@vercel.com',
   'will.sather@vercel.com',
   'miguel.caballero@vercel.com',
   // 'another-admin@vercel.com',
