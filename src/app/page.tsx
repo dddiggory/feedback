@@ -263,6 +263,13 @@ export default async function DashboardPage() {
                               >
                                 {entry.submitter_name}
                               </Link>
+                            ) : entry.submitter_email ? (
+                              <Link
+                                href={`/user/${encodeURIComponent(entry.submitter_email)}`}
+                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline break-words"
+                              >
+                                {entry.submitter_name}
+                              </Link>
                             ) : (
                               <span className="text-xs text-gray-900 break-words">{entry.submitter_name}</span>
                             )}
@@ -305,35 +312,60 @@ export default async function DashboardPage() {
                   {topSubmitters?.map((submitter, index) => (
                     <tr key={submitter.submitter_email || index} className="hover:bg-gray-50">
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                        <div className="flex items-center">
-                          {submitter.submitter_avatar ? (
-                            <Image
-                              src={submitter.submitter_avatar}
-                              alt={`${submitter.submitter_name || 'User'}'s avatar`}
-                              width={50}
-                              height={50}
-                              className="w-6 h-6 rounded-full mr-2"
-                            />
-                          ) : submitter.submitter_name ? (
-                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
-                              {getInitials(submitter.submitter_name)}
-                            </div>
-                          ) : (
-                            <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
-                              ?
-                            </div>
-                          )}
-                          <div>
-                            <div className="font-medium">
-                              {submitter.submitter_name || 'Unknown User'}
-                            </div>
-                            {submitter.submitter_email && (
-                              <div className="text-xs text-gray-500">
-                                {submitter.submitter_email}
+                        {submitter.submitter_email ? (
+                          <Link href={`/user/${encodeURIComponent(submitter.submitter_email)}`} className="flex items-center cursor-pointer hover:bg-gray-50 rounded-md p-1 -m-1 transition-colors">
+                            {submitter.submitter_avatar ? (
+                              <Image
+                                src={submitter.submitter_avatar}
+                                alt={`${submitter.submitter_name || 'User'}'s avatar`}
+                                width={50}
+                                height={50}
+                                className="w-6 h-6 rounded-full mr-2"
+                              />
+                            ) : submitter.submitter_name ? (
+                              <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                                {getInitials(submitter.submitter_name)}
+                              </div>
+                            ) : (
+                              <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                                ?
                               </div>
                             )}
+                            <div>
+                              <div className="font-medium hover:underline">
+                                {submitter.submitter_name || 'Unknown User'}
+                              </div>
+                              <div className="text-xs text-gray-500 hover:underline">
+                                {submitter.submitter_email}
+                              </div>
+                            </div>
+                          </Link>
+                        ) : (
+                          <div className="flex items-center">
+                            {submitter.submitter_avatar ? (
+                              <Image
+                                src={submitter.submitter_avatar}
+                                alt={`${submitter.submitter_name || 'User'}'s avatar`}
+                                width={50}
+                                height={50}
+                                className="w-6 h-6 rounded-full mr-2"
+                              />
+                            ) : submitter.submitter_name ? (
+                              <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                                {getInitials(submitter.submitter_name)}
+                              </div>
+                            ) : (
+                              <div className={`w-6 h-6 rounded-full mr-2 flex items-center justify-center text-white text-xs font-medium ${getRandomColor()}`}>
+                                ?
+                              </div>
+                            )}
+                            <div>
+                              <div className="font-medium">
+                                {submitter.submitter_name || 'Unknown User'}
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">
                         {submitter.total_entries}
