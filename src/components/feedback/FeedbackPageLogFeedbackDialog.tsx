@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ReactNode, useState, useRef, useEffect } from "react"
+import { ReactNode, useState, useRef, useEffect, useCallback } from "react"
 import { AccountOpportunitySelect } from "./AccountOpportunitySelect"
 import {
   Select,
@@ -27,6 +27,12 @@ import { useAccountSearch } from '@/hooks/use-account-opportunity-search'
 import { Account } from '@/lib/services/account-opportunity'
 import { Opportunity } from '@/lib/services/opportunity'
 import { createEntryWithWebhook } from '@/lib/actions/webhook'
+import { upload } from '@vercel/blob/client'
+
+// Minimal shape used from the upload response
+type BlobUploadResult = {
+  url: string
+}
 
 interface FeedbackPageLogFeedbackDialogProps {
   trigger?: ReactNode
@@ -48,8 +54,12 @@ export function FeedbackPageLogFeedbackDialog({
   const [description, setDescription] = useState("")
   const [links, setLinks] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
+  const [uploaded, setUploaded] = useState<BlobUploadResult[]>([])
+  const [uploading, setUploading] = useState(false)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { opportunities, selectedId: selectedOpportunityId, setSelectedId: setSelectedOpportunityId, loading: loadingOpportunities } = useOpportunitiesByAccount(accountName)
   const { handleSearchChange } = useAccountSearch()
 
@@ -74,6 +84,33 @@ export function FeedbackPageLogFeedbackDialog({
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isSubmitting])
+
+  const MAX_IMAGES = 10
+  const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp']
+
+  const addFiles = useCallback((files: FileList | null) => {
+    if (!files) return
+    const existing = pendingFiles.length
+    const added: File[] = []
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i]
+      if (!ACCEPTED.includes(f.type)) continue
+      if (existing + added.length >= MAX_IMAGES) break
+      added.push(f)
+    }
+    if (added.length) setPendingFiles(prev => [...prev, ...added])
+  }, [pendingFiles.length])
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    addFiles(e.dataTransfer.files)
+  }
+
+  const onClickPicker = () => fileInputRef.current?.click()
+
+  const removePending = (idx: number) => {
+    setPendingFiles(prev => prev.filter((_, i) => i !== idx))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -100,12 +137,56 @@ export function FeedbackPageLogFeedbackDialog({
         throw new Error(result.error || 'Failed to create entry')
       }
 
+      // If images were selected, upload them and attach to the created entry
+      if (result.entryId && pendingFiles.length > 0) {
+        try {
+          setUploading(true)
+          const results: BlobUploadResult[] = []
+          for (const file of pendingFiles) {
+            const res = await upload(file.name, file, {
+              access: 'public',
+              handleUploadUrl: '/api/images/upload',
+              // send scope so server route can build the pathname
+              clientPayload: JSON.stringify({ scope: 'entry', parentId: result.entryId, filename: file.name }),
+            })
+            results.push(res)
+            console.log('Uploaded to Blob:', res.url)
+            // Attach in DB
+            const attachResp = await fetch('/api/images/attach', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                scope: 'entry',
+                parentId: result.entryId,
+                blob: {
+                  url: res.url,
+                  // The Vercel Blob response does not include size/contentType; fall back to the File values
+                  size: file.size,
+                  contentType: file.type,
+                },
+              }),
+            })
+            if (!attachResp.ok) {
+              const t = await attachResp.text()
+              console.error('Attach failed:', attachResp.status, t)
+            }
+          }
+          setUploaded(results)
+        } catch (err) {
+          console.error('Image upload/attach error:', err)
+        } finally {
+          setUploading(false)
+        }
+      }
+
       // Reset form
       setAccountName("")
       setSelectedAccount(null) // Reset selected account
       setSeverity("med")
       setDescription("")
       setLinks("")
+      setPendingFiles([])
+      setUploaded([])
       
       // Close dialog
       setOpen(false)
@@ -218,20 +299,56 @@ export function FeedbackPageLogFeedbackDialog({
                 onChange={(e) => setLinks(e.target.value)}
               />
             </div>
+            
+            {/* Image uploader */}
+            <div className="space-y-2">
+              <Label>Screenshots & Images (optional)</Label>
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={onDrop}
+                onClick={onClickPicker}
+                className="border-2 border-dashed rounded-md p-4 text-center cursor-pointer bg-white/60 hover:bg-white"
+              >
+                <p className="text-slate-700">Drag and drop images here, or click to browse</p>
+                <p className="text-slate-500 text-sm mt-1">Up to {MAX_IMAGES} images. JPEG, PNG, WEBP.</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED.join(',')}
+                  multiple
+                  onChange={(e) => addFiles(e.target.files)}
+                  className="hidden"
+                />
+              </div>
+
+              {pendingFiles.length > 0 && (
+                <div className="mt-2 grid grid-cols-1 gap-2">
+                  {pendingFiles.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between rounded-md bg-white/70 px-3 py-2">
+                      <div className="truncate text-sm text-slate-700">{f.name}</div>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removePending(i)}>Remove</Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {uploading && <div className="text-sm text-slate-600">Uploading images…</div>}
+            </div>
           </div>
           <DialogFooter className="flex-shrink-0 mt-4 px-1">
             <Button 
               className="cursor-pointer" 
               type="submit" 
-              disabled={isSubmitting || !accountName || !description.trim() || loadingOpportunities}
+              disabled={isSubmitting || uploading || !accountName || !description.trim() || loadingOpportunities}
             >
               {isSubmitting 
                 ? "Submitting..." 
-                : loadingOpportunities
-                  ? "Loading opportunities..."
-                  : (!accountName || !description.trim())
-                    ? "Complete Required Fields Before Submitting"
-                    : "Submit Feedback (Cmd+Enter)"
+                : uploading
+                  ? "Uploading images..."
+                  : loadingOpportunities
+                    ? "Loading opportunities..."
+                    : (!accountName || !description.trim())
+                      ? "Complete Required Fields Before Submitting"
+                      : "Submit Feedback (Cmd+Enter)"
               }
             </Button>
           </DialogFooter>

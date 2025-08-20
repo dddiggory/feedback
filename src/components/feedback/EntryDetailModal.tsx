@@ -17,17 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
-import { Edit, Save, X, Trash } from "lucide-react"
+import { Edit, Save, X, Trash, ImageIcon } from "lucide-react"
 import { useUser } from "@/components/layout/UserContext"
 import { useAdmin } from "@/hooks/use-admin"
 import { createClient } from "@/lib/supabase/client"
 import { getSeverityStyle } from "@/lib/utils"
 import { formatARR } from "@/lib/format"
+import { EntryImagesManagerModal } from "./EntryImagesManagerModal"
 
 interface FeedbackEntry {
   id: string;
@@ -76,6 +77,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   
   const [editedSeverity, setEditedSeverity] = useState(normalizeSeverity(entry.severity))
   const [isSaving, setIsSaving] = useState(false)
+  const [images, setImages] = useState<Array<{id: string, url: string, caption: string | null}>>([])
   const router = useRouter()
   const { user } = useUser()
   const { isAdmin } = useAdmin()
@@ -84,6 +86,22 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
   // Check if current user is the submitter or an admin
   const isOwner = user?.id === entry.created_by_user_id
   const canEdit = isOwner || isAdmin
+
+  // Fetch entry images
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const resp = await fetch(`/api/images/list-by-parent?scope=entry&parentId=${entry.id}`)
+        if (resp.ok) {
+          const data = await resp.json()
+          setImages(data.images || [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch entry images:', error)
+      }
+    }
+    fetchImages()
+  }, [entry.id])
 
   // Close modal handler
   const handleClose = () => {
@@ -176,6 +194,11 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
       console.error('Error deleting entry:', error)
       alert('Failed to delete entry. Please try again.')
     }
+  }
+
+  // Handle opening images modal
+  const handleOpenImagesModal = () => {
+    window.dispatchEvent(new Event('open-entry-images-modal'))
   }
 
   // Clean up the website URL for logo display
@@ -419,6 +442,45 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
         </div>
       )}
 
+      {/* Images */}
+      <div className="grid gap-2">
+        <div className="flex items-center justify-between">
+          <Label className="text-base font-semibold">Images ({images.length})</Label>
+          <Button
+            onClick={handleOpenImagesModal}
+            variant="outline"
+            size="sm"
+            className="cursor-pointer bg-white hover:bg-blue-50"
+          >
+            <ImageIcon className="w-4 h-4 mr-1" />
+            Manage Images
+          </Button>
+        </div>
+        {images.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {images.map((img) => (
+              <div key={img.id} className="relative group">
+                <img 
+                  src={img.url} 
+                  alt={img.caption || 'Entry image'} 
+                  className="w-full h-24 object-cover rounded-md border bg-white cursor-pointer hover:opacity-75 transition-opacity"
+                  onClick={() => window.open(img.url, '_blank')}
+                />
+                {img.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white text-xs p-1 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity">
+                    {img.caption}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg p-4 border text-center text-gray-500 text-sm">
+            No images attached to this entry yet.
+          </div>
+        )}
+      </div>
+
       {/* Metadata */}
       <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
         <div>
@@ -472,6 +534,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
           </div>
           {renderContent()}
         </div>
+        <EntryImagesManagerModal entryId={entry.id} initialImages={images} />
       </div>
     );
   }
@@ -502,6 +565,7 @@ export function EntryDetailModal({ entry, feedbackItem, isIntercepted = false }:
           </Button>
         </div>
       </DialogContent>
+      <EntryImagesManagerModal entryId={entry.id} initialImages={images} />
     </Dialog>
   )
 } 

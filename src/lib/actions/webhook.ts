@@ -29,7 +29,7 @@ interface CreateEntryWithWebhookData {
 
 export async function createEntryWithWebhook(
   data: CreateEntryWithWebhookData
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; entryId?: string }> {
   try {
     const supabase = await createClient()
     
@@ -97,7 +97,7 @@ export async function createEntryWithWebhook(
       console.error('Error fetching entry_key:', entryFetchError)
       // Don't fail the entry creation, just log the webhook failure
       console.warn('Webhook will not be sent due to missing entry_key')
-      return { success: true }
+      return { success: true, entryId: entry.id }
     }
 
     // Fetch feedback item details for webhook payload
@@ -111,7 +111,7 @@ export async function createEntryWithWebhook(
       console.error('Error fetching feedback item:', feedbackError)
       // Don't fail the entry creation, just log the webhook failure
       console.warn('Webhook will not be sent due to missing feedback item data')
-      return { success: true }
+      return { success: true, entryId: entry.id }
     }
 
     // Prepare webhook payload (using already cleaned website)
@@ -167,7 +167,7 @@ export async function createEntryWithWebhook(
       // Log but don't fail the entry creation
     }
 
-    return { success: true }
+    return { success: true, entryId: entry.id }
   } catch (error) {
     console.error('Error in createEntryWithWebhook:', error)
     return { success: false, error: 'An unexpected error occurred' }
