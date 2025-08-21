@@ -219,7 +219,9 @@ export default async function FeedbackItemPage({
                   id: feedbackItem.id,
                   title: feedbackItem.title,
                   description: feedbackItem.description,
-                  slug: feedbackItem.slug
+                  slug: feedbackItem.slug,
+                  status: feedbackItem.status,
+                  shipped_notes: feedbackItem.shipped_notes
                 }}
                 images={images || []}
               />
