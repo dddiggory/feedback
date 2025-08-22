@@ -19,9 +19,12 @@ export async function GET(request: NextRequest) {
         const decodedState = JSON.parse(Buffer.from(state, 'base64').toString())
         redirectUrl = decodedState.redirectUrl || '/'
         targetOrigin = decodedState.origin || targetOrigin
+        console.log('OAuth proxy - decoded state:', { decodedState, targetOrigin, redirectUrl }) // Debug log
       } catch (e) {
         console.warn('Failed to decode state parameter:', e)
       }
+    } else {
+      console.log('OAuth proxy - no state parameter provided') // Debug log
     }
 
     // Construct the callback URL for the target environment

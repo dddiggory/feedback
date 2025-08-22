@@ -18,12 +18,23 @@ export function getOAuthRedirectUri(): string {
   const isPreview = isPreviewEnvironment()
   
   if (isPreview) {
-    // Use the production domain as proxy for preview environments
-    return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'}/api/auth/proxy`
+    // Always use the production domain as proxy for preview environments
+    return 'https://gtmfeedback.vercel.app/api/auth/proxy'
   }
   
-  // Use the standard callback for production/development
-  return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'}/auth/callback`
+  // For production/development, use environment variable or fallback
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (siteUrl && !siteUrl.includes('localhost')) {
+    return `${siteUrl}/auth/callback`
+  }
+  
+  // Development fallback
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return `${window.location.origin}/auth/callback`
+  }
+  
+  // Production fallback
+  return 'https://gtmfeedback.vercel.app/auth/callback'
 }
 
 /**
@@ -33,10 +44,20 @@ export function createOAuthState(redirectUrl: string = '/'): string | undefined 
   const isPreview = isPreviewEnvironment()
   
   if (isPreview) {
-    // Get current origin
-    const currentOrigin = typeof window !== 'undefined' 
-      ? window.location.origin 
-      : process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
+    // Get current origin - prioritize window.location for client-side accuracy
+    let currentOrigin = 'https://gtmfeedback.vercel.app' // fallback
+    
+    if (typeof window !== 'undefined') {
+      currentOrigin = window.location.origin
+    } else {
+      // Server-side: try to get from environment or headers
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+      if (siteUrl && !siteUrl.includes('localhost')) {
+        currentOrigin = siteUrl
+      }
+    }
+    
+    console.log('Creating OAuth state for origin:', currentOrigin) // Debug log
     
     const state = {
       origin: currentOrigin,
