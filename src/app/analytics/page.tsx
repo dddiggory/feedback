@@ -1,38 +1,94 @@
+"use client";
+
 import { Layout } from '@/components/layout/Layout';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { TopItemsBarChart } from '@/components/analytics/TopItemsBarChart';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { CalendarRange } from 'lucide-react';
+import { CalendarDatePicker } from "@/components/ui/calendar-date-picker";
+import { DateRange } from "react-day-picker";
+import { useState, useEffect } from "react";
+import { startOfMonth, endOfMonth } from "date-fns";
 
-export default async function AnalyticsPage() {
-  const supabase = await createClient();
+export default function AnalyticsPage() {
+  const supabase = createClient();
+  
+  // State for date range filtering - default to "All Time" (undefined)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  
+  // State for data
+  const [feedbackItems, setFeedbackItems] = useState<any[]>([]);
+  const [entriesData, setEntriesData] = useState<any[]>([]);
+  const [productAreas, setProductAreas] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: feedbackItems } = await supabase
-    .from('feedback_items_with_data')
-    .select('*');
+  // Fetch data based on date range
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      
+      try {
+        // Fetch feedback items (for general stats)
+        const { data: feedbackItemsData } = await supabase
+          .from('feedback_items_with_data')
+          .select('*');
 
-  const { data: productAreas } = await supabase
-    .from('product_areas')
-    .select('*');
+        // Fetch entries with date filtering
+        let entriesQuery = supabase
+          .from('entries_with_data')
+          .select('*');
+        
+        if (dateRange?.from) {
+          entriesQuery = entriesQuery.gte('created_at', dateRange.from.toISOString());
+        }
+        if (dateRange?.to) {
+          entriesQuery = entriesQuery.lte('created_at', dateRange.to.toISOString());
+        }
+        
+        const { data: entriesData } = await entriesQuery;
 
-  // Calculate metrics
-  const totalFeedback = feedbackItems?.length || 0;
-  const totalRevenueOpportunity = feedbackItems?.reduce((sum, item) => sum + (item.current_arr_sum || 0) + (item.open_opp_arr_sum || 0), 0) || 0;
-  const avgEntriesPerFeedback = feedbackItems?.reduce((sum, item) => sum + (item.entry_count || 0), 0) / totalFeedback || 0;
+        // Fetch product areas
+        const { data: productAreasData } = await supabase
+          .from('product_areas')
+          .select('*');
 
-  // Get feedback by status
-  const feedbackByStatus = feedbackItems?.reduce((acc: Record<string, number>, item) => {
+        setFeedbackItems(feedbackItemsData || []);
+        setEntriesData(entriesData || []);
+        setProductAreas(productAreasData || []);
+      } catch (error) {
+        console.error('Error fetching analytics data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dateRange, supabase]);
+
+  // Calculate metrics based on filtered entries
+  const totalEntries = entriesData?.length || 0;
+  const totalRevenueOpportunity = entriesData?.reduce((sum, entry) => sum + (entry.current_arr || 0) + (entry.open_opp_arr || 0), 0) || 0;
+  
+  // Get feedback items that have entries in the date range
+  const feedbackItemsWithEntries = feedbackItems?.filter(item => 
+    entriesData?.some(entry => entry.feedback_item_id === item.id)
+  ) || [];
+  
+  const totalFeedback = feedbackItemsWithEntries.length;
+  const avgEntriesPerFeedback = totalFeedback > 0 ? totalEntries / totalFeedback : 0;
+
+  // Get feedback by status (from filtered feedback items)
+  const feedbackByStatus = feedbackItemsWithEntries?.reduce((acc: Record<string, number>, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
     return acc;
   }, {}) || {};
 
-  // Get top product areas by feedback count
-  const productAreaCounts = feedbackItems?.reduce((acc: Record<string, number>, item) => {
-    item.product_area_names?.forEach((area: string) => {
+  // Get top product areas by entry count (from filtered entries)
+  const productAreaCounts = entriesData?.reduce((acc: Record<string, number>, entry) => {
+    entry.product_area_names?.forEach((area: string) => {
       acc[area] = (acc[area] || 0) + 1;
     });
     return acc;
@@ -42,6 +98,10 @@ export default async function AnalyticsPage() {
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Layout>
       <div className="space-y-8">
@@ -49,7 +109,7 @@ export default async function AnalyticsPage() {
         <div>
           <h1 className="text-3xl font-bold text-white">Analytics & Reporting</h1>
           <p className="mt-2 text-white">
-            High-level reporting on feedback items, measurable by raw count or revenue. Try filtering by Product Area or grouping by New vs. Existing.<br />What other reports would you like to see, and why? Do you want SQL querying? Come ask in <Link href="https://vercel.slack.com/archives/C094FVBAVLH" target="_blank" className="text-green-400 font-bold hover:underline">#project-gtmfeedback-app</Link> on Slack.
+            High-level reporting on feedback entries, filterable by date range. Metrics show entries created within the selected date range.<br />What other reports would you like to see, and why? Do you want SQL querying? Come ask in <Link href="https://vercel.slack.com/archives/C094FVBAVLH" target="_blank" className="text-green-400 font-bold hover:underline">#project-gtmfeedback-app</Link> on Slack.
           </p>
         </div>
 
@@ -105,13 +165,12 @@ export default async function AnalyticsPage() {
                         <SelectItem value="severity" className="cursor-not-allowed">Severity Level</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button
-                      variant="outline"
-                      
-                      className="min-w-[180px] cursor-not-allowed opacity-50"
-                    >
-                      <CalendarRange className="w-1 h-1 cursor-not-allowed" /> (coming soon)
-                    </Button>
+                    <CalendarDatePicker
+                      date={dateRange}
+                      onDateSelect={setDateRange}
+                      numberOfMonths={2}
+                      className="min-w-[280px]"
+                    />
                   </div>
                 </div>
                 <TabsContent value="count">

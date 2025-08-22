@@ -19,6 +19,8 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { CalendarDatePicker } from "@/components/ui/calendar-date-picker"
+import { DateRange } from "react-day-picker"
 import { CalendarRange } from 'lucide-react'
 
 interface ProductAreaOption {
@@ -112,6 +114,7 @@ export function TopItemsBarChart() {
   const [productAreas, setProductAreas] = useState<ProductAreaOption[]>([])
   const [selectedProductArea, setSelectedProductArea] = useState<string | undefined>(undefined)
   const [groupBy, setGroupBy] = useState<string>('none')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined) // Default to "All Time"
 
   // Fetch product areas for dropdown
   useEffect(() => {
@@ -148,8 +151,22 @@ export function TopItemsBarChart() {
     return query.contains('product_area_slugs', [productAreaFilter])
   }
 
+  // Helper function to apply date filtering to entries queries
+  function applyDateFilter(query: any, dateFilter?: DateRange) {
+    if (!dateFilter?.from && !dateFilter?.to) {
+      return query // No date filtering for "All Time"
+    }
+    if (dateFilter.from) {
+      query = query.gte('created_at', dateFilter.from.toISOString())
+    }
+    if (dateFilter.to) {
+      query = query.lte('created_at', dateFilter.to.toISOString())
+    }
+    return query
+  }
+
   // Helper function to fetch severity data
-  async function fetchSeverityData(supabase: any, productAreaFilter?: string) {
+  async function fetchSeverityData(supabase: any, productAreaFilter?: string, dateFilter?: DateRange) {
     // First get the top 10 feedback items by entry count or revenue
     let topItemsQuery = supabase
       .from('feedback_items_with_data')
@@ -179,10 +196,15 @@ export function TopItemsBarChart() {
       const itemIds = items.map(item => item.id)
       
       // Get all entries for these feedback items with severity data
-      const { data: entriesData } = await supabase
+      let entriesQuery = supabase
         .from('entries_with_data')
         .select('feedback_item_id, severity, total_arr')
         .in('feedback_item_id', itemIds)
+      
+      // Apply date filtering to entries
+      entriesQuery = applyDateFilter(entriesQuery, dateFilter)
+      
+      const { data: entriesData } = await entriesQuery
 
       // Aggregate by feedback item
       const aggregated = items.map(item => {
@@ -215,7 +237,7 @@ export function TopItemsBarChart() {
   }
 
   // Helper function to fetch customer type data for entry counts
-  async function fetchCustomerTypeData(supabase: any, productAreaFilter?: string) {
+  async function fetchCustomerTypeData(supabase: any, productAreaFilter?: string, dateFilter?: DateRange) {
     // First get the top 10 feedback items by entry count
     let topItemsQuery = supabase
       .from('feedback_items_with_data')
@@ -235,10 +257,15 @@ export function TopItemsBarChart() {
       const itemIds = items.map(item => item.id)
       
       // Get all entries for these feedback items with current_arr data
-      const { data: entriesData } = await supabase
+      let entriesQuery = supabase
         .from('entries_with_data')
         .select('feedback_item_id, current_arr')
         .in('feedback_item_id', itemIds)
+      
+      // Apply date filtering to entries
+      entriesQuery = applyDateFilter(entriesQuery, dateFilter)
+      
+      const { data: entriesData } = await entriesQuery
 
       // Aggregate by feedback item
       const aggregated = items.map(item => {
@@ -262,44 +289,78 @@ export function TopItemsBarChart() {
     return { entryCountData }
   }
 
-  // Fetch chart data, filtered by selected product area
+  // Helper function to get date-filtered counts and revenue for feedback items
+  async function getDateFilteredCounts(supabase: any, feedbackItems: any[], dateFilter?: DateRange) {
+    if (!feedbackItems?.length) return feedbackItems;
+
+    const itemIds = feedbackItems.map(item => item.id);
+    
+    // Get entries for these items with date filtering
+    let entriesQuery = supabase
+      .from('entries_with_data')
+      .select('feedback_item_id, current_arr, open_opp_arr, total_arr')
+      .in('feedback_item_id', itemIds);
+    
+    // Apply date filtering
+    entriesQuery = applyDateFilter(entriesQuery, dateFilter);
+    
+    const { data: entriesData } = await entriesQuery;
+
+    // Recalculate counts and revenue for each feedback item based on filtered entries
+    return feedbackItems.map(item => {
+      const itemEntries = entriesData?.filter(entry => entry.feedback_item_id === item.id) || [];
+      
+      const filteredEntryCount = itemEntries.length;
+      const filteredCurrentArr = itemEntries.reduce((sum, entry) => sum + (entry.current_arr || 0), 0);
+      const filteredOpenOppArr = itemEntries.reduce((sum, entry) => sum + (entry.open_opp_arr || 0), 0);
+      const filteredCombinedArr = filteredCurrentArr + filteredOpenOppArr;
+
+      return {
+        ...item,
+        // Override with date-filtered values
+        entry_count: filteredEntryCount,
+        current_arr_sum: filteredCurrentArr,
+        open_opp_arr_sum: filteredOpenOppArr,
+        combined_arr_impact: filteredCombinedArr,
+        entry_count_label: filteredEntryCount.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+        combined_arr_impact_label: new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          notation: 'compact',
+          maximumFractionDigits: 2,
+        }).format(filteredCombinedArr)
+      };
+    });
+  }
+
+  // Fetch chart data, filtered by selected product area and date range
   useEffect(() => {
     const supabase = createClient()
     async function fetchData() {
       if (groupBy === 'severity') {
         // Fetch severity-grouped data
-        const { entryCountData, revenueData } = await fetchSeverityData(supabase, selectedProductArea)
+        const { entryCountData, revenueData } = await fetchSeverityData(supabase, selectedProductArea, dateRange)
         setTopByEntryCount(entryCountData)
         setTopByRevenueImpact(revenueData)
       } else if (groupBy === 'customer-type') {
         // Fetch customer-type grouped data for entry counts
-        const { entryCountData } = await fetchCustomerTypeData(supabase, selectedProductArea)
+        const { entryCountData } = await fetchCustomerTypeData(supabase, selectedProductArea, dateRange)
         setTopByEntryCount(entryCountData)
         
-        // For revenue, use regular data but keep existing customer-type revenue logic
+        // For revenue, get top items by all-time revenue but recalculate with date filter
         let revenueQuery = supabase
           .from('feedback_items_with_data')
           .select('*')
           .order('combined_arr_impact', { ascending: false })
           .limit(10)
-        // Apply product area filtering
         revenueQuery = applyProductAreaFilter(revenueQuery, selectedProductArea)
         const { data: revenueData } = await revenueQuery
-        setTopByRevenueImpact(
-          (revenueData || []).map((item: ChartDataItem) => ({
-            ...item,
-            combined_arr_impact_label: typeof item.combined_arr_impact === 'number'
-              ? new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  notation: 'compact',
-                  maximumFractionDigits: 2,
-                }).format(item.combined_arr_impact)
-              : '',
-          }))
-        )
+        
+        // Recalculate with date-filtered entries
+        const dateFilteredRevenueData = await getDateFilteredCounts(supabase, revenueData || [], dateRange);
+        setTopByRevenueImpact(dateFilteredRevenueData)
       } else {
-        // Fetch regular data
+        // Get top items by all-time counts/revenue but recalculate with date filter
         let entryQuery = supabase
           .from('feedback_items_with_data')
           .select('*')
@@ -310,36 +371,26 @@ export function TopItemsBarChart() {
           .select('*')
           .order('combined_arr_impact', { ascending: false })
           .limit(10)
+        
         // Apply product area filtering
         entryQuery = applyProductAreaFilter(entryQuery, selectedProductArea)
         revenueQuery = applyProductAreaFilter(revenueQuery, selectedProductArea)
-        const { data: entryData } = await entryQuery
-        setTopByEntryCount(
-          (entryData || []).map((item: ChartDataItem) => ({
-            ...item,
-            entry_count_label: typeof item.entry_count === 'number'
-              ? item.entry_count.toLocaleString('en-US', { maximumFractionDigits: 0 })
-              : '',
-          }))
-        )
-        const { data: revenueData } = await revenueQuery
-        setTopByRevenueImpact(
-          (revenueData || []).map((item: ChartDataItem) => ({
-            ...item,
-            combined_arr_impact_label: typeof item.combined_arr_impact === 'number'
-              ? new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  notation: 'compact',
-                  maximumFractionDigits: 2,
-                }).format(item.combined_arr_impact)
-              : '',
-          }))
-        )
+        
+        const [{ data: entryData }, { data: revenueData }] = await Promise.all([
+          entryQuery,
+          revenueQuery
+        ]);
+        
+        // Recalculate with date-filtered entries
+        const dateFilteredEntryData = await getDateFilteredCounts(supabase, entryData || [], dateRange);
+        const dateFilteredRevenueData = await getDateFilteredCounts(supabase, revenueData || [], dateRange);
+        
+        setTopByEntryCount(dateFilteredEntryData)
+        setTopByRevenueImpact(dateFilteredRevenueData)
       }
     }
     fetchData()
-  }, [selectedProductArea, groupBy])
+  }, [selectedProductArea, groupBy, dateRange])
 
   return (
     <div>
@@ -394,13 +445,12 @@ export function TopItemsBarChart() {
                 <SelectItem value="severity" className="cursor-pointer">Severity Level</SelectItem>
               </SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              disabled
-              className="min-w-[50px] cursor-not-allowed opacity-50"
-            >
-              <CalendarRange className="w-1 h-1 cursor-not-allowed" /> (coming soon)
-            </Button>
+            <CalendarDatePicker
+              date={dateRange}
+              onDateSelect={setDateRange}
+              numberOfMonths={2}
+              className="min-w-[280px]"
+            />
           </div>
         </div>
         <TabsContent value="count">
