@@ -89,15 +89,11 @@ export function AuthGate({ children }: AuthGateProps) {
               </p>
             </div>
             <div className="mt-8 space-y-6">
-              {isPreviewEnvironment() ? (
-                <div className="space-y-4">
-                  <GoogleOAuthButton className="w-full" />
-                  <p className="text-xs text-center text-gray-500">
-                    Preview environment - using OAuth flow
-                  </p>
-                </div>
-              ) : (
-                <GoogleOneTapComponent ref={oneTapRef} />
+              <GoogleOneTapComponent ref={oneTapRef} />
+              {isPreviewEnvironment() && (
+                <p className="text-xs text-center text-gray-500">
+                  Preview environment detected
+                </p>
               )}
               <div className="text-center">
                 <p
