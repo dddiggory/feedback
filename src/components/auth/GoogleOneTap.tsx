@@ -4,7 +4,7 @@ import React, { useImperativeHandle, forwardRef, useEffect, useRef } from 'react
 import Script from 'next/script'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { isPreviewEnvironment, getOAuthRedirectUri, createOAuthState } from '@/lib/auth-utils'
+import { isPreviewEnvironment, getOAuthRedirectUri } from '@/lib/auth-utils'
 
 interface GoogleOneTapConfig {
   client_id: string
