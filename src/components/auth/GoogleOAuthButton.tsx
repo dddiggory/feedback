@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { isPreviewEnvironment, getOAuthRedirectUri, createOAuthState, getCurrentOrigin } from '@/lib/auth-utils'
+import { isPreviewEnvironment, getOAuthRedirectUri, createOAuthState } from '@/lib/auth-utils'
 
 interface GoogleOAuthButtonProps {
   className?: string
