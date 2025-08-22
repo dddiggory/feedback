@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+  const requestUrl = request.url
+  const { searchParams } = new URL(requestUrl)
   const code = searchParams.get('code')
   const encodedOrigin = searchParams.get('origin')
+  
+  console.log('OAuth proxy - received request:', { requestUrl, code: code ? 'present' : 'missing', encodedOrigin })
   
   if (!code) {
     return NextResponse.json({ error: 'No authorization code provided' }, { status: 400 })
@@ -21,16 +24,33 @@ export async function GET(request: NextRequest) {
         })
         
         targetOrigin = Buffer.from(base64Origin, 'base64').toString()
-        console.log('OAuth proxy - decoded origin:', { encodedOrigin, targetOrigin })
+        console.log('OAuth proxy - decoded origin successfully:', { 
+          encodedOrigin, 
+          base64Origin, 
+          targetOrigin,
+          isLocalhost: targetOrigin.includes('localhost')
+        })
       } catch (e) {
-        console.warn('Failed to decode origin parameter:', e)
+        console.error('Failed to decode origin parameter:', e, { encodedOrigin })
       }
+    } else {
+      console.log('OAuth proxy - no origin parameter provided, using fallback:', targetOrigin)
+    }
+
+    // Validate the target origin
+    if (targetOrigin.includes('localhost') && !targetOrigin.startsWith('http://localhost:')) {
+      console.error('Invalid localhost origin detected:', targetOrigin)
+      targetOrigin = 'https://gtmfeedback.vercel.app'
     }
 
     // Construct the callback URL for the target environment
     const callbackUrl = `${targetOrigin}/auth/callback?code=${encodeURIComponent(code)}`
     
-    console.log('OAuth proxy - redirecting to:', callbackUrl)
+    console.log('OAuth proxy - final redirect decision:', { 
+      targetOrigin, 
+      callbackUrl,
+      willRedirectToLocalhost: callbackUrl.includes('localhost')
+    })
     
     // Redirect to the target environment's callback handler
     return NextResponse.redirect(callbackUrl)
