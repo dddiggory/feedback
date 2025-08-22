@@ -20,7 +20,10 @@ export function GoogleOAuthButton({ className = '', children }: GoogleOAuthButto
       const isPreview = isPreviewEnvironment()
       const redirectTo = getOAuthRedirectUri()
       
-      let options: any = {
+      const options: {
+        redirectTo: string
+        queryParams?: { state: string }
+      } = {
         redirectTo,
       }
       

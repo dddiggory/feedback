@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   try {
     // Decode the state parameter to get the original redirect URL and target origin
     let redirectUrl = '/'
-    let targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://feedback-vercel-se-team.vercel.app'
+    let targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
     
     if (state) {
       try {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(callbackUrl)
   } catch (error) {
     console.error('OAuth proxy error:', error)
-    const targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://feedback-vercel-se-team.vercel.app'
+    const targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
     return NextResponse.redirect(`${targetOrigin}/auth/auth-code-error`)
   }
 }

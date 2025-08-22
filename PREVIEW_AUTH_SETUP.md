@@ -24,14 +24,14 @@ In your Google Cloud Console OAuth 2.0 Client:
 
 **Authorized JavaScript Origins:**
 ```
-https://feedback-vercel-se-team.vercel.app
+https://gtmfeedback.vercel.app
 http://localhost:3000  # for development
 ```
 
 **Authorized Redirect URIs:**
 ```
-https://feedback-vercel-se-team.vercel.app/api/auth/proxy
-https://feedback-vercel-se-team.vercel.app/auth/callback
+https://gtmfeedback.vercel.app/api/auth/proxy
+https://gtmfeedback.vercel.app/auth/callback
 http://localhost:3000/auth/callback  # for development
 ```
 
@@ -40,7 +40,7 @@ http://localhost:3000/auth/callback  # for development
 Ensure these environment variables are set in all environments (production, preview, development):
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://feedback-vercel-se-team.vercel.app
+NEXT_PUBLIC_SITE_URL=https://gtmfeedback.vercel.app
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key

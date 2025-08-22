@@ -7,7 +7,7 @@ export function isPreviewEnvironment(): boolean {
     process.env.VERCEL_ENV === 'preview' ||
     (typeof window !== 'undefined' && 
      window.location.hostname.includes('vercel.app') &&
-     !window.location.hostname.includes('feedback-vercel-se-team.vercel.app'))
+     !window.location.hostname.includes('gtmfeedback.vercel.app'))
   )
 }
 
@@ -19,23 +19,11 @@ export function getOAuthRedirectUri(): string {
   
   if (isPreview) {
     // Use the production domain as proxy for preview environments
-    return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://feedback-vercel-se-team.vercel.app'}/api/auth/proxy`
+    return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'}/api/auth/proxy`
   }
   
   // Use the standard callback for production/development
-  return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://feedback-vercel-se-team.vercel.app'}/auth/callback`
-}
-
-/**
- * Gets the current origin URL
- */
-export function getCurrentOrigin(): string {
-  if (typeof window !== 'undefined') {
-    return window.location.origin
-  }
-  
-  // Server-side fallback
-  return process.env.NEXT_PUBLIC_SITE_URL || 'https://feedback-vercel-se-team.vercel.app'
+  return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'}/auth/callback`
 }
 
 /**
@@ -45,8 +33,13 @@ export function createOAuthState(redirectUrl: string = '/'): string | undefined 
   const isPreview = isPreviewEnvironment()
   
   if (isPreview) {
+    // Get current origin
+    const currentOrigin = typeof window !== 'undefined' 
+      ? window.location.origin 
+      : process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
+    
     const state = {
-      origin: getCurrentOrigin(),
+      origin: currentOrigin,
       redirectUrl,
     }
     return Buffer.from(JSON.stringify(state)).toString('base64')
