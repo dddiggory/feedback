@@ -37,34 +37,4 @@ export function getOAuthRedirectUri(): string {
   return 'https://gtmfeedback.vercel.app/auth/callback'
 }
 
-/**
- * Creates OAuth state parameter for preview environments
- */
-export function createOAuthState(redirectUrl: string = '/'): string | undefined {
-  const isPreview = isPreviewEnvironment()
-  
-  if (isPreview) {
-    // Get current origin - prioritize window.location for client-side accuracy
-    let currentOrigin = 'https://gtmfeedback.vercel.app' // fallback
-    
-    if (typeof window !== 'undefined') {
-      currentOrigin = window.location.origin
-    } else {
-      // Server-side: try to get from environment or headers
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-      if (siteUrl && !siteUrl.includes('localhost')) {
-        currentOrigin = siteUrl
-      }
-    }
-    
-    console.log('Creating OAuth state for origin:', currentOrigin) // Debug log
-    
-    const state = {
-      origin: currentOrigin,
-      redirectUrl,
-    }
-    return Buffer.from(JSON.stringify(state)).toString('base64')
-  }
-  
-  return undefined
-}
+

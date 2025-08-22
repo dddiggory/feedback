@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { isPreviewEnvironment, getOAuthRedirectUri, createOAuthState } from '@/lib/auth-utils'
+import { isPreviewEnvironment, getOAuthRedirectUri } from '@/lib/auth-utils'
 
 interface GoogleOAuthButtonProps {
   className?: string
@@ -20,32 +20,42 @@ export function GoogleOAuthButton({ className = '', children }: GoogleOAuthButto
       const isPreview = isPreviewEnvironment()
       const redirectTo = getOAuthRedirectUri()
       
-      const options: {
-        redirectTo: string
-        queryParams?: { state: string }
-      } = {
-        redirectTo,
-      }
-      
-      // For preview environments, we need to pass the current origin as state
-      if (isPreview) {
-        const state = createOAuthState('/')
-        if (state) {
-          // Use Supabase's built-in state parameter support
-          options.queryParams = {
-            state: state
-          }
+      // For preview environments, encode the origin in the redirect URL
+      if (isPreview && typeof window !== 'undefined') {
+        const currentOrigin = window.location.origin
+        const encodedOrigin = Buffer.from(currentOrigin).toString('base64').replace(/[+/=]/g, (match) => {
+          return { '+': '-', '/': '_', '=': '' }[match] || match
+        })
+        
+        // Append the encoded origin to the redirect URL
+        const redirectWithOrigin = `${redirectTo}?origin=${encodedOrigin}`
+        
+        console.log('Preview OAuth redirect:', { currentOrigin, encodedOrigin, redirectWithOrigin })
+        
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectWithOrigin,
+          },
+        })
+        
+        if (error) {
+          console.error('OAuth sign-in error:', error)
+          throw error
         }
-      }
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options,
-      })
-      
-      if (error) {
-        console.error('OAuth sign-in error:', error)
-        throw error
+      } else {
+        // Non-preview environments
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo,
+          },
+        })
+        
+        if (error) {
+          console.error('OAuth sign-in error:', error)
+          throw error
+        }
       }
     } catch (error) {
       console.error('Error initiating Google sign-in:', error)
@@ -57,7 +67,7 @@ export function GoogleOAuthButton({ className = '', children }: GoogleOAuthButto
     <button
       onClick={handleSignIn}
       disabled={isLoading}
-      className={`flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`cursor-pointer flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {isLoading ? (
         <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2" />

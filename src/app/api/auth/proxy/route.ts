@@ -1,40 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
-  const state = searchParams.get('state')
+  const encodedOrigin = searchParams.get('origin')
   
   if (!code) {
     return NextResponse.json({ error: 'No authorization code provided' }, { status: 400 })
   }
 
   try {
-    // Decode the state parameter to get the original redirect URL and target origin
-    let redirectUrl = '/'
-    let targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
+    let targetOrigin = 'https://gtmfeedback.vercel.app' // default fallback
     
-    if (state) {
+    // Decode the origin parameter if provided
+    if (encodedOrigin) {
       try {
-        const decodedState = JSON.parse(Buffer.from(state, 'base64').toString())
-        redirectUrl = decodedState.redirectUrl || '/'
-        targetOrigin = decodedState.origin || targetOrigin
-        console.log('OAuth proxy - decoded state:', { decodedState, targetOrigin, redirectUrl }) // Debug log
+        // Reverse the URL-safe base64 encoding
+        const base64Origin = encodedOrigin.replace(/[-_]/g, (match) => {
+          return { '-': '+', '_': '/' }[match] || match
+        })
+        
+        targetOrigin = Buffer.from(base64Origin, 'base64').toString()
+        console.log('OAuth proxy - decoded origin:', { encodedOrigin, targetOrigin })
       } catch (e) {
-        console.warn('Failed to decode state parameter:', e)
+        console.warn('Failed to decode origin parameter:', e)
       }
-    } else {
-      console.log('OAuth proxy - no state parameter provided') // Debug log
     }
 
     // Construct the callback URL for the target environment
-    const callbackUrl = `${targetOrigin}/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(redirectUrl)}`
+    const callbackUrl = `${targetOrigin}/auth/callback?code=${encodeURIComponent(code)}`
+    
+    console.log('OAuth proxy - redirecting to:', callbackUrl)
     
     // Redirect to the target environment's callback handler
     return NextResponse.redirect(callbackUrl)
   } catch (error) {
     console.error('OAuth proxy error:', error)
-    const targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://gtmfeedback.vercel.app'
-    return NextResponse.redirect(`${targetOrigin}/auth/auth-code-error`)
+    return NextResponse.redirect('https://gtmfeedback.vercel.app/auth/auth-code-error')
   }
 }
