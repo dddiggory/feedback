@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// OAuth proxy for preview environments
+
 export async function GET(request: NextRequest) {
   const requestUrl = request.url
   const { searchParams } = new URL(requestUrl)
